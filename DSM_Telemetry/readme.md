@@ -1,8 +1,17 @@
 # DSM Telemetry Script Tools
 
-# Instalations
+
+# Deployment/Installation
 
 Copy the Uncompressed files into your radio /SCRIPTS/TOOLS
+
+The SDCard should look like this:
+
+    /SCRIPTS/TOOLS/
+                    DSM_AR636_Tel.lua
+                    DSM_AR636_Tel.lua
+
+
 
 Tested with Radimaster TX16S and FrSky QX7
 

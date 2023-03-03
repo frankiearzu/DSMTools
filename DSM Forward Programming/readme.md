@@ -13,22 +13,36 @@ Since EdgeTx/OpenTx doesn’t have an equivalent setup that is stored in the rad
 During `"Gyro Settings->initial setup"`, the RX asks the TX for model information behind the scenes.  After setup, `"Gyro Settings->System Tools-> Relearn Servo Settings"` requests the TX configuration and stores it in the RX. 
 
 # Deployment
-Make sure to manually create `/MODELS/DSMDATA`  . The script will complain at startup.
 
-    /SCRIPTS/TOOLS/DsmFwdPrg_05_BW.lua      -- black/white text only radios
-    /SCRIPTS/TOOLS/DsmFwdPrg_05_Color.lua   -- Color and touch radios
-    /SCRIPTS/TOOLS/DSMLIB/      -- (ALL CAPITALS) Libraries ane extra files
-    /SCRIPTS/TOOLS/DSMLIB/DsmFwPrgLib.lua   -- DSM Protocol Message and Menu   engine
-    /SCRIPTS/TOOLS/DSMLIB/DsmFwPrgSIMLib.lua -- Simulation of AR631, FC6250HX
-    /SCRIPTS/TOOLS/DSMLIB/SetupLib.lua -- Model Setup Screens
-    /SCRIPTS/TOOLS/DSMLIB/img        --Images for RX orientations
+Make sure to manually create `/MODELS/DSMDATA`  . The script will complain at startup if it does not exist. Here the script saves the Spektrun settings for each of your models.
+
+Uncompress the Zip file (ZIP version) into your local computer.
+In another window, open your TX SDCard and go to /SCRIPTS/TOOLS.
+
+When upgrading from a previous version of this tool, delete your /SCRIPTS/TOOLS/DSMLIB before copying the new one (if you customized your images, inside "DSMLIB/img" do a backup first)
+
+Copy the entire DSMLIB folder.
+Copy the main script you want to use (Color or B&W).
+
+
+Your TX SDCard should looks like this:
+
+    /SCRIPTS/TOOLS
+        DsmFwdPrg_05_BW.lua      -- black/white text only 
+        DsmFwdPrg_05_Color.lua   -- Color and touch radios
+
+    /SCRIPTS/TOOLS/DSMLIB/          -- (ALL CAPITALS) Libraries ane extra files
+                DsmFwPrgLib.lua     -- DSM Protocol Message and Menu   engine
+                DsmFwPrgSIMLib.lua  -- Simulation of AR631, FC6250HX
+                SetupLib.lua        -- Model Setup Screens
+                img                 --Folder with Images for RX orientations
 
 Other Directories
 
 /MODELS/DSMDATA                 --(ALL CAPITALS) Data of model config (Wing Type, Servo Assignments)
 /LOGS/dsm_log.txt		       	--Readable log of the last RX/TX session, usefull for debugging problems
 
-When upgrading from a previous version of this tool, delete your /SCRIPTS/TOOLS/DSMLIB before copying the new one (if you customized your images, inside "DSMLIB/img" do a backup first)
+
 
 # Common Questions
 1. `RX not accepting channels higher than Ch6 for Flight-mode o Gains:`
