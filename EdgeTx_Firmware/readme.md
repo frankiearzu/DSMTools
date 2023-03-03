@@ -1,4 +1,4 @@
-# EdgeTx Firmwaware + TextGen
+# EdgeTx Firmware + TextGen
 
 The firmware listed here was build from a local branch with only one file changed to support Spektrum TextGen.  
 
