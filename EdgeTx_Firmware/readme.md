@@ -16,6 +16,8 @@ Compiled from this local with the arguments:
 
 `cmake -Wno-dev -DPCB=X10 -DPCBREV=TX16S -DBLUETOOTH=YES -DDEFAULT_MODE=2 -DGVARS=YES -DPPM_UNIT=US -DHELI=NO -DCMAKE_BUILD_TYPE=Release ../`
 
+if you go to your System Radio information, in the version it will say "2.8.1-TextGen-selfbuild"
+
 ## FrSky QX7
 
 File:
