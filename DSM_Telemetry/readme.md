@@ -9,7 +9,7 @@ The SDCard should look like this:
 
     /SCRIPTS/TOOLS/
                     DSM_AR636_Tel.lua
-                    DSM_AR636_Tel.lua
+                    DSM_SmartRX_Tel.lua
 
 
 
@@ -40,3 +40,8 @@ This script has many helpfull telemetry functions for the new "Smart" receivers.
 * Battery Status: Smart Battery Status
 * TextGen (Requires new EdgeTX firmware with TextGen Support)
 * Flight Log
+
+## DSM_Capture_Tel.lua
+
+This tool is to capture RAW telemetry data. Usefull when developpers don't have the actual sensors to test, but we can see the RAW data comming in the telemetry messages.
+
