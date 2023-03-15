@@ -120,7 +120,7 @@ local function capture16(event)
 end
 
 local function capture17(event)
-    log_I2C_Data(event,0x16)
+    log_I2C_Data(event,0x17)
 end
 
 local function capture26(event)
