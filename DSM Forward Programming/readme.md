@@ -18,6 +18,9 @@ Please use:
 
 
 ## Black & White Minimal version
+This is running on a very memory limited FrSky QX7.  You can change the values, but unfortunatly, the code to setup a plane from zero is too big.
+(if you have a Boxter you might want to try v0.55 that is in development for small screens, middle of the range Memory usage.. see below).
+
 ![IMG_3024](https://user-images.githubusercontent.com/32604366/230123260-614f4e5e-9546-4439-9196-db885894083f.jpg)
 
 ## In_Development
