@@ -1,0 +1,581 @@
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 16 06 10 29 00 02                             | GetMenu(0x1029, 0x00 L=2)
+RX: 09 02 29 10 AD 00 00 00 00 00 22 10 00 00 00  | Menu[Mid=0x1029, Tid=0x00AD Text='Gain Channel Select']
+RX: 09 02 29 10 AD 00 00 00 00 00 22 10 00 00 00  | Menu[Mid=0x1029, Tid=0x00AD Text='Gain Channel Select']
+TX: 13 04 10 29 FF FF                             | GetFirstMenuLine(0x1029)
+RX: 09 03 29 10 00 1C DC 01 29 10 00 00 00 00 02  | MenuLine[Mid=0x1029, L=0 T=0x1C Tid=0x01DC, Vid=0x1029 Text='AS3X']
+RX: 09 03 29 10 00 1C DC 01 29 10 00 00 00 00 02  | MenuLine[Mid=0x1029, L=0 T=0x1C Tid=0x01DC, Vid=0x1029 Text='AS3X']
+TX: 14 06 10 29 00 00                             | GetNextMenuLine(0x1029,L=0)
+RX: 09 03 29 10 01 0C 40 00 00 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=1 T=0x0C Tid=0x0040, Vid=0x1000 Text='Roll']
+RX: 09 03 29 10 01 0C 40 00 00 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=1 T=0x0C Tid=0x0040, Vid=0x1000 Text='Roll']
+TX: 14 06 10 29 00 01                             | GetNextMenuLine(0x1029,L=1)
+RX: 09 03 29 10 02 0C 41 00 01 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=2 T=0x0C Tid=0x0041, Vid=0x1001 Text='Pitch']
+RX: 09 03 29 10 02 0C 41 00 01 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=2 T=0x0C Tid=0x0041, Vid=0x1001 Text='Pitch']
+TX: 14 06 10 29 00 02                             | GetNextMenuLine(0x1029,L=2)
+RX: 09 03 29 10 03 0C 42 00 02 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=3 T=0x0C Tid=0x0042, Vid=0x1002 Text='Yaw']
+RX: 09 03 29 10 03 0C 42 00 02 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=3 T=0x0C Tid=0x0042, Vid=0x1002 Text='Yaw']
+TX: 14 06 10 29 00 03                             | GetNextMenuLine(0x1029,L=3)
+RX: 09 03 29 10 04 1C DA 00 29 10 00 00 00 00 02  | MenuLine[Mid=0x1029, L=4 T=0x1C Tid=0x00DA, Vid=0x1029 Text='SAFE']
+RX: 09 03 29 10 04 1C DA 00 29 10 00 00 00 00 02  | MenuLine[Mid=0x1029, L=4 T=0x1C Tid=0x00DA, Vid=0x1029 Text='SAFE']
+TX: 14 06 10 29 00 04                             | GetNextMenuLine(0x1029,L=4)
+RX: 09 03 29 10 05 0C 40 00 04 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=5 T=0x0C Tid=0x0040, Vid=0x1004 Text='Roll']
+RX: 09 03 29 10 05 0C 40 00 04 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=5 T=0x0C Tid=0x0040, Vid=0x1004 Text='Roll']
+TX: 14 06 10 29 00 05                             | GetNextMenuLine(0x1029,L=5)
+RX: 09 03 29 10 06 0C 41 00 05 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=6 T=0x0C Tid=0x0041, Vid=0x1005 Text='Pitch']
+RX: 09 03 29 10 06 0C 41 00 05 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=6 T=0x0C Tid=0x0041, Vid=0x1005 Text='Pitch']
+TX: 14 06 10 29 00 06                             | GetNextMenuLine(0x1029,L=6)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+RX: 09 04 29 10 01 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0005]
+RX: 09 04 29 10 01 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0005]
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+RX: 09 04 29 10 02 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1002, Value=0x0005]
+RX: 09 04 29 10 02 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1002, Value=0x0005]
+TX: 15 06 10 29 10 02                             | GetNextMenuValue(0x1029,0x1002)
+RX: 09 04 29 10 04 10 00 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0000]
+RX: 09 04 29 10 04 10 00 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0000]
+TX: 15 06 10 29 10 04                             | GetNextMenuValue(0x1029,0x1004)
+RX: 09 04 29 10 05 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1005, Value=0x0006]
+RX: 09 04 29 10 05 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1005, Value=0x0006]
+TX: 15 06 10 29 10 05                             | GetNextMenuValue(0x1029,0x1005)
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 04 29 10 00 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0005]
+RX: 09 04 29 10 00 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0005]
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 04 29 10 00 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0005]
+RX: 09 04 29 10 00 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0005]
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+RX: 09 04 29 10 00 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0005]
+RX: 09 04 29 10 00 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0005]
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+TX: 18 06 10 00 00 06                             | UpdateMenuValue(0x1000,0x0006)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 19 04 10 00 FF FF                             | ValidateMenuValue(0x1000)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 18 06 10 00 00 07                             | UpdateMenuValue(0x1000,0x0007)
+TX: 19 04 10 00 FF FF                             | ValidateMenuValue(0x1000)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+TX: 18 06 10 00 00 07                             | UpdateMenuValue(0x1000,0x0007)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 19 04 10 00 FF FF                             | ValidateMenuValue(0x1000)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 18 06 10 00 00 07                             | UpdateMenuValue(0x1000,0x0007)
+TX: 19 04 10 00 FF FF                             | ValidateMenuValue(0x1000)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+TX: 18 06 10 00 00 07                             | UpdateMenuValue(0x1000,0x0007)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 19 04 10 00 FF FF                             | ValidateMenuValue(0x1000)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+TX: 18 06 10 00 00 07                             | UpdateMenuValue(0x1000,0x0007)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 19 04 10 00 FF FF                             | ValidateMenuValue(0x1000)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 01 FF FF                             | MenuValueWait(Line=1)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 18 06 10 00 00 06                             | UpdateMenuValue(0x1000,0x0006)
+TX: 19 04 10 00 FF FF                             | ValidateMenuValue(0x1000)
+TX: 1B 04 00 01 FF FF                             | MenuValueWaitEND(Line=1)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 1B 04 00 01 FF FF                             | MenuValueWaitEND(Line=1)
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 18 06 10 01 00 06                             | UpdateMenuValue(0x1001,0x0006)
+TX: 19 04 10 01 FF FF                             | ValidateMenuValue(0x1001)
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 18 06 10 01 00 07                             | UpdateMenuValue(0x1001,0x0007)
+TX: 19 04 10 01 FF FF                             | ValidateMenuValue(0x1001)
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+TX: 18 06 10 01 00 07                             | UpdateMenuValue(0x1001,0x0007)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 19 04 10 01 FF FF                             | ValidateMenuValue(0x1001)
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 18 06 10 01 00 07                             | UpdateMenuValue(0x1001,0x0007)
+TX: 19 04 10 01 FF FF                             | ValidateMenuValue(0x1001)
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+TX: 18 06 10 01 00 07                             | UpdateMenuValue(0x1001,0x0007)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 19 04 10 01 FF FF                             | ValidateMenuValue(0x1001)
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 18 06 10 01 00 07                             | UpdateMenuValue(0x1001,0x0007)
+TX: 19 04 10 01 FF FF                             | ValidateMenuValue(0x1001)
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 02 FF FF                             | MenuValueWait(Line=2)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 18 06 10 01 00 06                             | UpdateMenuValue(0x1001,0x0006)
+TX: 19 04 10 01 FF FF                             | ValidateMenuValue(0x1001)
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+TX: 1B 04 00 02 FF FF                             | MenuValueWaitEND(Line=2)
+TX: 1B 04 00 02 FF FF                             | MenuValueWaitEND(Line=2)
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 16 06 10 22 00 80                             | GetMenu(0x1022, 0x00 L=128)
+RX: 09 02 22 10 86 00 00 00 00 00 10 10 00 00 00  | Menu[Mid=0x1022, Tid=0x0086 Text='System Setup']
+RX: 09 02 22 10 86 00 00 00 00 00 10 10 00 00 00  | Menu[Mid=0x1022, Tid=0x0086 Text='System Setup']
+TX: 13 04 10 22 FF FF                             | GetFirstMenuLine(0x1022)
+RX: 09 03 22 10 00 1C 90 01 23 10 00 00 00 00 03  | MenuLine[Mid=0x1022, L=0 T=0x1C Tid=0x0190, Vid=0x1023 Text='Relearn Model/Servo Settings (TX->RX)']RX: 09 03 22 10 00 1C 90 01 23 10 00 00 00 00 03  | MenuLine[Mid=0x1022, L=0 T=0x1C Tid=0x0190, Vid=0x1023 Text='Relearn Model/Servo Settings (TX->RX)']TX: 14 06 10 22 00 00                             | GetNextMenuLine(0x1022,L=0)
+RX: 09 03 22 10 01 1C 80 00 25 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=1 T=0x1C Tid=0x0080, Vid=0x1025 Text='Orientation']
+RX: 09 03 22 10 01 1C 80 00 25 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=1 T=0x1C Tid=0x0080, Vid=0x1025 Text='Orientation']
+TX: 14 06 10 22 00 01                             | GetNextMenuLine(0x1022,L=1)
+RX: 09 03 22 10 02 1C AD 00 29 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=2 T=0x1C Tid=0x00AD, Vid=0x1029 Text='Gain Channel Select']
+RX: 09 03 22 10 02 1C AD 00 29 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=2 T=0x1C Tid=0x00AD, Vid=0x1029 Text='Gain Channel Select']
+TX: 14 06 10 22 00 02                             | GetNextMenuLine(0x1022,L=2)
+RX: 09 03 22 10 03 1C CA 00 2A 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=3 T=0x1C Tid=0x00CA, Vid=0x102A Text='SAFE/Panic Mode Setup']
+RX: 09 03 22 10 03 1C CA 00 2A 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=3 T=0x1C Tid=0x00CA, Vid=0x102A Text='SAFE/Panic Mode Setup']
+TX: 14 06 10 22 00 03                             | GetNextMenuLine(0x1022,L=3)
+RX: 09 03 22 10 04 1C 40 02 32 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=4 T=0x1C Tid=0x0240, Vid=0x1032 Text='Utilities']
+RX: 09 03 22 10 04 1C 40 02 32 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=4 T=0x1C Tid=0x0240, Vid=0x1032 Text='Utilities']
+TX: 14 06 10 22 00 04                             | GetNextMenuLine(0x1022,L=4)
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 16 06 10 29 00 02                             | GetMenu(0x1029, 0x00 L=2)
+RX: 09 02 29 10 AD 00 00 00 00 00 22 10 00 00 00  | Menu[Mid=0x1029, Tid=0x00AD Text='Gain Channel Select']
+RX: 09 02 29 10 AD 00 00 00 00 00 22 10 00 00 00  | Menu[Mid=0x1029, Tid=0x00AD Text='Gain Channel Select']
+TX: 13 04 10 29 FF FF                             | GetFirstMenuLine(0x1029)
+RX: 09 03 29 10 00 1C DC 01 29 10 00 00 00 00 02  | MenuLine[Mid=0x1029, L=0 T=0x1C Tid=0x01DC, Vid=0x1029 Text='AS3X']
+RX: 09 03 29 10 00 1C DC 01 29 10 00 00 00 00 02  | MenuLine[Mid=0x1029, L=0 T=0x1C Tid=0x01DC, Vid=0x1029 Text='AS3X']
+TX: 14 06 10 29 00 00                             | GetNextMenuLine(0x1029,L=0)
+RX: 09 03 29 10 01 0C 40 00 00 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=1 T=0x0C Tid=0x0040, Vid=0x1000 Text='Roll']
+RX: 09 03 29 10 01 0C 40 00 00 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=1 T=0x0C Tid=0x0040, Vid=0x1000 Text='Roll']
+TX: 14 06 10 29 00 01                             | GetNextMenuLine(0x1029,L=1)
+RX: 09 03 29 10 02 0C 41 00 01 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=2 T=0x0C Tid=0x0041, Vid=0x1001 Text='Pitch']
+RX: 09 03 29 10 02 0C 41 00 01 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=2 T=0x0C Tid=0x0041, Vid=0x1001 Text='Pitch']
+TX: 14 06 10 29 00 02                             | GetNextMenuLine(0x1029,L=2)
+RX: 09 03 29 10 03 0C 42 00 02 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=3 T=0x0C Tid=0x0042, Vid=0x1002 Text='Yaw']
+RX: 09 03 29 10 03 0C 42 00 02 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=3 T=0x0C Tid=0x0042, Vid=0x1002 Text='Yaw']
+TX: 14 06 10 29 00 03                             | GetNextMenuLine(0x1029,L=3)
+RX: 09 03 29 10 04 1C DA 00 29 10 00 00 00 00 02  | MenuLine[Mid=0x1029, L=4 T=0x1C Tid=0x00DA, Vid=0x1029 Text='SAFE']
+RX: 09 03 29 10 04 1C DA 00 29 10 00 00 00 00 02  | MenuLine[Mid=0x1029, L=4 T=0x1C Tid=0x00DA, Vid=0x1029 Text='SAFE']
+TX: 14 06 10 29 00 04                             | GetNextMenuLine(0x1029,L=4)
+RX: 09 03 29 10 05 0C 40 00 04 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=5 T=0x0C Tid=0x0040, Vid=0x1004 Text='Roll']
+RX: 09 03 29 10 05 0C 40 00 04 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=5 T=0x0C Tid=0x0040, Vid=0x1004 Text='Roll']
+TX: 14 06 10 29 00 05                             | GetNextMenuLine(0x1029,L=5)
+RX: 09 03 29 10 06 0C 41 00 05 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=6 T=0x0C Tid=0x0041, Vid=0x1005 Text='Pitch']
+RX: 09 03 29 10 06 0C 41 00 05 10 35 00 55 00 35  | MenuLine[Mid=0x1029, L=6 T=0x0C Tid=0x0041, Vid=0x1005 Text='Pitch']
+TX: 14 06 10 29 00 06                             | GetNextMenuLine(0x1029,L=6)
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+RX: 09 04 29 10 00 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1000, Value=0x0006]
+TX: 15 06 10 29 10 00                             | GetNextMenuValue(0x1029,0x1000)
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+RX: 09 04 29 10 01 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1001, Value=0x0006]
+TX: 15 06 10 29 10 01                             | GetNextMenuValue(0x1029,0x1001)
+RX: 09 04 29 10 02 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1002, Value=0x0005]
+RX: 09 04 29 10 02 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1002, Value=0x0005]
+TX: 15 06 10 29 10 02                             | GetNextMenuValue(0x1029,0x1002)
+RX: 09 04 29 10 04 10 00 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0000]
+RX: 09 04 29 10 04 10 00 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0000]
+TX: 15 06 10 29 10 04                             | GetNextMenuValue(0x1029,0x1004)
+RX: 09 04 29 10 05 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1005, Value=0x0006]
+RX: 09 04 29 10 05 10 06 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1005, Value=0x0006]
+TX: 15 06 10 29 10 05                             | GetNextMenuValue(0x1029,0x1005)
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 04 29 10 04 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0005]
+RX: 09 04 29 10 04 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0005]
+RX: 09 04 29 10 04 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0005]
+RX: 09 04 29 10 04 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0005]
+TX: 15 06 10 29 10 04                             | GetNextMenuValue(0x1029,0x1004)
+TX: 15 06 10 29 10 04                             | GetNextMenuValue(0x1029,0x1004)
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 04 29 10 04 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0005]
+RX: 09 04 29 10 04 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0005]
+TX: 15 06 10 29 10 04                             | GetNextMenuValue(0x1029,0x1004)
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 1A 04 00 05 FF FF                             | MenuValueWait(Line=5)
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 18 06 10 04 00 05                             | UpdateMenuValue(0x1004,0x0005)
+TX: 19 04 10 04 FF FF                             | ValidateMenuValue(0x1004)
+TX: 1B 04 00 05 FF FF                             | MenuValueWaitEND(Line=5)
+RX: 09 04 29 10 04 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0005]
+RX: 09 04 29 10 04 10 05 00 00 00 00 00 00 00 00  | MenuLineValue[Mid=0x1029, Vid=0x1004, Value=0x0005]
+TX: 1B 04 00 05 FF FF                             | MenuValueWaitEND(Line=5)
+TX: 15 06 10 29 10 04                             | GetNextMenuValue(0x1029,0x1004)
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+TX: 16 06 10 22 00 80                             | GetMenu(0x1022, 0x00 L=128)
+RX: 09 02 22 10 86 00 00 00 00 00 10 10 00 00 00  | Menu[Mid=0x1022, Tid=0x0086 Text='System Setup']
+RX: 09 02 22 10 86 00 00 00 00 00 10 10 00 00 00  | Menu[Mid=0x1022, Tid=0x0086 Text='System Setup']
+TX: 13 04 10 22 FF FF                             | GetFirstMenuLine(0x1022)
+RX: 09 03 22 10 00 1C 90 01 23 10 00 00 00 00 03  | MenuLine[Mid=0x1022, L=0 T=0x1C Tid=0x0190, Vid=0x1023 Text='Relearn Model/Servo Settings (TX->RX)']RX: 09 03 22 10 00 1C 90 01 23 10 00 00 00 00 03  | MenuLine[Mid=0x1022, L=0 T=0x1C Tid=0x0190, Vid=0x1023 Text='Relearn Model/Servo Settings (TX->RX)']TX: 14 06 10 22 00 00                             | GetNextMenuLine(0x1022,L=0)
+RX: 09 03 22 10 01 1C 80 00 25 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=1 T=0x1C Tid=0x0080, Vid=0x1025 Text='Orientation']
+RX: 09 03 22 10 01 1C 80 00 25 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=1 T=0x1C Tid=0x0080, Vid=0x1025 Text='Orientation']
+TX: 14 06 10 22 00 01                             | GetNextMenuLine(0x1022,L=1)
+RX: 09 03 22 10 02 1C AD 00 29 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=2 T=0x1C Tid=0x00AD, Vid=0x1029 Text='Gain Channel Select']
+RX: 09 03 22 10 02 1C AD 00 29 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=2 T=0x1C Tid=0x00AD, Vid=0x1029 Text='Gain Channel Select']
+TX: 14 06 10 22 00 02                             | GetNextMenuLine(0x1022,L=2)
+RX: 09 03 22 10 03 1C CA 00 2A 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=3 T=0x1C Tid=0x00CA, Vid=0x102A Text='SAFE/Panic Mode Setup']
+RX: 09 03 22 10 03 1C CA 00 2A 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=3 T=0x1C Tid=0x00CA, Vid=0x102A Text='SAFE/Panic Mode Setup']
+TX: 14 06 10 22 00 03                             | GetNextMenuLine(0x1022,L=3)
+RX: 09 03 22 10 04 1C 40 02 32 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=4 T=0x1C Tid=0x0240, Vid=0x1032 Text='Utilities']
+RX: 09 03 22 10 04 1C 40 02 32 10 00 00 00 00 02  | MenuLine[Mid=0x1022, L=4 T=0x1C Tid=0x0240, Vid=0x1032 Text='Utilities']
+TX: 14 06 10 22 00 04                             | GetNextMenuLine(0x1022,L=4)
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
+RX: 09 00 CB 00 20 38 14 00 20 08 00 00 00 78 AE  | RxHB
