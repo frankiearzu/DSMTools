@@ -34,6 +34,7 @@ Has been tested on Radiomaster TX16S and FrSky QX7
 
 'TextGen' can be used to program your Avian ESC parameters if you have a Spektrum Smart RX and Avian ESC supporting TextGen confuguration. (Requires Edge 2.9.0, or special versions of 2.8.1- See below)
 
+![Smart-RX-Tel](https://user-images.githubusercontent.com/32604366/230751833-e92d3eae-2782-4009-a3dc-63ce893f2a38.png)
 ![Smart-RX-Tel2](https://user-images.githubusercontent.com/32604366/230751488-70b396b7-f08e-4152-a516-d355b3cf4001.png)
 
 
