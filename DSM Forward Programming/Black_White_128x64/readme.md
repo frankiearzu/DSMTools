@@ -32,8 +32,8 @@ Your TX SDCard should looks like this:
         DsmFwdPrg_05_MIN.lua     -- black/white 128x64 Minimal version 
 
     /SCRIPTS/TOOLS/DSMLIB/       -- (ALL CAPITALS) Libraries ane extra files
-        msg_en.txt               -- Menu messages in English  (common for all radios)
-        msg_MIN_en.txt           -- Menu messages in English  (custumized messages for 128x164 resolution)
+        msg_fwdp_en.txt               -- Menu messages in English  (common for all radios)
+        MIN_msg_fwdp_en.txt           -- Menu messages in English  (overrides for 128x164 resolution)
 
 ### Other Directories/Files
 
