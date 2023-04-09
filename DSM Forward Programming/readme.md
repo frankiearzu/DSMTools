@@ -7,6 +7,11 @@ Thanks to all the people volunteered to test it.
 Please use:
 - Color_480x272:  for Radiomaster TX16S or equivalent screen (480x272)
 - Black_White:    (Beta Version) for Smaller screens (128x64) and limited memory
- 
-![IMG_3024](https://user-images.githubusercontent.com/32604366/230123260-614f4e5e-9546-4439-9196-db885894083f.jpg)
+
+## Color Version
 ![flight-mode-setup](https://user-images.githubusercontent.com/32604366/230751281-0c71ff4a-179f-41fd-9290-302a6e0fe821.png)
+
+
+
+## Black & White Minimal version
+![IMG_3024](https://user-images.githubusercontent.com/32604366/230123260-614f4e5e-9546-4439-9196-db885894083f.jpg)
