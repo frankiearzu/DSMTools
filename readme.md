@@ -4,7 +4,7 @@ This repository has a collection of EdgeTx Tools to use Spektrum Receivers
 
 ## Donation
 
-The tools are completly free to use, but if you like this tools, plase consider a donation to support test hadware and new development.  
+The tools are completly free to use, but if you like this tools, please consider a donation to support test hadware and new development.  
 
 https://www.paypal.com/donate/?hosted_button_id=XQRVDHN2EFWYW
 
