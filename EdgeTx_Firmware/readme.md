@@ -8,7 +8,7 @@ The firmware was compiled from a local branch:
 https://github.com/frankiearzu/edgetx/tree/v2.8.1_TextGen
 
 - TextGen:  official 2.8.1 + TextGen Change
-- GPSFix5:  official 2.8.1 + TextGen + Spektrum GSP support
+- GPSFix5:  official 2.8.1 + TextGen + Spektrum GSP support (have been flying with it since March 3,2023 without any problem)
 - Others:  Experimenting with new sensors (custom for some friends with the sensors before make the change officical).
 
 
