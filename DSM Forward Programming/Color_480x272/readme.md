@@ -42,8 +42,8 @@ Your TX SDCard should looks like this:
 
 Other Directories
 
-   /MODELS/DSMDATA                 --(ALL CAPITALS) Data of model config (Wing Type, Servo Assignments)
-   /LOGS/dsm_log.txt		       	--Readable log of the last RX/TX session, usefull for debugging problems
+    /MODELS/DSMDATA                 --(ALL CAPITALS) Data of model config (Wing Type, Servo Assignments)
+    /LOGS/dsm_log.txt		    --Readable log of the last RX/TX session, usefull for debugging problems
 
 
 
