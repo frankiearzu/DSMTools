@@ -21,8 +21,8 @@ In another window, open your TX SDCard and go to /SCRIPTS/TOOLS.
 
 When upgrading from a previous version of this tool, delete your /SCRIPTS/TOOLS/DSMLIB before copying the new one (if you customized your images, inside "DSMLIB/img" do a backup first)
 
-Copy the entire DSMLIB folder.
-Copy the main script you want to use (Color or B&W).
+1. Copy the entire DSMLIB folder to /SCRIPTS/TOOLS.  You will end up with /SCRIPTS/TOOLS/DSMLIB in your SDCard.
+2. Copy the main script you want to use (Color or B&W) to /SCRIPTS/TOOLS.
 
 
 Your TX SDCard should looks like this:
