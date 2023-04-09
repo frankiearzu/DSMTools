@@ -18,3 +18,6 @@ Please use:
 
 ## Black & White Minimal version
 ![IMG_3024](https://user-images.githubusercontent.com/32604366/230123260-614f4e5e-9546-4439-9196-db885894083f.jpg)
+
+## In_Development
+V0.55 for radios 128x64.   The minimal version should work (almost the same code as in v0.54), but the BW fully functional version has been optimized to reduce memory. For sure it does not run on older radios with low memory (QX7, maybe zorro), but i think it could run on Radiomaster Boxter who has a good amount of RAM in the chip. (Only have QX7.. not a Boxter.. runs on the simulator, but don't have a Boxter to test). 
