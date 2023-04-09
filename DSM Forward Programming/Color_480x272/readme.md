@@ -80,7 +80,7 @@ V0.54:
 1. Fix a problem in the Attitude Trim page (`Gyro Settings->System Setup->SAFE/Panic Setup->Attitude Trim`). It was not saving the values after exiting the menu. This is to change what SAFE considers "Level" flying.
 2. Wings 2-Ail 2-Flaps had a bug on the 2nd flap.
 3. New Minimalistic script (`DsmFwdPrg_05_MIN.lua`): For radios with very low memory (FrSky QX7, RM Zorro, others). It can only change existing settings, but does not have the Plane Setup menus to setup a completly new plane.  In some radios, the very first time it runs (compile + run), it might give you a `not enouth memory` error.. try to run it again.
-4. External menu message file (DSMLIB/msg_en.txt and msg_MIN_es.txt).  Intial work to do localization and different languages.
+4. External menu message file (DSMLIB/msg_fwdp_en.txt and MIN_msg_fwdp_en.txt).  Intial work to do localization and different languages.
 
 V0.53:
 1. Improved channel selection (Flight mode, Panic Channel, Gains Channel). Now during editing a channel, you can select any channel (>Ch4). Also, of you toggle the switch/channel it will populate the screen.
