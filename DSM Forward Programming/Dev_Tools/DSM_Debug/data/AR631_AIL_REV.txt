@@ -1,0 +1,120 @@
+
+============= NORMAL ==================================================
+RX: 09 02 23 10 90 01 00 00 00 00 22 10 00 00 00  | Menu[Mid=0x1023, Tid=0x0190 Text='Relearn Model/Servo Settings (TX->RX)']
+TX: 13 04 10 23 FF FF                             | GetFirstMenuLine(0x1023)
+RX: 09 05 00 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=0, Type=0x1F]
+TX: 20 06 00 00 00 40                             | Send_TXChInfo_20(0x00 0x00 0x00 0x40)  P=0 THR(0x40)
+TX: 23 06 00 64 00 64                             | Send_TXTravel_23(0x00 0x64 0x00 0x64)  Left=100 Right=100
+TX: 21 06 00 00 07 FF                             | Send_TXSubTrim_21(0x00 0x00 0x07 0xFF)
+TX: 24 06 00 83 5A B5                             | Send_TX???_24(0x00 0x83 0x5A 0xB5)
+TX: 24 06 06 80 25 4B                             | Send_TX???_24(0x06 0x80 0x25 0x4B)
+TX: 22 04 00 00 FF FF                             | Send_TXEnd_22(0x00 0x00)
+RX: 09 05 01 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=1, Type=0x1F]
+RX: 09 05 01 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=1, Type=0x1F]
+TX: 20 06 01 01 00 01                             | Send_TXChInfo_20(0x01 0x01 0x00 0x01)  P=1 AIL(0x01)
+TX: 23 06 00 64 00 64                             | Send_TXTravel_23(0x00 0x64 0x00 0x64)  Left=100 Right=100
+TX: 21 06 00 8E 07 72                             | Send_TXSubTrim_21(0x00 0x8E 0x07 0x72)
+TX: 24 06 00 83 5A B5                             | Send_TX???_24(0x00 0x83 0x5A 0xB5)
+TX: 24 06 06 80 25 4B                             | Send_TX???_24(0x06 0x80 0x25 0x4B)
+TX: 22 04 00 00 FF FF                             | Send_TXEnd_22(0x00 0x00)
+RX: 09 05 02 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=2, Type=0x1F]
+RX: 09 05 02 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=2, Type=0x1F]
+TX: 20 06 02 02 00 02                             | Send_TXChInfo_20(0x02 0x02 0x00 0x02)  P=2 ELE(0x02)
+TX: 23 06 00 64 00 64                             | Send_TXTravel_23(0x00 0x64 0x00 0x64)  Left=100 Right=100
+TX: 21 06 00 8E 07 72                             | Send_TXSubTrim_21(0x00 0x8E 0x07 0x72)
+TX: 24 06 00 83 5A B5                             | Send_TX???_24(0x00 0x83 0x5A 0xB5)
+TX: 24 06 06 80 25 4B                             | Send_TX???_24(0x06 0x80 0x25 0x4B)
+TX: 22 04 00 00 FF FF                             | Send_TXEnd_22(0x00 0x00)
+RX: 09 05 03 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=3, Type=0x1F]
+RX: 09 05 03 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=3, Type=0x1F]
+TX: 20 06 03 03 00 04                             | Send_TXChInfo_20(0x03 0x03 0x00 0x04)  P=3 RUD(0x04)
+TX: 23 06 00 64 00 64                             | Send_TXTravel_23(0x00 0x64 0x00 0x64)  Left=100 Right=100
+TX: 21 06 00 8E 07 72                             | Send_TXSubTrim_21(0x00 0x8E 0x07 0x72)
+TX: 24 06 00 83 5A B5                             | Send_TX???_24(0x00 0x83 0x5A 0xB5)
+TX: 24 06 06 80 25 4B                             | Send_TX???_24(0x06 0x80 0x25 0x4B)
+TX: 22 04 00 00 FF FF                             | Send_TXEnd_22(0x00 0x00)
+RX: 09 05 05 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=5, Type=0x1F]
+RX: 09 05 05 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=5, Type=0x1F]
+TX: 20 06 05 05 00 81                             | Send_TXChInfo_20(0x05 0x05 0x00 0x81)  P=5 AIL(0x01) Slave(0x80)
+TX: 23 06 00 64 00 64                             | Send_TXTravel_23(0x00 0x64 0x00 0x64)  Left=100 Right=100
+TX: 21 06 00 8E 07 72                             | Send_TXSubTrim_21(0x00 0x8E 0x07 0x72)
+TX: 24 06 00 83 5A B5                             | Send_TX???_24(0x00 0x83 0x5A 0xB5)
+TX: 24 06 06 80 25 4B                             | Send_TX???_24(0x06 0x80 0x25 0x4B)
+TX: 22 04 00 00 FF FF                             | Send_TXEnd_22(0x00 0x00)
+RX: 09 03 23 10 03 1C 90 00 24 10 00 00 00 00 03  | MenuLine[Mid=0x1023, L=3 T=0x1C Tid=0x0090, Vid=0x1024 Text='Apply']
+TX: 14 06 10 23 00 03                             | GetNextMenuLine(0x1023,L=3)
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 16 06 10 24 00 03                             | GetMenu(0x1024, 0x00 L=3)
+RX: 09 00 00 00 00 00 00 00 00 00 00 00 00 00 00  | RxHB
+RX: 09 00 00 00 00 00 00 00 00 00 00 00 00 00 00  | RxHB
+RX: 09 00 00 00 00 00 00 00 00 00 00 00 00 00 00  | RxHB
+RX: 09 00 00 00 00 00 00 00 00 00 00 00 00 00 00  | RxHB
+RX: 09 02 24 10 90 01 00 00 00 00 00 00 00 00 00  | Menu[Mid=0x1024, Tid=0x0190 Text='Relearn Model/Servo Settings (TX->RX)']
+RX: 09 02 24 10 90 01 00 00 00 00 00 00 00 00 00  | Menu[Mid=0x1024, Tid=0x0190 Text='Relearn Model/Servo Settings (TX->RX)']
+TX: 13 04 10 24 FF FF                             | GetFirstMenuLine(0x1024)
+RX: 09 03 24 10 03 1C 93 00 00 10 00 00 00 00 02  | MenuLine[Mid=0x1024, L=3 T=0x1C Tid=0x0093, Vid=0x1000 Text='Complete']
+RX: 09 03 24 10 03 1C 93 00 00 10 00 00 00 00 02  | MenuLine[Mid=0x1024, L=3 T=0x1C Tid=0x0093, Vid=0x1000 Text='Complete']
+TX: 14 06 10 24 00 03                             | GetNextMenuLine(0x1024,L=3)
+
+
+
+============ REVERSE AIL1/AIL2
+RX: 09 05 00 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=0, Type=0x1F]
+TX: 20 06 00 00 00 40                             | Send_TXChInfo_20(0x00 0x00 0x00 0x40)  P=0 THR(0x40) 
+TX: 23 06 00 64 00 64                             | Send_TXTravel_23(0x00 0x64 0x00 0x64)  Left=100 Right=100
+TX: 21 06 00 00 07 FF                             | Send_TXSubTrim_21(0x00 0x00 0x07 0xFF)
+TX: 24 06 00 83 5A B5                             | Send_TX???_24(0x00 0x83 0x5A 0xB5)
+TX: 24 06 06 80 25 4B                             | Send_TX???_24(0x06 0x80 0x25 0x4B)
+TX: 22 04 00 00 FF FF                             | Send_TXEnd_22(0x00 0x00)
+RX: 09 05 01 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=1, Type=0x1F]
+RX: 09 05 01 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=1, Type=0x1F]
+TX: 20 06 01 01 70 21                             | Send_TXChInfo_20(0x01 0x01 0x70 0x21)  P=1 AIL(0x01) Rev(0x20) MIX(0x1000)MIX_ELE(0x2000)MIX(0x4000)
+TX: 23 06 00 64 00 64                             | Send_TXTravel_23(0x00 0x64 0x00 0x64)  Left=100 Right=100
+TX: 21 06 00 8E 07 72                             | Send_TXSubTrim_21(0x00 0x8E 0x07 0x72)
+TX: 24 06 00 83 5A B5                             | Send_TX???_24(0x00 0x83 0x5A 0xB5)
+TX: 24 06 06 80 25 4B                             | Send_TX???_24(0x06 0x80 0x25 0x4B)
+TX: 22 04 00 00 FF FF                             | Send_TXEnd_22(0x00 0x00)
+RX: 09 05 02 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=2, Type=0x1F]
+RX: 09 05 02 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=2, Type=0x1F]
+TX: 20 06 02 02 00 02                             | Send_TXChInfo_20(0x02 0x02 0x00 0x02)  P=2 ELE(0x02)
+TX: 23 06 00 64 00 64                             | Send_TXTravel_23(0x00 0x64 0x00 0x64)  Left=100 Right=100
+TX: 21 06 00 8E 07 72                             | Send_TXSubTrim_21(0x00 0x8E 0x07 0x72)
+TX: 24 06 00 83 5A B5                             | Send_TX???_24(0x00 0x83 0x5A 0xB5)
+TX: 24 06 06 80 25 4B                             | Send_TX???_24(0x06 0x80 0x25 0x4B)
+TX: 22 04 00 00 FF FF                             | Send_TXEnd_22(0x00 0x00)
+RX: 09 05 03 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=3, Type=0x1F]
+RX: 09 05 03 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=3, Type=0x1F]
+TX: 20 06 03 03 00 04                             | Send_TXChInfo_20(0x03 0x03 0x00 0x04)  P=3 RUD(0x04)
+TX: 23 06 00 64 00 64                             | Send_TXTravel_23(0x00 0x64 0x00 0x64)  Left=100 Right=100
+TX: 21 06 00 8E 07 72                             | Send_TXSubTrim_21(0x00 0x8E 0x07 0x72)
+TX: 24 06 00 83 5A B5                             | Send_TX???_24(0x00 0x83 0x5A 0xB5)
+TX: 24 06 06 80 25 4B                             | Send_TX???_24(0x06 0x80 0x25 0x4B)
+TX: 22 04 00 00 FF FF                             | Send_TXEnd_22(0x00 0x00)
+RX: 09 05 05 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=5, Type=0x1F]
+RX: 09 05 05 1F 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=5, Type=0x1F]
+TX: 20 06 05 05 70 A1                             | Send_TXChInfo_20(0x05 0x05 0x70 0xA1)  P=5 AIL(0x01) Slave(0x80) Rev(0x20) MIX(0x1000)MIX_ELE(0x2000)MIX(0x4000)  
+TX: 23 06 00 64 00 64                             | Send_TXTravel_23(0x00 0x64 0x00 0x64)  Left=100 Right=100
+TX: 21 06 00 8E 07 72                             | Send_TXSubTrim_21(0x00 0x8E 0x07 0x72)
+TX: 24 06 00 83 5A B5                             | Send_TX???_24(0x00 0x83 0x5A 0xB5)
+TX: 24 06 06 80 25 4B                             | Send_TX???_24(0x06 0x80 0x25 0x4B)
+TX: 22 04 00 00 FF FF                             | Send_TXEnd_22(0x00 0x00)
+RX: 09 03 23 10 03 1C 90 00 24 10 00 00 00 00 03  | MenuLine[Mid=0x1023, L=3 T=0x1C Tid=0x0090, Vid=0x1024 Text='Apply']
+RX: 09 03 23 10 03 1C 90 00 24 10 00 00 00 00 03  | MenuLine[Mid=0x1023, L=3 T=0x1C Tid=0x0090, Vid=0x1024 Text='Apply']
+TX: 14 06 10 23 00 03                             | GetNextMenuLine(0x1023,L=3)
+TX: 00 04 00 00 FF FF                             | TxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+RX: 09 00 17 00 20 08 00 00 00 08 00 00 00 78 AE  | RxHB
+TX: 16 06 10 24 00 03                             | GetMenu(0x1024, 0x00 L=3)
+RX: 09 02 24 10 90 01 00 00 00 00 00 00 00 00 00  | Menu[Mid=0x1024, Tid=0x0190 Text='Relearn Model/Servo Settings (TX->RX)']
+RX: 09 02 24 10 90 01 00 00 00 00 00 00 00 00 00  | Menu[Mid=0x1024, Tid=0x0190 Text='Relearn Model/Servo Settings (TX->RX)']
+TX: 13 04 10 24 FF FF                             | GetFirstMenuLine(0x1024)
+RX: 09 03 24 10 03 1C 93 00 00 10 00 00 00 00 02  | MenuLine[Mid=0x1024, L=3 T=0x1C Tid=0x0093, Vid=0x1000 Text='Complete']
+RX: 09 03 24 10 03 1C 93 00 00 10 00 00 00 00 02  | MenuLine[Mid=0x1024, L=3 T=0x1C Tid=0x0093, Vid=0x1000 Text='Complete']
+TX: 14 06 10 24 00 03                             | GetNextMenuLine(0x1024,L=3)
+
+

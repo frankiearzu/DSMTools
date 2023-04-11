@@ -1,0 +1,38 @@
+PS F:\EdgeTx\SDCard\edgetx-2.8.0\SCRIPTS\Java\DSM_Debug>  & 'C:\Program Files\Eclipse Foundation\jdk-11.0.12.7-hotspot\bin\java.exe' '-cp' 'F:\EdgeTx\SDCard\edgetx-2.8.0\SCRIPTS\Java\DSM_Debug\bin' 'DSM_Debug' 'C:\Users\frank\Desktop\AR636A.csv'
+TX: 11 06 00 14 00 00                             | GetVersion()
+RX: 09 01 00 1E 02 26 05 00 14 00 00 00 00 00 00  | RX=0x1E Version 2.38.5
+RX: 09 01 00 1E 02 26 05 00 14 00 00 00 00 00 00  | RX=0x1E Version 2.38.5
+TX: 12 06 00 14 00 00                             | GetMainMenu()
+RX: 09 02 00 10 4B 00 00 00 00 00 00 00 00 00 00  | Menu[Mid=0x1000, Tid=0x004B Text='Main Menu']
+RX: 09 02 00 10 4B 00 00 00 00 00 00 00 00 00 00  | Menu[Mid=0x1000, Tid=0x004B Text='Main Menu']
+TX: 13 04 10 00 FF FF                             | GetFirstMenuLine(0x1000)
+RX: 09 05 00 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=0, Type=0x01]
+RX: 09 05 00 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=0, Type=0x01]
+TX: 20 06 00 00 00 40                             | Send_TXChInfo_20(0x00 0x00 0x00 0x40)  P=0 THR(0x40)
+RX: 09 05 01 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=1, Type=0x01]
+RX: 09 05 01 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=1, Type=0x01]
+TX: 20 06 01 01 70 21                             | Send_TXChInfo_20(0x01 0x01 0x70 0x21)  P=1 AIL(0x01) Rev(0x20) MIX(0x1000)MIX_ELE(0x2000)MIX(0x4000)
+RX: 09 05 02 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=2, Type=0x01]
+RX: 09 05 02 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=2, Type=0x01]
+TX: 20 06 02 02 60 23                             | Send_TXChInfo_20(0x02 0x02 0x60 0x23)  P=2 AIL(0x01) ELE(0x02) Rev(0x20) MIX_ELE(0x2000)MIX(0x4000)
+RX: 09 05 03 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=3, Type=0x01]
+RX: 09 05 03 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=3, Type=0x01]
+TX: 20 06 03 03 00 04                             | Send_TXChInfo_20(0x03 0x03 0x00 0x04)  P=3 RUD(0x04)
+RX: 09 05 04 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=4, Type=0x01]
+RX: 09 05 04 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=4, Type=0x01]
+TX: 20 06 04 04 70 A3                             | Send_TXChInfo_20(0x04 0x04 0x70 0xA3)  P=4 AIL(0x01) ELE(0x02) Slave(0x80) Rev(0x20) MIX(0x1000)MIX_ELE(0x2000)MIX(0x4000)
+RX: 09 05 05 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=5, Type=0x01]
+RX: 09 05 05 01 00 00 00 07 00 00 00 00 00 00 00  | GetTxInfo[P=5, Type=0x01]
+TX: 20 06 05 05 70 A1                             | Send_TXChInfo_20(0x05 0x05 0x70 0xA1)  P=5 AIL(0x01) Slave(0x80) Rev(0x20) MIX(0x1000)MIX_ELE(0x2000)MIX(0x4000)  
+RX: 09 03 00 10 00 1C F9 00 10 10 00 00 00 00 03  | MenuLine[Mid=0x1000, L=0 T=0x1C Tid=0x00F9, Vid=0x1010 Text='Gyro Settings']
+RX: 09 03 00 10 00 1C F9 00 10 10 00 00 00 00 03  | MenuLine[Mid=0x1000, L=0 T=0x1C Tid=0x00F9, Vid=0x1010 Text='Gyro Settings']
+TX: 14 06 10 00 00 00                             | GetNextMenuLine(0x1000,L=0)
+RX: 09 03 00 10 01 1C 27 02 5E 10 00 00 00 00 02  | MenuLine[Mid=0x1000, L=1 T=0x1C Tid=0x0227, Vid=0x105E Text='Other Settings']
+RX: 09 03 00 10 01 1C 27 02 5E 10 00 00 00 00 02  | MenuLine[Mid=0x1000, L=1 T=0x1C Tid=0x0227, Vid=0x105E Text='Other Settings']
+TX: 14 06 10 00 00 01                             | GetNextMenuLine(0x1000,L=1)
+TX: 00 04 00 00 FF FF                             | TxHB
+
+COMMENTS: 2-Aileron, V-Tail Config with Servo reverse on Aileron and Elevator
+The results of the 0x05 lines represents the functionality on that Port/Channel in the receiver.
+The the meanning of the mixes still don't see a pattern, but is contant depending on the function and if the servo is reversed or not.
+So right now, i have a table that depending on the wing type, tail type, and last byte value, it generate the mix byte.
