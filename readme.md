@@ -40,8 +40,8 @@ Has been tested on Radiomaster TX16S and FrSky QX7
 
 ## EdgeTx Firmware with TextGen
 
-EdgeTX 2.9.0 Will incorpare my changes to support TextGen.
-If you cannot wait, i have EdgeTx 2.8.1 with only my TextGen channge in there. 
+Official EdgeTX 2.8.3 Includes my changes for TextGen and other telemetry fixes.
+No need to use the custom firmware any more. 
 
 
 
