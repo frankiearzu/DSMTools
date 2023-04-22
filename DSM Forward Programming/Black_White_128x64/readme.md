@@ -4,7 +4,7 @@ Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
 
-# Introduction  (v0.54  Beta) LIMITED FUNCTIONALITY
+# Introduction  (v0.54) LIMITED FUNCTIONALITY
 
 Many of the 128x64 small screen radios has very limited memory.  Currently this version only supports changing existing setting, but
 will not work to setup a plane from zero or a new receiver.
@@ -71,7 +71,7 @@ Please report if you have tested it with other receivers to allow us to update t
 If in a screen you get text that looks like `Unknown_XX` (ex: Unknown_D3), that message has not been setup in the script in english. If you can determine what the proper message is,  you can send us a message to be added to the library.
 The `XX` represents a Hex Number (0..9,A..F)  message ID. 
 
-If you want to fix it in your local copy, all messages are in the file `SCRIPT\TOOS\DSMLIB\msg_en.txt`. (english version)
+If you want to fix it in your local copy, all messages are in the file `SCRIPT\TOOS\DSMLIB\msg_fwdp_en.txt`. (english version)
 
 Example::
 
@@ -93,7 +93,7 @@ For example, if you get `Unknown_9D` in the GUI and your now that it should say 
 Some settings that can change (top of Lua file):
 `local LANGUAGE            = "en"`
 
-If you want to translate the menu messages to another language (like french), copy the file `msg_en.txt` into `msg_fr.txt`, translate it, and change the language in the lua file to `"fr"`.
+If you want to translate the menu messages to another language (like french), copy the file `msg_fwdp_en.txt` into `msg_fwdp_fr.txt`, translate it, and change the language in the lua file to `"fr"`.
 
 
 # LOG File
