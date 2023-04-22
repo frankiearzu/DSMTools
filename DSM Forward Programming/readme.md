@@ -11,7 +11,7 @@ Please use:
 
 ## Message Files
 We are constantly updating new messages who appear as "Unknown_XYZ" in the menus with the proper values.
-You only have to update the message file `"msg_fwdprg_en.txt"` inside `/SCRIPTS/TOOLS/DSMLIB` 
+You only have to update the message file `"msg_fwdp_en.txt"` inside `/SCRIPTS/TOOLS/DSMLIB` 
 
 ## Color Version
 ![main-menu](https://user-images.githubusercontent.com/32604366/230751340-dd118f36-1884-405b-b12b-81cba16c7321.png)
