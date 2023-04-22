@@ -1,5 +1,8 @@
 # EdgeTx Firmware + TextGen
 
+## NOTE: Official EdgeTX 2.8.3 NOW INCLUDES TextGen and GPS fix. No need to use the custom version any more.
+
+
 The firmware listed here was build from a local branch with only one file changed to support Spektrum TextGen.  
 
 This change is already in the nighly build towards v2.9.0 
@@ -7,8 +10,7 @@ This change is already in the nighly build towards v2.9.0
 The firmware was compiled from a local branch:
 https://github.com/frankiearzu/edgetx/tree/v2.8.1_TextGen
 
-- TextGen:  official 2.8.1 + TextGen Change
-- GPSFix5:  official 2.8.1 + TextGen + Spektrum GSP support (have been flying with it since March 3,2023 without any problem)
+- TextGen + Spektrum GPS:  Official EdgeTX 2.8.3 includes the Spektrum GPS fixes as well as TextGen (for Avian ESC programming). No need to use the custom version any more.
 - Others:  Experimenting with new sensors (custom for some friends with the sensors before make the change officical).
 
 
