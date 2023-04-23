@@ -43,7 +43,7 @@ This script has many helpfull telemetry functions for the new "Smart" receivers.
 
 ## Video Tutorials
 I tried to do the screens as close as posible to the real Spektrum ones.  
-Some splanation of the features:
+Some explanation of the features:
 
 * Flight log:  https://www.youtube.com/watch?v=nZlHA2FEY20
 * TextGen: 
