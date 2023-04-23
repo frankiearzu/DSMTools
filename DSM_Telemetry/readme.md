@@ -41,6 +41,15 @@ This script has many helpfull telemetry functions for the new "Smart" receivers.
 * TextGen (Requires new EdgeTX firmware with TextGen Support)
 * Flight Log
 
+## Video Tutorials
+I tried to do the screens as close as posible to the real Spektrum ones.  
+Some splanation of the features:
+
+* Flight log:  https://www.youtube.com/watch?v=nZlHA2FEY20
+* TextGen: 
+    - Avian ESC programing (basic reverse): https://www.youtube.com/watch?v=_ZHWzBWe1e0
+    - Avian ESC programming (troubleshootings...) https://www.youtube.com/watch?v=5SdE2Ok2TRU
+
 ## DSM_Capture_Tel.lua
 
 This tool is to capture RAW telemetry data. Usefull when developpers don't have the actual sensors to test, but we can see the RAW data comming in the telemetry messages.
