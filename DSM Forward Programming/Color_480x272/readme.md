@@ -26,7 +26,7 @@ When upgrading from a previous version of this tool, delete your /SCRIPTS/TOOLS/
 
 Your TX SDCard should looks like this:
 
-    /SCRIPTS/TOOLS/
+    /SCRIPTS/TOOLS/     -- you only need one of the 3 to save some space in your TOOLS screen
         DSM FwdPrg_05_BW.lua      -- black/white text only 
         DSM FwdPrg_05_Color.lua   -- Color and touch radios
         DSM FwdPrg_05_MIN.lua     -- `NEW!` Minimalistic version for radios with LOW memory (cannot setup new planes)
