@@ -20,7 +20,7 @@ https://www.youtube.com/@franciscoarzu8120
 
 Fully functional DSM Forward programming.  You can setup a plane from zero.  Currently only support radios with microcrontroller chip with good amount of RAM memory (like TX16S, Jumper T16/T18, etc)
 
-Working a version that will run on radios with smaller screens (128x64) and much less RAM memory, like FrSky QX7, Radimaster TX12/Zorro/Boxer. The intial version of this low memory has been releases on version 0.54.
+Have a limited version that will run on smaller screens (128x64) and much less RAM memory, like FrSky QX7, Radimaster TX12/Zorro/Boxer. This version has the name MINimalistic.  You can navigate and change values, but you cannot setup a model from zero. 
 
 ![flight-mode-setup](https://user-images.githubusercontent.com/32604366/230751444-be0a271d-ae94-4cec-aaff-564472ffc800.png)
 
