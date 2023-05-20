@@ -27,7 +27,8 @@ Tools include:
 * Blade Gyro Adjust 
 * Blade Alpha6 Monitor
 * Plane AS3X Monitor
-* TextGen  (Requires new EdgeTX 2.8.3 or later)  if you use the same stick and panic button combinations to enter Blade Servo or Gyro adjustment, some Blade receivers have a good TextGen menu to confiture them
+* TextGen  (Requires new EdgeTX 2.8.3 or later)  
+   - if you use the same stick and panic button combinations to enter Blade Servo or Gyro adjustment, some Blade receivers have a good TextGen menu to confiture them
 * Flight Log"
 
 ## DSM_SmartRX_Tel.lua
@@ -39,6 +40,7 @@ This script has many helpfull telemetry functions for the new "Smart" receivers.
 * ESC Status: Smart ESC Status
 * Battery Status: Smart Battery Status
 * TextGen (Requires new EdgeTX 2.8.3 or later)
+    -  Avian ESC programming
 * Flight Log
 
 ## Video Tutorials
