@@ -134,6 +134,9 @@ T |0x00C7|Calibrate Sensor
 T |0x00CA|SAFE/Panic Mode Setup
 --
 T |0x00CD|Level model and capture attitude/m -- SPECIAL MENU to itself who is not a comment
+T |0x00CE|Error TX Conf
+T |0x00CF|Invalid TX Ch Conf 1
+T |0x00D0|Invalid TX Ch Conf 2
 --
 -- RX Orientations for AR631/AR637, Optionally attach an Image + Alt Text to display
 LT|0x00CB|Pos 1
@@ -355,6 +358,8 @@ T |0x0267|Positive = Nose Up/Roll Right
 T |0x0268|Negative = Nose Down/Roll Left
 T |0x0269|SAFE - Thr to Pitch
 T |0x026A|Use CAUTION for Yaw gain!/b
+--
+T |0x0272|Show Advanced Menus
 --
 T |0x0300|No compatible DSM RX...
 T |0x0301|Waiting for RX to Restart

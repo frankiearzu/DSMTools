@@ -22,11 +22,9 @@ In another window, open your TX SDCard and go to `/SCRIPTS/TOOLS`.
 
 When upgrading from a previous version of this tool, delete your `/SCRIPTS/TOOLS/DSMLIB` before copying the new one (if you customized the menu messages, inside `DSMLIB` do a backup of the message files first)
 
-1. Copy the entire `DSMLIB` folder into `/SCRIPTS/TOOLS`, now your will have `/SCRIPTS/TOOLS/DSMLIB` in your SDCard .
+1. The zip file has the same structure as your SDCard. If you want to copy all the content of the zip file into your SDCard, it will create all the directories and files in the right place.
 
-2. Copy the main script you want to use (MIN).
-
-Your TX SDCard should looks like this:
+For the MINimalistic version, Your TX SDCard should looks like this:
 
     /SCRIPTS/TOOLS
         DsmFwdPrg_05_MIN.lua     -- black/white 128x64 Minimal version 
