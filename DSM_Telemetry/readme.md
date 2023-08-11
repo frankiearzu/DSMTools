@@ -15,6 +15,21 @@ The SDCard should look like this:
 
 Tested with Radimaster TX16S and FrSky QX7
 
+---
+
+## Versions
+
+## v1.1
+
+It uses direct access to the telemetry data (EdgeTX only).  This allow to fix fomating or math problems with the values of the sensors in the tool, instead of the EdgeTX firmware.
+
+A little better presentation, and more screens supported with similar layout as Spektrum Radios.
+Also shows the version of the tools
+
+
+## v1.0
+
+Initial version.. uses the Telemetry sensors to get the data
 
 ## DSM_AR636_Tel.lua
 
@@ -23,10 +38,9 @@ This script has many helpfull telemetry functions for Blade Helicopters using AR
 Tools include:
 
 * Blade Version:  Firmware and product version
-* Blade Servo Adjust
-* Blade Gyro Adjust 
+* Blade Servo Adjust/Gyro Adjust 
 * Blade Alpha6 Monitor
-* Plane AS3X Monitor
+* Plane AS3X-Legacy Monitor
 * TextGen  (Requires new EdgeTX 2.8.3 or later)  
    - if you use the same stick and panic button combinations to enter Blade Servo or Gyro adjustment, some Blade receivers have a good TextGen menu to confiture them
 * Flight Log"
@@ -41,6 +55,7 @@ This script has many helpfull telemetry functions for the new "Smart" receivers.
 * Battery Status: Smart Battery Status
 * TextGen (Requires new EdgeTX 2.8.3 or later)
     -  Avian ESC programming
+* Flight Pack Amps Consumption (v1.1)
 * Flight Log
 
 ## Video Tutorials
