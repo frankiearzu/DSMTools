@@ -4,7 +4,8 @@ Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
 
-NOTE for FC6250HX FC+RX version: For the full size FC, DO NOT do the initial setup your Swashplate type (orientation/placement of the 3 servos) with the tool. It is bricking/locking the RX where it cannot be recover unless you send it back to Speaktrum/HH.  Getting one to analyze what is the problem. Set it up initially using the PC Tool + USB.  After that, you can use it to change all other values in the field.
+# NOTE for FC6250HX FC+RX version
+For the full size FC6250HX, DO NOT do the initial setup of your Swashplate type (orientation/placement of the 3 servos) with the tool. It is bricking/locking the RX where it cannot be recover unless you send it back to Speaktrum/HH.  Getting one to analyze what is the problem. Set it up initially using the PC Tool + USB cable.  After that, you can use it to change all other values in the field.
 
 # Introduction  (v0.55)
 
@@ -12,7 +13,7 @@ This script library enhances the original DSM Forward Programming tool. DSM Forw
 
 Since EdgeTx/OpenTx doesn’t have an equivalent setup that is stored in the radio, we have to create our own version. This info is stored inside the `/MODELS/DSMDATA` directory/folder (which needs to be created by manually).
 
-During `"Gyro Settings->initial setup"`, the RX asks the TX for model information behind the scenes.  After setup, `"Gyro Settings->System Tools-> Relearn Servo Settings"` requests the TX configuration and stores it in the RX. 
+During `"Gyro Settings->initial setup"`, the RX asks the TX for model information behind the scenes.  After setup, `"Gyro Settings->System Tools-> Relearn Servo Settings"` requests the TX servo configuration and stores it in the RX. 
 
 # Deployment
 
@@ -66,9 +67,9 @@ Other Directories
  
     4.2: Go to the script, `Model Setup` and setup your wing type, tail type, and select the channel assigment for each surface. Leave the servo settings the same as the values in the TX to start.
  
-    4.3: AR63X family: Go to `Forward programming->Gyro Setting->Initial Setup` (New/factory reset), or `Forward programming->Gyro Setting->System Setup->Relearn Servo Settings` (not new). This will load your urrent Gyro servo settings into the plane's RX.
+    4.3: Go to `Forward programming->Gyro Setting->Initial Setup` (New/factory reset), or `Forward programming->Gyro Setting->System Setup->Relearn Servo Settings` (not new). This will load your current Gyro servo settings into the plane's RX. This moves the current servo TX settings to the RX, so it is now in a known state.
  
-    4.4: Verify that the AS3X and SAFE reacts in the proper direction. You can use the Flight mode confugured as "Safe Mode: Auto-Level" to see if it moves the surfaces in the right direction.  
+    4.4: Verify that the AS3X and SAFE reacts in the proper direction. You can use the Flight mode configured as "Safe Mode: Auto-Level" to see if it moves the surfaces in the right direction.  
  
     4.5: If a surface don't move in the right direction, go to the `Model Setup->Gyro Channel Reverse` to reverse the Gyro on the channels needed, and do again the `Forward programming->Gyro Setting->System Setup->Relearn Servo Settings` to tranfer the new settings to the RX.
 
