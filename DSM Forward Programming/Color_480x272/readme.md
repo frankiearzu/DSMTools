@@ -4,6 +4,8 @@ Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
 
+NOTE for FC6250HX FC+RX version: For the full size FC, DO NOT do the initial setup your Swashplate type (orientation/placement of the 3 servos) with the tool. It is bricking/locking the RX where it cannot be recover unless you send it back to Speaktrum/HH.  Getting one to analyze what is the problem. Set it up initially using the PC Tool + USB.  After that, you can use it to change all other values in the field.
+
 # Introduction  (v0.54)
 
 This script library enhances the original DSM Forward Programming tool. DSM Forward Programming is needed to setup many of the new Spektrum Receivers with Gyro AS3X/SAFE features. For the Gyro (/Safe) to correct the plane in flight, it needs to move the right surfaces therefore the RX needs to know the configuration of the plane (Wing Type, Tail Type, Mixers, Servo Assignments, Servo Reverse). That info tells the RX where the aileron(s) are (one or two), where the elevator(s) are (one or two),  V-Tail, Delta Wing, etc. 
@@ -48,7 +50,9 @@ Other Directories
 
 # Common Questions
 1. `RX not accepting channels higher than Ch6 for Flight-mode o Gains:`
-V0.53 and newer:  The RX is listening to channel changes for this options. Configure the Switch to the channel, togling once the switch will select the channel on the menu field.  
+- V0.55 and newer:  Problem solved.. Should allow you to select up to 12ch with the switch technique or with the scroller.
+
+- V0.53/0.54:  The RX is listening to channel changes for this options. Configure the Switch to the channel, togling once the switch will select the channel on the menu field.  
 
 2. `Why Ch1 says Ch1 (TX:Ch3/Thr)?`:
  Radios with Multi-Module are usually configured to work the standard AETR convention. Spektrum uses TAER. The multi-module does the conversion when transmitting the signals. So `Spektrum Ch1 (Throttle)` really comes from the `TX Ch3`.  We show both information (+name from the TX output).  If your multi-module/radio is setup as TAER, the script will not do the re-arrangement.  
@@ -75,6 +79,21 @@ V0.53 and newer:  The RX is listening to channel changes for this options. Confi
 ---
 
 # Changes and fixes 
+V0.55:
+1. Finally found where the TX reports to the RX how many channels is transmiting. The TX now reports itself as a 12ch radio instead of 6h. (DSM Multi-Module limit).  This fixes a few things:
+    
+    
+    a. Many places where you have to select channels > CH6 for Flight-Mode, Gains, Panic now works properly with the scroller. The radio is still validating that you are not selecting an invalid channel. For example, if you have an additional AIL on CH6, it will not allow you to use CH6 for FM or Gains.. it just move to the next valid one.
+
+    b. When setting up AIL/ELE on challes greater than CH6, on previous versions SAFE/AS3X was not moving them.. now they work up to CH10.  Why CH10?? Thats what fits on the reverse screens.
+
+    c. Some individual Gain channels was not allowing to setup on CH > CH6.
+
+2. `RTN` Key now works as `Back` when the screen has a `Back`. Makes it easy for navigation.. Presing `RTN` on the main screen exists the tool.
+
+3. The TX now comunicates the SubTrim positions to the RX during `Relearn Servo Setting`. This changes the center of movement to one side or another. Really not much difference, but when you had an extream subtrim to one side, it was not moving simetrically.
+
+
 V0.54:
 1. Fix a problem in the Attitude Trim page (`Gyro Settings->System Setup->SAFE/Panic Setup->Attitude Trim`). It was not saving the values after exiting the menu. This is to change what SAFE considers "Level" flying.
 2. Wings 2-Ail 2-Flaps had a bug on the 2nd flap.
@@ -96,7 +115,8 @@ V0.52:
 
 # Tested Hardware
 - AR631/AR637xx
-- FC6250HX (Blade 230S V2 Helicopter)
+- FC6250HX (Blade 230S V2 Helicopter; FC+RX in one, mini version)
+- FC6250HX Full size (Separate FC and RX): Don't do initial Swashplate setup with the tool. Looks like it briking the FC. Use the PC+USB for intial setup, after that, the tool works.
 - AR636 (Blade 230S V1 Heli firmware 4.40)
 
 - Radiomaster TX16S  (All versions)
