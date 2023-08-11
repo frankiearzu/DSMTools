@@ -6,7 +6,7 @@ Thanks to all the people volunteered to test it.
 
 NOTE for FC6250HX FC+RX version: For the full size FC, DO NOT do the initial setup your Swashplate type (orientation/placement of the 3 servos) with the tool. It is bricking/locking the RX where it cannot be recover unless you send it back to Speaktrum/HH.  Getting one to analyze what is the problem. Set it up initially using the PC Tool + USB.  After that, you can use it to change all other values in the field.
 
-# Introduction  (v0.54)
+# Introduction  (v0.55)
 
 This script library enhances the original DSM Forward Programming tool. DSM Forward Programming is needed to setup many of the new Spektrum Receivers with Gyro AS3X/SAFE features. For the Gyro (/Safe) to correct the plane in flight, it needs to move the right surfaces therefore the RX needs to know the configuration of the plane (Wing Type, Tail Type, Mixers, Servo Assignments, Servo Reverse). That info tells the RX where the aileron(s) are (one or two), where the elevator(s) are (one or two),  V-Tail, Delta Wing, etc. 
 
@@ -16,12 +16,13 @@ During `"Gyro Settings->initial setup"`, the RX asks the TX for model informatio
 
 # Deployment
 
+When upgrading from a previous version of this tool, delete your /SCRIPTS/TOOLS/DSMLIB before copying the new one (if you customized your images, inside "DSMLIB/img" do a backup first)
+
 Make sure to manually create `/MODELS/DSMDATA`  . The script will complain at startup if it does not exist. Here the script saves the Spektrun settings for each of your models.
 
 Uncompress the Zip file (ZIP version) into your local computer.
 In another window, open your TX SDCard and go to /SCRIPTS/TOOLS.
 
-When upgrading from a previous version of this tool, delete your /SCRIPTS/TOOLS/DSMLIB before copying the new one (if you customized your images, inside "DSMLIB/img" do a backup first)
 
 1. The zip file has the same structure as your SDCard. If you want to copy all the content of the zip file into your SDCard, it will create all the directories and files in the right place.
 2. v0.53 and older zips, you can copy all the coontent to your SDCard folder /SCRIPTS/TOOLS
