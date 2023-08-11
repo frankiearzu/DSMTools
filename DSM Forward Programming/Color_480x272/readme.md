@@ -87,13 +87,13 @@ V0.55:
     
     a. Many places where you have to select channels > CH6 for Flight-Mode, Gains, Panic now works properly with the scroller. The radio is still validating that you are not selecting an invalid channel. For example, if you have an additional AIL on CH6, it will not allow you to use CH6 for FM or Gains.. it just move to the next valid one.
 
-    b. When setting up AIL/ELE on challes greater than CH6, on previous versions SAFE/AS3X was not moving them.. now they work up to CH10.  Why CH10?? Thats what fits on the reverse screens.
+    b. When setting up AIL/ELE on channels greater than CH6, on previous versions SAFE/AS3X was not moving them.. now they work up correctly.  Set them up in the first in CH1-CH10.  Why CH10?? Thats what fits on the reverse screen, otherwise, have to add more screens.
 
-    c. Some individual Gain channels was not allowing to setup on CH > CH6.
+    c. Some individual Gain channels was not allowing to setup on CH greater than CH6. Now is fixed.
 
 2. `RTN` Key now works as `Back` when the screen has a `Back`. Makes it easy for navigation.. Presing `RTN` on the main screen exists the tool.
 
-3. The TX now comunicates the SubTrim positions to the RX during `Relearn Servo Setting`. This changes the center of movement to one side or another. Really not much difference, but when you had an extream subtrim to one side, it was not moving simetrically.
+3. The TX now comunicates the SubTrim positions to the RX during `Relearn Servo Setting`. This changes the center of movement to one side or another. Really not much difference with small amounts of subtrim, previous versions where asuming subtrim of 0. When you have an extreame subtrim to one side, it was not moving simetrically.
 
 
 V0.54:
