@@ -19,7 +19,7 @@ Tested with Radimaster TX16S and FrSky QX7
 
 ## Versions
 
-## v1.1
+## v1.1  (EdgeTX v2.8.3 or later... no OpenTx)
 
 It uses direct access to the telemetry data (EdgeTX only).  This allow to fix fomating or math problems with the values of the sensors in the tool, instead of the EdgeTX firmware.
 
@@ -27,7 +27,7 @@ A little better presentation, and more screens supported with similar layout as 
 Also shows the version of the tools
 
 
-## v1.0
+## v1.0  (use this for OpenTx / EdgeTX version prior to v2.8.3)
 
 Initial version.. uses the Telemetry sensors to get the data
 
