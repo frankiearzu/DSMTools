@@ -54,12 +54,16 @@ Other Directories
 
 - V0.53/0.54:  The RX is listening to channel changes for this options. Configure the Switch to the channel, togling once the switch will select the channel on the menu field.  
 
-2. `Why Ch1 says Ch1 (TX:Ch3/Thr)?`:
+2. `Only able to switch to Fligh-mode 2 and 3, but not 1:`
+Check that the module "Enable max throw" is OFF in you Multi-Module settings (where you do BIND), otherwise the TX signals will be out of range.
+The multi-module is already adjusting the TX/FrSky servo range internally to match Spektrum.
+
+3. `Why Ch1 says Ch1 (TX:Ch3/Thr)?`:
  Radios with Multi-Module are usually configured to work the standard AETR convention. Spektrum uses TAER. The multi-module does the conversion when transmitting the signals. So `Spektrum Ch1 (Throttle)` really comes from the `TX Ch3`.  We show both information (+name from the TX output).  If your multi-module/radio is setup as TAER, the script will not do the re-arrangement.  
 
- 3. `If i change the model name, the original model settings are lost.` This is correct, the model name is used to generate the file name (inside /MODEL/DSMDATA) who stores the model configuration. Currently EdgeTx and OpenTX has differt features where i could get either the Model Name or the YAML file where the EdgeTX model configuration is stored.. to keep the code compatible, the model name is used.
+4. `If i change the model name, the original model settings are lost.` This is correct, the model name is used to generate the file name (inside /MODEL/DSMDATA) who stores the model configuration. Currently EdgeTx and OpenTX has differt features where i could get either the Model Name or the YAML file where the EdgeTX model configuration is stored.. to keep the code compatible, the model name is used.
 
- 4. `Reversing a channel in my TX do not reverse the AS3X/SAFE reaction.` Correct, the chanel stick direction and the Gyro direction are two separate things.
+5. `Reversing a channel in my TX do not reverse the AS3X/SAFE reaction.` Correct, the chanel stick direction and the Gyro direction are two separate things.
 
     4.1: First, you have setup your model so that the sticks and switches moves the surfaces in the right direction.
  
@@ -89,7 +93,9 @@ V0.55:
 
     c. Some individual Gain channels was not allowing to setup on CH greater than CH6. Now is fixed.
 
-2. `RTN` Key now works as `Back` when the screen has a `Back`. Makes it easy for navigation.. Presing `RTN` on the main screen exists the tool.
+2. User Interface:
+    a. `RTN` Key now works as `Back` when the screen has a `Back`. Makes it easy for navigation.. Presing `RTN` on the main screen exists the tool.
+    b. Much faster refresh of the menus. Optimize the process of send/recive menu data from the RX.
 
 3. The TX now comunicates the SubTrim positions to the RX during `Relearn Servo Setting`. This changes the center of movement to one side or another. Really not much difference with small amounts of subtrim, previous versions where asuming subtrim of 0. When you have an extreame subtrim to one side, it was not moving simetrically.
 
