@@ -5,7 +5,9 @@ Rewrite/Enhancements by: Francisco Arzu
 Thanks to all the people volunteered to test it.
 
 # NOTE for FC6250HX FC+RX version
-For the full size FC6250HX, DO NOT do the initial setup of your Swashplate type (orientation/placement of the 3 servos) with the tool. It is bricking/locking the RX where it cannot be recover unless you send it back to Speaktrum/HH.  Getting one to analyze what is the problem. Set it up initially using the PC Tool + USB cable.  After that, you can use it to change all other values in the field.
+For the full size FC6250HX, Only use V0.55 or newer.
+
+DO NOT use previous versions to do the Swashplate -> RX Orientation. The problem was that it did not have the orientation messages.. and you are choosing blind. The calibration will never stop until you place the RX in the right orientation, even after restarting the RX (if flashing red, is not in the right orientation.. if flashshing white is in the right orientation).
 
 # Introduction  (v0.55)
 
@@ -99,6 +101,9 @@ V0.55:
 
 3. The TX now comunicates the SubTrim positions to the RX during `Relearn Servo Setting`. This changes the center of movement to one side or another. Really not much difference with small amounts of subtrim, previous versions where asuming subtrim of 0. When you have an extreame subtrim to one side, it was not moving simetrically.
 
+4. Support for FC6250HX (the one with separate RX).. Setup Swashplate type, RX orientation works properly.. This are menu options that the smaller version that comes in the
+Blade 230S did not have.
+
 
 V0.54:
 1. Fix a problem in the Attitude Trim page (`Gyro Settings->System Setup->SAFE/Panic Setup->Attitude Trim`). It was not saving the values after exiting the menu. This is to change what SAFE considers "Level" flying.
@@ -122,11 +127,10 @@ V0.52:
 # Tested Hardware
 - AR631/AR637xx
 - FC6250HX (Blade 230S V2 Helicopter; FC+RX in one, mini version)
-- FC6250HX Full size (Separate FC and RX): Don't do initial Swashplate setup with the tool. Looks like it briking the FC. Use the PC+USB for intial setup, after that, the tool works.
+- FC6250HX (Separate RX.. use only V55 or newer of this tool)
 - AR636 (Blade 230S V1 Heli firmware 4.40)
 
 - Radiomaster TX16S  (All versions)
-- FrSky QX7, Radimaster Boxter (Minimalistic version)
 
 Please report if you have tested it with other receivers to allow us to update the documentation. Code should work up to 10 channels for the main surfaces (Ail/Ele/etc).  All Spektrum RX are internally 20 channels, so you can use Ch7 for Flight Mode even if your RX is only 6 channels (See common Questions)
 

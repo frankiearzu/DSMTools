@@ -4,7 +4,13 @@ Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
 
-# Introduction  (v0.54) LIMITED FUNCTIONALITY
+# NOTE for FC6250HX FC+RX version
+For the full size FC6250HX, Only use V0.55 or newer.
+
+DO NOT use previous versions to do the Swashplate -> RX Orientation. The problem was that it did not have the orientation messages.. and you are choosing blind. The calibration will never stop until you place the RX in the right orientation, even after restarting the RX (if flashing red, is not in the right orientation.. if flashshing white is in the right orientation).
+
+
+# Introduction  (v0.55) LIMITED FUNCTIONALITY
 
 Many of the 128x64 small screen radios has very limited memory.  Currently this version only supports changing existing setting, but
 will not work to setup a plane from zero or a new receiver.
@@ -56,10 +62,28 @@ V0.54 Beta:
 - Fix problem on editing the SAFE Mode Attitude Trim
 - First version with externalize merges, so that it can be translated to other languages
 
+V0.55:
+1. Finally found where the TX reports to the RX how many channels is transmiting. The TX now reports itself as a 12ch radio instead of 6h. (DSM Multi-Module limit).  This fixes a few things:
+    
+    a. Many places where you have to select channels > CH6 for Flight-Mode, Gains, Panic now works properly with the scroller. The radio is still validating that you are not selecting an invalid channel. For example, if you have an additional AIL on CH6, it will not allow you to use CH6 for FM or Gains.. it just move to the next valid one.
+
+    b. When setting up AIL/ELE on channels greater than CH6, on previous versions SAFE/AS3X was not moving them.. now they work up correctly.  Set them up in the first in CH1-CH10.  Why CH10?? Thats what fits on the reverse screen, otherwise, have to add more screens.
+
+    c. Some individual Gain channels was not allowing to setup on CH greater than CH6. Now is fixed.
+
+2. User Interface:
+    a. `RTN` Key now works as `Back` when the screen has a `Back`. Makes it easy for navigation.. Presing `RTN` on the main screen exists the tool.
+    b. Much faster refresh of the menus. Optimize the process of send/recive menu data from the RX.
+
+3. Support for FC6250HX (the one with separate RX).. Setup Swashplate type, RX orientation works properly.. This are menu options that the smaller version that comes in the
+Blade 230S did not have.
+
 # Tested Radios and RXs
-- Radio: FrSky QX7 
+- Radio: FrSky QX7:   Due to limited memory, could be that the first time is does not start (not enouth memory to compile+run), but try again after a fresh TX restart.
+
 - AR631/AR637xx
 - FC6250HX (Blade 230S V2 Helicopter)
+- FC6250HX (Separate RX.. use only V55 or newer of this tool)
 - AR636 (Blade 230S V1 Heli firmware 4.40)
 
 Please report if you have tested it with other receivers to allow us to update the documentation. Code should work up to 10 channels for the main surfaces (Ail/Ele/etc).  All Spektrum RX are internally 20 channels, so you can use Ch7 for Flight Mode even if your RX is only 6 channels (See common Questions)
