@@ -23,11 +23,8 @@ You only have to update the message file `"msg_fwdp_en.txt"` inside `/SCRIPTS/TO
 
 ## Black & White Minimal version
 This is running on a very memory limited FrSky QX7.  You can change the values, but unfortunatly, the code to setup a plane from zero is too big.
-(if you have a Boxter you might want to try v0.55 that is in development for small screens, middle of the range Memory usage.. see below).
+The memory is so tight, that depends on the EdgeTX firmware and compuled options, EdgeTx will leave little or more memory.
+with EdgeTX 2.8.5 works, 2.9.0 is using more, and usually don't run on my QX7. Boxter has a bit more memory.
+Sometimes the very first time, it does not run, simce is doing Compile+Run..  Restart the radio and try again (already compiled, so it will run). 
 
 ![IMG_3024](https://user-images.githubusercontent.com/32604366/230123260-614f4e5e-9546-4439-9196-db885894083f.jpg)
-
-## In_Development
-UPDATE: Memory is still an issue in V0.55 use the latest official v0.54
-
-V0.55 for radios 128x64.   The minimal version should work (almost the same code as in v0.54), but the BW fully functional version has been optimized to reduce memory. For sure it does not run on older radios with low memory (QX7, maybe zorro), but i think it could run on Radiomaster Boxter who has a good amount of RAM in the chip. (Only have QX7.. not a Boxter.. runs on the simulator, but don't have a Boxter to test). 
