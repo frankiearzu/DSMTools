@@ -67,17 +67,17 @@ The multi-module is already adjusting the TX/FrSky servo range internally to mat
 
 5. `Reversing a channel in my TX do not reverse the AS3X/SAFE reaction.` Correct, the chanel stick direction and the Gyro direction are two separate things.
 
-    4.1: First, you have setup your model so that the sticks and switches moves the surfaces in the right direction.
+    5.1: First, you have setup your model so that the sticks and switches moves the surfaces in the right direction.
  
-    4.2: Go to the script, `Model Setup` and setup your wing type, tail type, and select the channel assigment for each surface. Leave the servo settings the same as the values in the TX to start.
+    5.2: Go to the script, `Model Setup` and setup your wing type, tail type, and select the channel assigment for each surface. Leave the servo settings the same as the values in the TX to start.
  
-    4.3: Go to `Forward programming->Gyro Setting->Initial Setup` (New/factory reset), or `Forward programming->Gyro Setting->System Setup->Relearn Servo Settings` (not new). This will load your current Gyro servo settings into the plane's RX. This moves the current servo TX settings to the RX, so it is now in a known state.
+    5.3: Go to `Forward programming->Gyro Setting->Initial Setup` (New/factory reset), or `Forward programming->Gyro Setting->System Setup->Relearn Servo Settings` (not new). This will load your current Gyro servo settings into the plane's RX. This moves the current servo TX settings to the RX, so it is now in a known state.
  
-    4.4: Verify that the AS3X and SAFE reacts in the proper direction. You can use the Flight mode configured as "Safe Mode: Auto-Level" to see if it moves the surfaces in the right direction.  
+    5.4: Verify that the AS3X and SAFE reacts in the proper direction. You can use the Flight mode configured as "Safe Mode: Auto-Level" to see if it moves the surfaces in the right direction.  
  
-    4.5: If a surface don't move in the right direction, go to the `Model Setup->Gyro Channel Reverse` to reverse the Gyro on the channels needed, and do again the `Forward programming->Gyro Setting->System Setup->Relearn Servo Settings` to tranfer the new settings to the RX.
+    5.5: If a surface don't move in the right direction, go to the `Model Setup->Gyro Channel Reverse` to reverse the Gyro on the channels needed, and do again the `Forward programming->Gyro Setting->System Setup->Relearn Servo Settings` to tranfer the new settings to the RX.
 
-    4.6: Specktrum TX always passes the TX servo reverse as the Gyro Reverse, but on many OpenTX/EdgeTX radios, the Rud/Ail are usually reversed by default compared to Specktrum. So far i don't think that i can use this as a rule, that is why the `Gyro Channel Reverse` page exist. 
+    5.6: Specktrum TX always passes the TX servo reverse as the Gyro Reverse, but on many OpenTX/EdgeTX radios, the Rud/Ail are usually reversed by default compared to Specktrum. So far i don't think that i can use this as a rule, that is why the `Gyro Channel Reverse` page exist. 
     
 
 
