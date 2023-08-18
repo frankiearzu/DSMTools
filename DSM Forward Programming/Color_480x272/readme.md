@@ -24,9 +24,8 @@ When upgrading from a previous version of this tool, delete your /SCRIPTS/TOOLS/
 Uncompress the Zip file (ZIP version) into your local computer.
 In another window, open your TX SDCard.
 
-1. The zip file has the same structure as your SDCard. If you want to copy all the content of the zip file into your SDCard, it will create all the directories and files in the right place.
-2. v0.53 and older zips, you can copy all the coontent to your SDCard folder /SCRIPTS/TOOLS
-3. Make sure to check that  `/MODELS/DSMDATA` is there. The script will complain at startup if it does not exist. Here the script saves the Spektrun settings for each of your models.
+1. The zip file has the same structure as your SDCard. If you want to copy all the content of the zip file into your SDCard top level folder, it will create all the directories and files in the right place.
+2. Make sure to check that  `/MODELS/DSMDATA` is there. The script will complain at startup if it does not exist. Here the script saves the Spektrun settings for each of your models.
 
 Your TX SDCard should looks like this:
 
@@ -40,6 +39,7 @@ Your TX SDCard should looks like this:
             DsmFwPrgSIMLib.lua    -- Simulation of AR631, FC6250HX  (For GUI development)
             SetupLib.lua          -- Model Setup Screens
             msg_fwdp_en.txt       -- `NEW!` Messages for forward programing externalized. To support other langs (english)
+	    ... a few other files
 
     /SCRIPTS/TOOLS/DSMLIB/img                -- Images for RX orientations
 
