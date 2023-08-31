@@ -9,10 +9,6 @@ Thanks to **Pascal Langer** (Author of the Multi-Module) for the initial reverse
 
 Thanks to **Francisco Arzu** for taking the time to continue the work on reverse engineering, documenting and making the code more understandable.
 
-New Capabilities in Version 0.5
-- Log files of the conversation between RX/TX 
-- Improve the GUI  (EdgeTX touch screen)
-- Reversed engineer other things to make it work completly.
 
 # Menu Title and Lines
 
@@ -156,58 +152,73 @@ When receiving data, address 10 will have the message type we are receiving, or 
 
 
 # Request Messages (TX->RX)
+The first byte is the message type, the 2nd byte is the entire length starting from the message type. Example:
+
+|4|5|6|7|8|9|10
+|--|--|--|--|--|--|--
+Msg| Len | D1 | D2 
+0x00|0x04|0x00|0x00
+
 
 ## DSM_sendHeartbeat()
 keep connection open.. We need to send it every 2-3 seconds, otherwise the RX will force close the connection by sending the TX an Exit_Confirm message.
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg| Len? | ?? | ?? 
+Msg| Len | ?? | ?? 
 0x00|0x04|0x00|0x00
     
     SEND DSM_sendHeartbeat()
     DSM_SEND: [00 04 00 00 ]
 
  ## DSM_getRxVersion()
-Request the RX information
+Request the RX information.
+TXCh is the number of channels sent by the TX after CH6. For example, 0=6Ch,2=8ch,6=12Ch.
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg| Len? | ?? | ?? |??|??
-0x11|0x06|0x00|0x14|0x00|0x00
+Msg| Len | TXCh | ?? |??|??
+0x11|0x06|0x06|0x14|0x00|0x00
 
     SEND DSM_getRxVersion() 
-    DSM_SEND: [11 06 00 14 00 00 ]
+    DSM_SEND: [11 06 06 14 00 00 ]
 
 ## DSM_getMainMenu()
-Request data for the main menu of the RX
+Request data for the main menu of the RX.
+TXCh (See getRXVersion).
+The RX will request information about all the channels reported by the TX via
+`RequestTXChInfo`.
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg| Len? | ?? | ?? |??|??
-0x12|0x06|0x00|0x14|0x00|0x00
+Msg| Len | TXCh | ?? |??|??
+0x12|0x06|0x06|0x14|0x00|0x00
 
     SEND DSM_getMainMenu()
-    DSM_SEND: [12 06 00 14 00 00 ]
+    DSM_SEND: [12 06 06 14 00 00 ]
 
 
 ## DSM_getMenu(menuId, lastSelLine)
-Request data for Menu with ID=`menuId`. lastSelLine is the line that was selected to navigate to that menu. Most menus works with 0, but for some special "Enter Bind Mode", "Factory Reset", "Save to Backup" they will not work if we send 0, has to be the line who was selected in the confirmation menu line "Apply".
+Request data for Menu with ID=`menuId`. `lastSelLine` is the line that was selected to navigate to that menu.
+
+When navigating via BACK, PREV, NEXT use 0x80, 0x81, and 0x82.  This is specially important on some menus who stores captured data.. without them, they don't save the data (Attitude trim, RX orientation)
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg|Len? | MSB (menuId) | LSB (MenuId) | MSB (line#)??| LSB (line#)
+Msg|Len | MSB (menuId) | LSB (MenuId) | MSB (lineNo)| LSB (lineNo)
 0x16|0x06|0x10|0x60|0x00|0x01
 
     SEND DSM_getMenu(MenuId=0x1060 LastSelectedLine=1)
     DSM_SEND: [16 06 10 60 00 01 ]
 
 ## DSM_getFirstMenuLine(menuId)
-Request the first line of a menu identified as `menuId`. The response will be the first line of the menu. Some times, it return lines shown as `'MenuUknownLine_0x05'` that we still are trying to understand what they are for.
+Request the first line of a menu identified as `menuId`. The response will be the first line of the menu. 
+
+On the MainMenu, it will start requesing TxChannel info only the very first time before start sending the menu lines.
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg|Len? | MSB (menuId) | LSB (MenuId) 
+Msg|Len | MSB (menuId) | LSB (MenuId) 
 0x13|0x04|0x10|0x60
 
     SEND DSM_getFirstMenuLine(MenuId=0x1000)
@@ -218,74 +229,87 @@ Request the retrival of the next line following the current line. Response is ei
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg|Len? | MSB (menuId) | LSB (MenuId) | MSB (line#)??| LSB (line#)
+Msg|Len | MSB (menuId) | LSB (MenuId) | MSB (line#)??| LSB (line#)
 0x14|0x06|0x10|0x60|0x00|0x01
 
     SEND DSM_getNextLine(MenuId=0x1000,LastLine=1)
     DSM_SEND: [14 06 10 00 00 01 ]
 
-##  DSM_getNextMenuValue(menuId, valId, text)
+##  DSM_getNextMenuValue(menuId, valId)
 Retrive the next value after the last `ValId` of the current `menuId`.  text is just for debugging purposes to show the header of the value been retrived.
 The Response is a Menu Value or nothing if no more data.
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg|Len? | MSB (menuId) | LSB (MenuId) | MSB (ValId)| LSB (ValId)
+Msg|Len | MSB (menuId) | LSB (MenuId) | MSB (ValId)| LSB (ValId)
 0x15|0x06|0x10|0x61|0x10|0x00
 
-    SEND DSM_getNextMenuValue(MenuId=0x1061, LastValueId=0x1000) Extra: Text="Outputs"
+    SEND DSM_getNextMenuValue(MenuId=0x1061, LastValueId=0x1000) 
     DSM_SEND: [15 06 10 61 10 00 ]
 
-## DSM_updateMenuValue(valId, val, text, line)
-Updates the value identified as `valId` with the numeric value `val`. `text` and `line` are there to add debugging info.  No response is expected.
+## DSM_updateMenuValue(valId, val)
+Updates the value identified as `valId` with the numeric value `val`. 
 
 If the value is negative, it has to be translated to the proper DSM negative representaion.
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg|Len? | MSB (ValId) | LSB (ValId) | MSB (Value)| LSB (Value)
-0x18|0x06|0x??|0x??|0x??|0x??
+Msg|Len | MSB (ValId) | LSB (ValId) | MSB (Value)| LSB (Value)
+0x18|0x06|0x__|0x__|0x__|0x__
 
-    DSM_updateMenuValue(valId, val, text, line)
+    DSM_updateMenuValue(valId, value)
     -->DSM_send(0x18, 0x06, int16_MSB(valId), int16_LSB(valId), int16_MSB(value), int16_LSB(value)) 
 
-## DSM_validateMenuValue(valId, text, line)
-Validates the value identified as `valId`. `text` and `line` are there to add debugging info.  The RX can response an Update value if the value is not valid and needs to be corrected.
+## DSM_validateMenuValue(valId)
+Validates the value identified as `valId`. The RX can response an Update value if the value is not valid and needs to be corrected.
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg|Len? | MSB (ValId) | LSB (ValId)
-0x19|0x06|0x??|0x??
+Msg|Len | MSB (ValId) | LSB (ValId)
+0x19|0x06|0x__|0x__
 
 
-    DSM_validateMenuValue(valId, text, line)
+    DSM_validateMenuValue(valId)
     -> DSM_send(0x19, 0x06, int16_MSB(valId), int16_LSB(valId)) 
 
-## DSM_menuValueChangingWait(valId, text, line) 
-Durin editing, this serves as a heartbeat that we are editing the value. The value identified as `valId`. `text` and `line` are there to add debugging info.  The RX can response an Update value or a NUL response.
+## DSM_menuEditingValue(lineNo) 
+During editing, we need to tell the RX that we are editing a line (LineNo is zero base).. This will lock the screen to any changes of flight mode.  If we are editing a value that represents channel, this will "listen" to Channel changes and populate the value if a swith is flipped.
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg|Len?? | MSB (ValId) | LSB (ValId)
-0x1A|0x06|0x??|0x??
+Msg|Len | MSB (Line#) | LSB (Line#)
+0x1A|0x04|0x__|0x__
 
-    DSM_menuValueChangingWait(valId, text, line)
-    ->DSM_send(0x1A, 0x06, int16_MSB(valId), int16_LSB(valId))
+    DSM_menuEditingValue(lineno)
+    ->DSM_send(0x1A, 0x06, int16_MSB(lineNo), int16_LSB(lineNo))
+
+
+## DSM_menuEditingValueEND(lineNo) 
+This tells the RX that we are done editing a line.
+.
+|4|5|6|7|8|9|10
+|--|--|--|--|--|--|--
+Msg|Len | MSB (Line#) | LSB (Line#)
+0x1B|0x04|0x__|0x__
+
+    DSM_menuEditingValueEND(lineno)
+    ->DSM_send(0x1B, 0x06, int16_MSB(lineNo), int16_LSB(lineNo))
+
 
 ## DSM_exitRequest()
 Request to end the DSM Frd Prog connection. Will reponse with an exit confirmation.
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg|Len?? | ??
-0x1F|0x02|0xAA
+Msg|Len | 
+0x1F|0x02|
 
     CALL DSM_exitRequest()
-    DSM_SEND: [1F 02 AA ]
+    DSM_SEND: [1F 02 ]
 
 # Response Messages (RX->TX)
 
-All responses will have the a response byte in Multi_Buffer[10]=0x09, and the type of message in Multi_Buffer[11].
+All responses will have the a response byte in Multi_Buffer[10]=0x09 (I2C_FORMARD_PROG value 0x09), and the type of message in Multi_Buffer[11].
 
 ## RX Version Response
 
@@ -355,7 +379,7 @@ Response from a Exit Request.
     RESPONSE RX: 09 A7  
     RESPONSE Exit Confirm
 
-## NULL Response
+## NULL Response (HeartBeat)
 Can be use as a response, or heartbeat from the RX to keep the connection open.
 
 |10|11
@@ -367,101 +391,111 @@ Can be use as a response, or heartbeat from the RX to keep the connection open.
     RESPONSE NULL
 
 
-# Unknown Lines
-TOTALLY UNKNOWN WHAT THIS ARE FOR.. but only works for the Main Menu..
-Other menus they just loop on line=0 forever.
+# Request TX Info  (RX requesting TX info)
 
-## DSM_getNextUknownLine_0x05(menuId, curLine)
+The RX is requesting information about the TX.
+The flight controller/RX needs to know what channels are used for Flying surfaces and throttle, as well as servo settings in the TX for that channels.
 
 
-Request the retrival of the next Unknown line following the current line. Response is either the next unknow line, next menu line, or the next value, or nothing.
+## DSM_getTXChInfo(menuId, Ch)
 
-|4|5|6|7|8|9| Comment
+Request the info of the specific `Ch` (0 based).
+`InfoType`: 
+0x00 = Basic + Travel + END
+0x01 = Basic 
+0x1F = Basic + Travel + SubTrim + 0x24 + END
+
+|10|11|12|13
+|--|--|--|--
+|Resp|Msg|Ch#|InfoType
+|0x09|0x05|0x00|0x01
+
+    RESPONSE RequestTXChInfo: 09 05  
+    RESPONSE NULL
+
+
+## Message 0x20 Response: Basic Channel Role info
+
+Role1: MixType
+Role2: UsageType-Bits
+
+
+| 4| 5| 6| 7| 8| 9
+|--|--|--|--|--|--
+Msg|Len | Ch# | Ch# | Role1 | Role2 
+0x20|0x06|0x00|0x00|0x00|0x40 
+
+### UsageType-Bits
+
+|MASK|Meaning
+|--|--
+|0x01|Ail
+|0x02|Elv
+|0x04|Rud
+|0x40|Thr
+|0x20|Reversed
+|0x80|Slave  (2nd use of same surface)
+
+### Mix Bits
+Seems that Reverse do a complement of the first 3 bits Mix
+
+|MASK|Bits | Meaning| Comment
+|--|--|--|--
+|0x00| 0000| Normal|
+|0x10| 0001| MIX_AIL_B| Taileron 
+|0x20| 0010| MIX_ELE_A| For VTail and Delta-ELEVON A
+|0x30| 0011| MIX_ELE_B_REV | For VTIAL and Delta-ELEVON B
+|0x40| 0100| MIX_ELE_B| For VTIAL and Delta-ELEVON B
+|0x50| 0101| MIX_ELE_A_REV | For VTIAL and Delta-ELEVON A
+|0x60| 0110| MIX_AIL_B_REV| Taileron  Rev
+|0x70| 0111| NORM_REV | Reversed
+
+## Message 0x21 Response: SubTrim info  (Range)
+
+Sends the Left and Right values of the Servo Range (0-2047)
+
+Initial "Center" with 100% travel, 0-Subtrim is (142-1906)
+
+For Every % of travel relative 100, open the range (* 8.8). For example, 101% is (136-1914).
+
+For Every Subtrim number, move the range left/right (*2). For example, a Subtrim of 1, is (144-1908)
+
+if the left value is < 0, use 0.  is the right is > 2047, use 2047.
+
+
+| 4| 5| 6| 7| 8| 9 | 10
 |--|--|--|--|--|--|--
-Msg|Len? | Line# | Line# | 0x00 | Formula(line#)??
-0x20|0x06|0x00|0x00|0x00|0x40 | LastLineLine=0 retrieval
-0x20|0x06|0x01|0x01|0x00|0x01| LastLineLine=1 retrieval
-0x20|0x06|0x02|0x02|0x00|0x02| LastLineLine=2 retrieval
-0x20|0x06|0x03|0x03|0x00|0x04| LastLineLine=3 retrieval
-0x20|0x06|0x04|0x04|0x00|0x00| LastLineLine=4 retrieval
-0x20|0x06|0x05|0x05|0x00|0x00| LastLineLine=5 retrieval
+Msg|Len | Ch# | MSB(left) | LSB(left) | MSB(right) | LSB (right) 
+0x21|0x06|0xCH|0xLL|0xLL|0xRR|0xRR
 
-## Unknown Line Response
-We still don't know what is this for, but we have to retrive them and skip then. Works for main menu, but when it happens in another menus, usually we stay in an infinite loop retrieving line=0
+## Message 0x22: Ch Info END
+Sent when there is no more data for the Ch for multi-line information.
+No channel referenced in the response.
 
-|10|11|12|13|14|15|16|17
-|--|--|--|--|--|--|--|--
-|Resp|Msg|LSB (line#)
-|0x09|0x05|0x00|0x01|0x00|0x00|0x00|0x07
-|0x09|0x05|0x01|0x01|0x00|0x00|0x00|0x07
-
-## Interaction on Main Menu
-This is the normal interaction for the main menu. As you can see, it iterates on the 6 Unknow lines (0..5), and afterwards, it starts sending normal menu lines.
-
-    SEND DSM_getFirstMenuLine(MenuId=0x1000)
-    RESPONSE MenuUknownLine_0x05: LineNum=0  DATA=RX: 09 05 00 01 00 00 00 07 00 00 00 00 00 00 00 00
-    CALL DSM_getNextUknownLine_0x05(LastLine=0)
-    RESPONSE MenuUknownLine_0x05: LineNum=1  DATA=RX: 09 05 01 01 00 00 00 07 00 00 00 00 00 00 00 00
-    CALL DSM_getNextUknownLine_0x05(LastLine=1)
-    RESPONSE MenuUknownLine_0x05: LineNum=2  DATA=RX: 09 05 02 01 00 00 00 07 00 00 00 00 00 00 00 00
-    CALL DSM_getNextUknownLine_0x05(LastLine=2)
-    RESPONSE MenuUknownLine_0x05: LineNum=3  DATA=RX: 09 05 03 01 00 00 00 07 00 00 00 00 00 00 00 00
-    CALL DSM_getNextUknownLine_0x05(LastLine=3)
-    RESPONSE MenuUknownLine_0x05: LineNum=4  DATA=RX: 09 05 04 01 00 00 00 07 00 00 00 00 00 00 00 00
-    CALL DSM_getNextUknownLine_0x05(LastLine=4)
-    RESPONSE MenuUknownLine_0x05: LineNum=5  DATA=RX: 09 05 05 01 00 00 00 07 00 00 00 00 00 00 00 00
-    CALL DSM_getNextUknownLine_0x05(LastLine=5)
-    RESPONSE MenuLine: L[#0 T=M VId=0x1010 Text="Gyro settings"[0xF9]   MId=0x1000 ]
-
-## Other menus
-If it hapen on other menus. Usualy stays in an infinite loop until it crash/exits.
-The screen will show **"Error: Cannot Load Menu Lines from RX"**
-
-The log will look like:
-
-    DSM_getMenu(MenuId=0x104F LastSelectedLine=1)
-    RESPONSE Menu: M[Id=0x104F P=0x0 N=0x0 B=0x1000 Text="First Time Setup"[0x4A]]
-    SEND DSM_getFirstMenuLine(MenuId=0x104F)
-    RESPONSE MenuUknownLine_0x05: LineNum=0  DATA=RX: 09 05 00 01 00 00 00 07 00 00 00 00 00 00 00 00
-    CALL DSM_getNextUknownLine_0x05(LastLine=0)
-    RESPONSE MenuUknownLine_0x05: LineNum=0  DATA=RX: 09 05 00 01 00 00 00 07 00 00 00 00 00 00 00 00
-    ERROR: Received Same menu line
-    CALL DSM_getNextUknownLine_0x05(LastLine=0)
-    RESPONSE MenuUknownLine_0x05: LineNum=0  DATA=RX: 09 05 00 01 00 00 00 07 00 00 00 00 00 00 00 00
-    ERROR: Received Same menu line
-
-We found that sometimes, Overriding LastSelectedLine to 0 solves the problem for some specific menus. Not for all (for other, is the oposite (0->1)). But at least no unknown lines are returned with this hack for AR631/AR637. Maybe others also needed.
-
-**Overriding to Zero is not a good solution for every menu. Some menus needs the LastLine to know the behaviour (for example, Factory Reset the RX, Save Backup, Restore Backup, Enter Bind Mode, Some sensor Calibration). Thats why we cannot do it blindly.**
-
-Here is the current code to fix some of this problems in AR631/AR637.
-Function `DSM_SelLine_HACK()`
-
-    if (ctx.RX.Id == RX.AR637T or ctx.RX.Id == RX.AR637TA or ctx.RX.Id == RX.AR631) then
-        -- AR631/AR637 Hack for "First time Setup" or 
-        -- "First Time AS3X Setup", use 0 instead of the ctx.SelLine=5
-        if (ctx.Menu.MenuId == 0x104F  or ctx.Menu.MenuId==0x1055) then
-            LOG_write("First time Setup Menu HACK: Overrideing LastSelectedLine to ZERO\n")
-            ctx.SelLine = 0
-        end
-        -- DID NOT WORK: AR631/AR637 Hack for "Relearn Servo Settings", use 1 instead 
-        -- of the ctx.SelLine=0
-        --if (ctx.Menu.MenuId == 0x1023) then
-        --    LOG_write("Relearn Servo Settings HACK: Overrideing LastSelectedLine to 1\n")
-        --    ctx.SelLine = 1
-        --end
-
-Now it retrives properly the menu:
-
- Log shows:
-    
-    First time Setup Menu HACK: Overrideing LastSelectedLine to ZERO
-    DSM_getMenu(MenuId=0x104F LastSelectedLine=0)
-    RESPONSE Menu: M[Id=0x104F P=0x0 N=0x0 B=0x105E Text="First Time Setup"[0x4A]]
-    SEND DSM_getFirstMenuLine(MenuId=0x104F)
-    .. Good menu data
+| 4| 5| 6| 7
+|--|--|--|--
+Msg|Len | 0x00| 0x00 
+0x22|0x04|0x00|0x00
 
 
+## Message 0x23 Response: Servo Travel (Percent)
 
+Percent of travel to left and right.  
+Only positive numbers between 0-150%
+
+
+| 4| 5| 6| 7| 8| 9 | 10
+|--|--|--|--|--|--|--
+Msg|Len | Ch# | MSB(left) | LSB(left) | MSB(right) | LSB (right) 
+0x23|0x06|0xCH|0xLL|0xLL|0xRR|0xRR
+
+## Message 0x24: Unknown, 
+
+Same data for every channel. No channel referenced in the reponse
+
+
+DSM_send(0x24, 0x06, 0x00, 0x83, 0x5A, 0xB5)
+
+DSM_send(0x24, 0x06, 0x06, 0x80, 0x25, 0x4B) 
 
 
