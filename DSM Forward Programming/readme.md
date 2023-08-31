@@ -23,8 +23,11 @@ You only have to update the message file `"msg_fwdp_en.txt"` inside `/SCRIPTS/TO
 
 ## Black & White Minimal version
 This is running on a very memory limited FrSky QX7.  You can change the values, but unfortunatly, the code to setup a plane from zero is too big.
-The memory is so tight, that depends on the EdgeTX firmware and compuled options, EdgeTx will leave little or more memory.
-with EdgeTX 2.8.5 works, 2.9.0 is using more, and usually don't run on my QX7. Boxter has a bit more memory.
-Sometimes the very first time, it does not run, simce is doing Compile+Run..  Restart the radio and try again (already compiled, so it will run). 
+The memory is so tight, that depends on the EdgeTX firmware and compiled options
+
+Sometimes the very first time, it does not run, since is doing Compile+Run..  Restart the radio and try again (already compiled, so it will run). 
+
+V0.55 has a change to save a bit of  memory, is not loading ALL the aprox 400 menu messages to memory, but initially parse the file to find the message position in the file, and later when the menu is display, it load the messages for that menu from the SDCard. 
+
 
 ![IMG_3024](https://user-images.githubusercontent.com/32604366/230123260-614f4e5e-9546-4439-9196-db885894083f.jpg)
