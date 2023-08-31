@@ -252,9 +252,15 @@ T |0x00E5|Swash Type
 T |0x00E6|Travel 
 T |0x00E7|Left
 T |0x00E8|Right
+T |0x00EA|Low Throttle
+--
+T |0x00F2|Governor
+T |0x00F4|Soft Start 
 --
 LT|0x00F2|Fixed
 LT|0x00F3|Adjustable
+LT|0x00F4|Inh
+LT|0x00F5|Nitro
 --
 T |0x00F6|Direction
 T |0x00F8|Settings -- ?? validate on a Spektrum radio
@@ -294,6 +300,7 @@ T |0x01EC|Pitch Up
 T |0x01EE|Thr to Pitch
 T |0x01EF|Low Thr to Pitch/c/b
 T |0x01F0|High Thr to Pitch/c/b
+T |0x01F1|Filter
 T |0x01F3|Threshold
 T |0x01F4|Angle
 T |0x01F6|Failsafe Angles/c/b
@@ -402,6 +409,10 @@ T |0x0268|Negative = Nose Down/Roll Left
 T |0x0269|SAFE - Thr to Pitch
 T |0x026A|Use CAUTION for Yaw gain!/b
 --
+T |0x026B|Head Speed
+T |0x026C|Pinion
+T |0x026D|Main Gear
+T |0x026F|RPM Sensor
 T |0x0272|Show Advanced Menus
 --
 T |0x0300|No compatible DSM RX...
