@@ -7,7 +7,9 @@ Thanks to all the people volunteered to test it.
 # NOTE for FC6250HX FC+RX version
 For the full size FC6250HX, Only use V0.55 or newer.
 
-DO NOT use previous versions to do the Swashplate -> RX Orientation. The problem was that it did not have the orientation messages.. and you are choosing blind. The calibration will never stop until you place the RX in the right orientation, even after restarting the RX (if flashing red, is not in the right orientation.. if flashshing white is in the right orientation).
+DO NOT use previous versions to do the Setup -> Gyro Settings -> Orientation. The problem was that it did not have the orientation messages.. and you are were choosing blind. The calibration will never stop until you place the RX in the right orientation, even after restarting the RX (if flashing red, is not in the right orientation.. if flashshing white is in the right orientation).  If you run into this problem, and lights are blinking red, rotate the FC on the longer axis until you get white blinking.. keep it stable, will blink white faster andlet calibration finishes.. after that is back to normal.
+
+OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink white, but when exit FP, will blink red...is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the OpenTX code since it only happens with this helis FC. 
 
 
 # Introduction  (v0.55) LIMITED FUNCTIONALITY
@@ -17,6 +19,9 @@ will not work to setup a plane from zero or a new receiver.
 
 Will continue working on creating a separate program to setup the plane, but will take some time.
 Splitting the functionaluty into multiple tools is the only way to deal with the limited memory.
+
+If the very first time it does not run due to memory, restart the radio and try again.. the very first time is doing compile+run that takes more memory.
+
 
 IF YOU SEE MENU OPTIONS WHO STARTS WITH `DONT USE:` please don't select that option since is not going to work.
 
