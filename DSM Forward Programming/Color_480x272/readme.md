@@ -9,7 +9,7 @@ For the full size FC6250HX, Only use V0.55 or newer.
 
 DO NOT use previous versions to do the Setup -> Gyro Settings -> Orientation. The problem was that it did not have the orientation messages.. and you are were choosing blind. The calibration will never stop until you place the RX in the right orientation, even after restarting the RX (if flashing red, is not in the right orientation.. if flashshing white is in the right orientation).  If you run into this problem, and lights are blinking red, rotate the FC on the longer axis until you get white blinking.. keep it stable, will blink white faster andlet calibration finishes.. after that is back to normal.
 
-When you forward programming you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink red, but is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the EdgeTX/OpenTX code since it only happens with this helis FC. 
+When you enter "forward programming" you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink red, but is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the EdgeTX/OpenTX code since it only happens with this helis FC. 
 
 # Introduction  (v0.55)
 
