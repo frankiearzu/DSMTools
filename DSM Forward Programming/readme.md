@@ -19,7 +19,8 @@ You only have to update the message file `"msg_fwdp_en.txt"` inside `/SCRIPTS/TO
 ![orientation](https://user-images.githubusercontent.com/32604366/230751350-59070e75-afa3-439b-8902-bc7b3b901084.png)
 ![wing-type](https://user-images.githubusercontent.com/32604366/230751370-b4e4355f-a3d2-4c44-aa1a-57861f1ff3da.png)
 
-
+![Heli1](https://github.com/frankiearzu/DSMTools/assets/32604366/acd64fa1-e926-4e9d-85ad-560f43659c88)
+![Heli2](https://github.com/frankiearzu/DSMTools/assets/32604366/b36b8be4-8e09-4265-871e-e4bdae12ffda)
 
 ## Black & White Minimal version
 This is running on a very memory limited FrSky QX7.  You can change the values, but unfortunatly, the code to setup a plane from zero is too big.
