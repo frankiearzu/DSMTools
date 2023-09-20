@@ -23,6 +23,11 @@ Fully functional DSM Forward programming.  You can setup a plane from zero.  Cur
 Have a limited version that will run on smaller screens (128x64) and much less RAM memory, like FrSky QX7, Radimaster TX12/Zorro/Boxer. This version has the name MINimalistic.  You can navigate and change values, but you cannot setup a model from zero. 
 
 ![flight-mode-setup](https://user-images.githubusercontent.com/32604366/230751444-be0a271d-ae94-4cec-aaff-564472ffc800.png)
+![orientation](https://github.com/frankiearzu/DSMTools/assets/32604366/8cf72434-b8bd-46f9-9bef-2d3fcd35d47c)
+![Heli2](https://github.com/frankiearzu/DSMTools/assets/32604366/cab6ee1e-213a-47f9-8e76-8ff5cf459bd3)
+![wing-type](https://github.com/frankiearzu/DSMTools/assets/32604366/455c3193-6b74-48e2-9afa-ffbc901961d7)
+
+
 
 
 ## DSM Telemetry Scripts
@@ -36,6 +41,10 @@ Has been tested on Radiomaster TX16S and FrSky QX7
 
 ![Smart-RX-Tel](https://user-images.githubusercontent.com/32604366/230751833-e92d3eae-2782-4009-a3dc-63ce893f2a38.png)
 ![Smart-RX-Tel2](https://user-images.githubusercontent.com/32604366/230751488-70b396b7-f08e-4152-a516-d355b3cf4001.png)
+![Smart-Tel-ESC](https://github.com/frankiearzu/DSMTools/assets/32604366/af4a0dda-4dff-4740-93c4-6e8e44219e27)
+![Smart-Tel-TextGen](https://github.com/frankiearzu/DSMTools/assets/32604366/cb1c66bb-e856-43d8-88e1-b854ab8e0c56)
+![Smart-Tel-SAFE](https://github.com/frankiearzu/DSMTools/assets/32604366/867970cb-46c6-4d79-9396-c6de32f6bcf5)
+
 
 
 ## EdgeTx Firmware with TextGen
