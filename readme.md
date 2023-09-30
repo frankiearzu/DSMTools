@@ -15,6 +15,12 @@ Some Videos of how to use the tools:
 
 https://www.youtube.com/@franciscoarzu8120
 
+## How to download files from here
+
+Once you navigate to the ".zip" file that you need, use the download button on the right side to download:
+
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/2448e43d-94b8-4d24-b055-f91ac0f9dfdf)
+
 
 ## DSM Forward Programming
 
