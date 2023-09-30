@@ -21,7 +21,7 @@ Tested with Radimaster TX16S and FrSky QX7
 
 ## v1.1  (EdgeTX v2.8.3 or later... no OpenTx)
 
-It uses direct access to the telemetry data (EdgeTX only).  This allow to fix fomating or math problems with the values of the sensors in the tool, instead of the EdgeTX firmware.
+It uses direct access to the telemetry data (EdgeTX only).  This allow to fix fomating or math problems with the values of the sensors in the tool, instead of the EdgeTX firmware. It bypasses the EdgeTX sensors.
 
 A little better presentation, and more screens supported with similar layout as Spektrum Radios.
 Also shows the version of the tools
@@ -29,7 +29,7 @@ Also shows the version of the tools
 
 ## v1.0  (use this for OpenTx / EdgeTX version prior to v2.8.3)
 
-Initial version.. uses the Telemetry sensors to get the data
+Initial version.. uses the EdgeTX Telemetry sensors to get the data.. so you have to do "Discover New" in the EdgeTX telemetry screen. Also if you are adjusting the values via "ratio", use this version.
 
 ## DSM_AR636_Tel.lua
 
