@@ -30,10 +30,10 @@ LT|0x0033|2 X
 LT|0x0034|4 X
 --
 LT|0x0035|Inh
-LT|0x0036|Ch1
-LT|0x0037|Ch2
-LT|0x0038|Ch3
-LT|0x0039|Ch4
+LT|0x0036|Thr
+LT|0x0037|Ail
+LT|0x0038|Ele
+LT|0x0039|Rud
 LT|0x003A|Ch5
 LT|0x003B|Ch6
 LT|0x003C|Ch7
@@ -69,6 +69,10 @@ T |0x0053|Output Channel 3
 T |0x0054|Output Channel 4
 T |0x0055|Output Channel 5
 T |0x0056|Output Channel 6
+T |0x0057|Output Channel 7
+T |0x0058|Output Channel 8
+T |0x0059|Output Channel 9
+T |0x005A|Output Channel 10
 --
 -- FailSafe Options
 --LT|0x005E|Inh
