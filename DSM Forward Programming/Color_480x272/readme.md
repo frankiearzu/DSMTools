@@ -11,7 +11,10 @@ DO NOT use previous versions to do the Setup -> Gyro Settings -> Orientation. Th
 
 OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink white, but when exit FP, will blink red...is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the OpenTX code since it only happens with this helis FC. 
 
-# Introduction  (v0.55)
+# Introduction  (v0.55/v0.55a)
+
+The only difference between v0.55 and v0.55a is a small fix specific for OpenTx.. if you have EdgeTX, both are the same.
+With spektrum constantly updating its firmware, you only need to update the message file if you see in the screen any message "Unknown_xyz".
 
 This script library enhances the original DSM Forward Programming tool. DSM Forward Programming is needed to setup many of the new Spektrum Receivers with Gyro AS3X/SAFE features. For the Gyro (/Safe) to correct the plane in flight, it needs to move the right surfaces therefore the RX needs to know the configuration of the plane (Wing Type, Tail Type, Mixers, Servo Assignments, Servo Reverse). That info tells the RX where the aileron(s) are (one or two), where the elevator(s) are (one or two),  V-Tail, Delta Wing, etc. 
 
@@ -87,6 +90,9 @@ The multi-module is already adjusting the TX/FrSky servo range internally to mat
 ---
 
 # Changes and fixes 
+V0.55a:
+1. Fix loading external messages file for OpenTX.
+   
 V0.55:
 1. Finally found where the TX reports to the RX how many channels is transmiting. The TX now reports itself as a 12ch radio instead of 6h. (DSM Multi-Module limit).  This fixes a few things:
     
