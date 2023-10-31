@@ -10,8 +10,7 @@ Please use:
 - In_Development: New code that is still in testing stages. Unless you want to help test it, don't use it yet.
 
 ## Message Files
-We are constantly updating new messages who appear as "Unknown_XYZ" in the menus with the proper values.
-You only have to update the message file `"msg_fwdp_en.txt"` inside `/SCRIPTS/TOOLS/DSMLIB` 
+With Spektrum constantly updating their firmware, if you see a messages who appear as "Unknown_XYZ", that means that the proper message need to be added to the message file. We try to keep the message file up to date. If you need to update it, You only have to update the message file `"msg_fwdp_en.txt"` inside `/SCRIPTS/TOOLS/DSMLIB`. The `"msg_fwdp_en.txt"` can be downloaded independently from this folder.
 
 ## Color Version
 ![main-menu](https://user-images.githubusercontent.com/32604366/230751340-dd118f36-1884-405b-b12b-81cba16c7321.png)
