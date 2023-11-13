@@ -21,6 +21,8 @@ In 0.56, focused on validating and fixing the Wing and Tail type special mixing.
 - The type of mix applied: for V-Tail, the left/right Elevators (`EleRud`) uses `M_Rud` (Mix Rudder), For Delta, the left/right Ailerons (`AilEle`) uses `M_Ele` (Mix Elevator), and finally the Tailerons, the the left/right Elevators (`AilEle`) uses `M_Ail` (Mix Aileron).  Looks like the Mixes are for the entire RX and only needs to be set in one of the ports, The difference between the "A" and "B" configuration is just if the mix is set on the Master or Slave port (like Taileron_A or Taileron_B) and affects the direction.. sometimes you have to try both. Start by setting the right direction for the primary roll, and then use the A/B configurations. For exmaple, in Taileron, the primary roll is Elevators, the secondary roll is Aileron (Mix Aileron).    Below is a Taileron example: Two independent Elevators and 2 independent ailerons. 
 
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/4bbeb234-c92c-4663-b464-549df1c134a0)
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/f8fa62b4-9843-4d81-9c67-7c8bfcf252f2)
+
 
 
 With spektrum constantly updating its firmware, you only need to update the message file if you see in the screen any message "Unknown_xyz".
