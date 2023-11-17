@@ -11,7 +11,31 @@ DO NOT use previous versions to do the Setup -> Gyro Settings -> Orientation. Th
 
 OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink white, but when exit FP, will blink red...is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the OpenTX code since it only happens with this helis FC. 
 
-# Introduction  (v0.56)
+# Introduction  (v0.56 Black & White  Small Radios)
+
+!!!!!NEW!!!!!!: Finally was able to create the Plane Setup for Smaller Radios
+There is still significant memory limitations in some of this radios, so the Setup and FP was split in two files.
+The file 'DSM FwdPrg_56_STUP.lua' is the new one to create the planes setup that works together with 'DSM FwdPrg_56_MIN.lua'
+
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/be03ad40-3e2f-45e1-8f50-d231c3931169)
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/5010a361-1234-4c83-97b2-2eb6ae0d1061)
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/0d4e04dc-90d7-4322-9ad1-f57cbde49029)
+
+
+## Dealing with Low memory
+On my FrSky QX7 (Probably the one with the lower memory compared to Radiomaster Boxter and maybe Zorro), it will give you "not enouth memory"
+the very first time you try to run it since is compiling + running. Try to run them at least 2 times again, this times wll just run (not compile).
+In some ocations that keeps giving memory problems, i have to restart the radio, and try to run it right after restart.
+
+After it runs fine, and you try to run it the 2nd time and gives "not enouth memory", you have restart the radio.. for me this is random.. 
+sometimes i can run it many times consecutively.. but once it gives memory error, have to restart to be able to run again. 
+
+I am running EdgeTX 2.9.2 (there was some memory cleanup in 2.9.0, and 2.9.1 to get a bit more memory)
+I left version 0.55 in the files, since it uses less memory, it can change the mayority of FP parameters, but cannot setup plane or Relearn Servo Settings
+(don't execute the menus who say 'DON'T USE!!')
+
+
+# Introduction  (v0.56 COLOR)
 
 In 0.56, focused on validating and fixing the Wing and Tail type special mixing. Vtail/Delta was working but Taileron was not. The Gyro Reverse screen now show what type of servo information is sharing with the TX.  This affects the Gyro AS3X and SAFE behaviour, you still needs to set your TX with the proper mixes.
 
@@ -47,8 +71,9 @@ Your TX SDCard should looks like this:
 
     /SCRIPTS/TOOLS/     -- you only need one of the 3 to save some space in your TOOLS screen
         DSM FwdPrg_56_Color.lua   -- Color and touch radios
-        DSM FwdPrg_56_MIN.lua     -- Minimalistic version for radios with LOW memory
+        DSM FwdPrg_56_MIN.lua     -- Minimalistic version for radios with LOW memory (Can setup planes)
         DSM FwdPrg_56_STUP.lua    -- `NEW!` Setup plane for minimalistic version (LOW Memory radios)
+        DSM FwdPrg_55_MIN.lua     -- Uses less memory than v56, but cannot do initial setup of the plane
         
     /SCRIPTS/TOOLS/DSMLIB/        -- (ALL CAPITALS) Libraries ane extra files
             DsmFwPrgLib.lua       -- DSM Protocol Message and Menu   engine
