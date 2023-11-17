@@ -46,9 +46,9 @@ In another window, open your TX SDCard.
 Your TX SDCard should looks like this:
 
     /SCRIPTS/TOOLS/     -- you only need one of the 3 to save some space in your TOOLS screen
-        DSM FwdPrg_05_BW.lua      -- black/white text only 
-        DSM FwdPrg_05_Color.lua   -- Color and touch radios
-        DSM FwdPrg_05_MIN.lua     -- `NEW!` Minimalistic version for radios with LOW memory (cannot setup new planes)
+        DSM FwdPrg_56_Color.lua   -- Color and touch radios
+        DSM FwdPrg_56_MIN.lua     -- Minimalistic version for radios with LOW memory
+        DSM FwdPrg_56_STUP.lua    -- `NEW!` Setup plane for minimalistic version (LOW Memory radios)
         
     /SCRIPTS/TOOLS/DSMLIB/        -- (ALL CAPITALS) Libraries ane extra files
             DsmFwPrgLib.lua       -- DSM Protocol Message and Menu   engine
