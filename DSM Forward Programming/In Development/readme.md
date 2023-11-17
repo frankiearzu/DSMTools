@@ -32,7 +32,7 @@ sometimes i can run it many times consecutively.. but once it gives memory error
 
 I am running EdgeTX 2.9.2 (there was some memory cleanup in 2.9.0, and 2.9.1 to get a bit more memory)
 I left version 0.55 in the files, since it uses less memory, it can change the mayority of FP parameters, but cannot setup plane or Relearn Servo Settings
-(don't execute the menus who say 'DON'T USE!!')
+(don't execute the menus who say 'DON'T USE!!').. v0.55 and v0.56 MINs can co-exist.
 
 
 # Introduction  (v0.56 COLOR)
@@ -128,10 +128,10 @@ The multi-module is already adjusting the TX/FrSky servo range internally to mat
 # Changes and fixes 
 V0.56:
 1. Fix Tail-Type "Taileron" functionality that was not working. Also validated V-Tail and Delta wings.
-2. Gyro-Reverse Screen now shows what information about the Wing/Tail Type is shared with the RX.  
-    - The first is the "Role" of the port (`Ail/Ele/Rud/Thr`). Combination is posible for for special types of wing/tails: Vtail:`EleRud`, Delta & Taileron: `EleAil`.
-    - The 2nd information is if it the Master or Slave (Master is implicit)
-    - The type of mix applied: for V-Tail, the left/right Elevators (`EleRud`) uses M_Rud (Mix Rudder), For Delta, the left/right Ailerons (`AilEle`) uses `M_Ele` (Mix Elevator), and finally the Tailerons, the the left/right Elevators (`AilEle`) uses `M_Ail` (Mix Aileron).  The `-` (Minus) is Reverse. 
+2. Added Taileron and two Rudder config  (Many Freewing Jets like F18,F16, etc)
+3. Gyro-Reverse Screen now shows what is the channel/port used for (Ail, Ele, Rud, etc)
+4. COLOR ONLY: Gyro-Reverse Screen now shows what information that shared with the RX about each channel (Role, Slave, Reverse).
+5. NEW!! Initial version of Plane Setup for B&W radios  
 
 V0.55a:
 1. Fix loading external messages file for OpenTX.
