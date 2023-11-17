@@ -29,6 +29,7 @@ In some ocations that keeps giving memory problems, i have to restart the radio,
 
 After it runs fine, and you try to run it the 2nd time and gives "not enouth memory", you have restart the radio.. for me this is random.. 
 sometimes i can run it many times consecutively.. but once it gives memory error, have to restart to be able to run again. 
+Once it starts, it should work find after... is the statup who loads what it needs to memory.
 
 I am running EdgeTX 2.9.2 (there was some memory cleanup in 2.9.0, and 2.9.1 to get a bit more memory)
 I left version 0.55 in the files, since it uses less memory, it can change the mayority of FP parameters, but cannot setup plane or Relearn Servo Settings
