@@ -17,10 +17,16 @@ OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and 
 There is still significant memory limitations in some of this radios, so the Setup and FP was split in two files.
 The file 'DSM FwdPrg_56_STUP.lua' is the new one to create the planes setup that works together with 'DSM FwdPrg_56_MIN.lua'
 
+# How to Use it
+
+1. Make sure that the /MODELS/DSMDATA folder exist.
+2. Run the "DSM FwdPrg_56_STUP" first to setup the plane wing, tail and channels to use for each surface. At the end it will ask you to "save" the configuration. That saves a file in the /MODELS/DSMDATA folder.
+
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/be03ad40-3e2f-45e1-8f50-d231c3931169)
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/5010a361-1234-4c83-97b2-2eb6ae0d1061)
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/0d4e04dc-90d7-4322-9ad1-f57cbde49029)
 
+3. Run the "DSM FwdPrg_56_MIN". It uses the model configuration created in step #2 to properly tell the receiver the plane configuration for initial setup.  If you get "Cannot load model config", that means that the file was not created on step #2.   Once it shows the intial forward programming page for your receiver, usuall "Gyro Settings and Other Settings". You can properly setup the a plane from initial setup... if you are not familiar with this step, view some of the videos. There are already multiple videos showing how to do it EdgeTX color version, or the Spektrum official videos, the menus are the same.
 
 ## Dealing with Low memory
 On my FrSky QX7 (Probably the one with the lower memory compared to Radiomaster Boxter and maybe Zorro), it will give you "not enouth memory"
