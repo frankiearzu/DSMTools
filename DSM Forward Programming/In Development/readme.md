@@ -12,8 +12,9 @@ The file 'DSM FwdPrg_56_STUP.lua' is the new one to create the planes setup that
 
 # How to Use it
 
-1. Make sure that the /MODELS/DSMDATA folder exist.
-2. Run the "DSM FwdPrg_56_STUP" first to setup the plane wing, tail and channels to use for each surface. At the end it will ask you to "save" the configuration. That saves a file in the /MODELS/DSMDATA folder.
+Step #1: Make sure that the /MODELS/DSMDATA folder exist.
+
+Step #2: Run the "DSM FwdPrg_56_STUP" first to setup the plane wing, tail and channels to use for each surface. At the end it will ask you to "save" the configuration. That saves a file in the /MODELS/DSMDATA folder.
 
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/be03ad40-3e2f-45e1-8f50-d231c3931169)
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/5010a361-1234-4c83-97b2-2eb6ae0d1061)
@@ -22,7 +23,7 @@ The file 'DSM FwdPrg_56_STUP.lua' is the new one to create the planes setup that
 Why the RX needs to know the Plane Setup??   The AS3X/Gyro and SAFE needs to know what surfaces to move to do the proper correction in flight. It needs to know what channels are you using for ailerons, elevarors and rudders (could be 1 or 2 of each). Also if you have special Wing like a delta wing, the elevator and aileron functions are on the same channels.. same with V-Trails, Ruder/Elevator are combined. All this information is shared with the RX during "First Time Setup" as well as "Relearn Servo Setting".   Older version of 0.55 MIN hardcoded this info to be a plain 4-ch regular plane, thats why we discourage to use those function.
 
 
-3. Run the "DSM FwdPrg_56_MIN". It uses the model configuration created in step #2 to properly tell the receiver the plane configuration for initial setup.  If you get "Cannot load model config", that means that the file was not created on step #2.   Once it shows the intial forward programming page for your receiver, usuall "Gyro Settings and Other Settings". You can properly setup the a plane from initial setup... if you are not familiar with this step, view some of the videos. There are already multiple videos showing how to do it EdgeTX color version, or the Spektrum official videos, the menus are the same.
+Step #3: Run the "DSM FwdPrg_56_MIN". It uses the model configuration created in step #2 to properly tell the receiver the plane configuration for initial setup.  If you get "Cannot load model config", that means that the file was not created on step #2.   Once it shows the intial forward programming page for your receiver, usuall "Gyro Settings and Other Settings". You can properly setup the a plane from initial setup... if you are not familiar with this step, view some of the videos. There are already multiple videos showing how to do it EdgeTX color version, or the Spektrum official videos, the menus are the same.
 
 
 ## Dealing with Low memory
