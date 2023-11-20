@@ -4,13 +4,6 @@ Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
 
-# NOTE for FC6250HX FC+RX version
-For the full size FC6250HX, Only use V0.55 or newer.
-
-DO NOT use previous versions to do the Setup -> Gyro Settings -> Orientation. The problem was that it did not have the orientation messages.. and you are were choosing blind. The calibration will never stop until you place the RX in the right orientation, even after restarting the RX (if flashing red, is not in the right orientation.. if flashshing white is in the right orientation).  If you run into this problem, and lights are blinking red, rotate the FC on the longer axis until you get white blinking.. keep it stable, will blink white faster andlet calibration finishes.. after that is back to normal.
-
-OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink white, but when exit FP, will blink red...is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the OpenTX code since it only happens with this helis FC. 
-
 # Introduction  (v0.56 Black & White  Small Radios)
 
 !!!!!NEW!!!!!!: Finally was able to create the Plane Setup for Smaller Radios
@@ -26,7 +19,11 @@ The file 'DSM FwdPrg_56_STUP.lua' is the new one to create the planes setup that
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/5010a361-1234-4c83-97b2-2eb6ae0d1061)
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/0d4e04dc-90d7-4322-9ad1-f57cbde49029)
 
+Why the RX needs to know the Plane Setup??   The AS3X/Gyro and SAFE needs to know what surfaces to move to do the proper correction in flight. It needs to know what channels are you using for ailerons, elevarors and rudders (could be 1 or 2 of each). Also if you have special Wing like a delta wing, the elevator and aileron functions are on the same channels.. same with V-Trails, Ruder/Elevator are combined.
+
+
 3. Run the "DSM FwdPrg_56_MIN". It uses the model configuration created in step #2 to properly tell the receiver the plane configuration for initial setup.  If you get "Cannot load model config", that means that the file was not created on step #2.   Once it shows the intial forward programming page for your receiver, usuall "Gyro Settings and Other Settings". You can properly setup the a plane from initial setup... if you are not familiar with this step, view some of the videos. There are already multiple videos showing how to do it EdgeTX color version, or the Spektrum official videos, the menus are the same.
+
 
 ## Dealing with Low memory
 On my FrSky QX7 (Probably the one with the lower memory compared to Radiomaster Boxter and maybe Zorro), it will give you "not enouth memory"
@@ -41,7 +38,6 @@ I am running EdgeTX 2.9.2 (there was some memory cleanup in 2.9.0, and 2.9.1 to 
 I left version 0.55 in the files, since it uses less memory, it can change the mayority of FP parameters, but cannot setup plane or Relearn Servo Settings
 (don't execute the menus who say 'DON'T USE!!').. v0.55 and v0.56 MINs can co-exist.
 
-
 # Introduction  (v0.56 COLOR)
 
 In 0.56, focused on validating and fixing the Wing and Tail type special mixing. Vtail/Delta was working but Taileron was not. The Gyro Reverse screen now show what type of servo information is sharing with the TX.  This affects the Gyro AS3X and SAFE behaviour, you still needs to set your TX with the proper mixes.
@@ -54,8 +50,6 @@ In 0.56, focused on validating and fixing the Wing and Tail type special mixing.
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/4bbeb234-c92c-4663-b464-549df1c134a0)
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/f8fa62b4-9843-4d81-9c67-7c8bfcf252f2)
 
-
-
 With spektrum constantly updating its firmware, you only need to update the message file if you see in the screen any message "Unknown_xyz".
 
 This script library enhances the original DSM Forward Programming tool. DSM Forward Programming is needed to setup many of the new Spektrum Receivers with Gyro AS3X/SAFE features. For the Gyro (/Safe) to correct the plane in flight, it needs to move the right surfaces therefore the RX needs to know the configuration of the plane (Wing Type, Tail Type, Mixers, Servo Assignments, Servo Reverse). That info tells the RX where the aileron(s) are (one or two), where the elevator(s) are (one or two),  V-Tail, Delta Wing, etc. 
@@ -63,6 +57,13 @@ This script library enhances the original DSM Forward Programming tool. DSM Forw
 Since EdgeTx/OpenTx doesn’t have an equivalent setup that is stored in the radio, we have to create our own version. This info is stored inside the `/MODELS/DSMDATA` directory/folder (which needs to be created by manually).
 
 During `"Gyro Settings->initial setup"`, the RX asks the TX for model information behind the scenes.  After setup, `"Gyro Settings->System Tools-> Relearn Servo Settings"` requests the TX servo configuration and stores it in the RX. 
+
+# NOTE for FC6250HX FC+RX version
+For the full size FC6250HX, Only use V0.55 or newer.
+
+DO NOT use previous versions to do the Setup -> Gyro Settings -> Orientation. The problem was that it did not have the orientation messages.. and you are were choosing blind. The calibration will never stop until you place the RX in the right orientation, even after restarting the RX (if flashing red, is not in the right orientation.. if flashshing white is in the right orientation).  If you run into this problem, and lights are blinking red, rotate the FC on the longer axis until you get white blinking.. keep it stable, will blink white faster andlet calibration finishes.. after that is back to normal.
+
+OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink white, but when exit FP, will blink red...is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the OpenTX code since it only happens with this helis FC. 
 
 # Deployment
 
