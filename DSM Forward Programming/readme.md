@@ -6,7 +6,7 @@ Thanks to all the people volunteered to test it.
 
 Please use:
 - Color_480x272:  for Radiomaster TX16S or equivalent screen (480x272)
-- Black_White:    (Beta Version for MINimal memory usage) for older radios (Smaller screens 128x64 and limited memory)
+- Black_White:    MINimal memory usage for older radios (Smaller screens 128x64 and limited memory)
 - In_Development: New code that is still in testing stages. Unless you want to help test it, don't use it yet.
 
 ## Message Files
