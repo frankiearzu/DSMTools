@@ -22,12 +22,10 @@ With Spektrum constantly updating their firmware, if you see a messages who appe
 ![Heli2](https://github.com/frankiearzu/DSMTools/assets/32604366/b36b8be4-8e09-4265-871e-e4bdae12ffda)
 
 ## Black & White Minimal version
-This is running on a very memory limited FrSky QX7.  You can change the values, but unfortunatly, the code to setup a plane from zero is too big.
-The memory is so tight, that depends on the EdgeTX firmware and compiled options
+Starting at V0.56, now you can setup completly planes from zero.  V0.55 was limited to only change some parameters.
+There is still significan memory limitations in older radios, but i think with some tricks/restarts it will run on older radios. Please read the part "Dealing with memory problems".   Newer radios like the RM Boxter and TX12 Mk2 has more memory and should run without issues.
 
-Sometimes the very first time, it does not run, since is doing Compile+Run..  Restart the radio and try again (already compiled, so it will run). 
-
-V0.55 has a change to save a bit of  memory, is not loading ALL the aprox 400 menu messages to memory, but initially parse the file to find the message position in the file, and later when the menu is display, it load the messages for that menu from the SDCard. 
-
-
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/be03ad40-3e2f-45e1-8f50-d231c3931169)
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/5010a361-1234-4c83-97b2-2eb6ae0d1061)
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/0d4e04dc-90d7-4322-9ad1-f57cbde49029)
 ![IMG_3024](https://user-images.githubusercontent.com/32604366/230123260-614f4e5e-9546-4439-9196-db885894083f.jpg)
