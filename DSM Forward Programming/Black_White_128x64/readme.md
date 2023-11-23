@@ -4,27 +4,40 @@ Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
 
-# NOTE for FC6250HX FC+RX version
-For the full size FC6250HX, Only use V0.55 or newer.
+# Introduction  (v0.56 Black & White  Small Radios)
 
-DO NOT use previous versions to do the Setup -> Gyro Settings -> Orientation. The problem was that it did not have the orientation messages.. and you are were choosing blind. The calibration will never stop until you place the RX in the right orientation, even after restarting the RX (if flashing red, is not in the right orientation.. if flashshing white is in the right orientation).  If you run into this problem, and lights are blinking red, rotate the FC on the longer axis until you get white blinking.. keep it stable, will blink white faster andlet calibration finishes.. after that is back to normal.
+!!!!!NEW!!!!!!: Finally was able to create the Plane Setup for Smaller Radios
+There is still significant memory limitations in some of this radios, so the Setup and FP was split in two files.
+The file 'DSM FwdPrg_56_STUP.lua' is the new one to create the planes setup that works together with 'DSM FwdPrg_56_MIN.lua'
 
-OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink white, but when exit FP, will blink red...is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the OpenTX code since it only happens with this helis FC. 
+# How to Use it
+
+Step #1: Make sure that the /MODELS/DSMDATA folder exist.
+
+Step #2: Run the "DSM FwdPrg_56_STUP" first to setup the plane wing, tail and channels to use for each surface. At the end it will ask you to "save" the configuration. That saves a file in the /MODELS/DSMDATA folder.
+
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/be03ad40-3e2f-45e1-8f50-d231c3931169)
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/5010a361-1234-4c83-97b2-2eb6ae0d1061)
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/0d4e04dc-90d7-4322-9ad1-f57cbde49029)
+
+Why the RX needs to know the Plane Setup??   The AS3X/Gyro and SAFE needs to know what surfaces to move to do the proper correction in flight. It needs to know what channels are you using for ailerons, elevarors and rudders (could be 1 or 2 of each). Also if you have special Wing like a delta wing, the elevator and aileron functions are on the same channels.. same with V-Trails, Ruder/Elevator are combined. All this information is shared with the RX during "First Time Setup" as well as "Relearn Servo Setting".   Older version of 0.55 MIN hardcoded this info to be a plain 4-ch regular plane, thats why we discourage to use those function.
 
 
-# Introduction  (v0.55) LIMITED FUNCTIONALITY
-
-Many of the 128x64 small screen radios has very limited memory.  Currently this version only supports changing existing setting, but
-will not work to setup a plane from zero or a new receiver.
-
-Will continue working on creating a separate program to setup the plane, but will take some time.
-Splitting the functionaluty into multiple tools is the only way to deal with the limited memory.
-
-If the very first time it does not run due to memory, restart the radio and try again.. the very first time is doing compile+run that takes more memory.
+Step #3: Run the "DSM FwdPrg_56_MIN". It uses the model configuration created in step #2 to properly tell the receiver the plane configuration for initial setup.  If you get "Cannot load model config", that means that the file was not created on step #2.   Once it shows the intial forward programming page for your receiver, usuall "Gyro Settings and Other Settings". You can properly setup the a plane from initial setup... if you are not familiar with this step, view some of the videos. There are already multiple videos showing how to do it EdgeTX color version, or the Spektrum official videos, the menus are the same.
 
 
-IF YOU SEE MENU OPTIONS WHO STARTS WITH `DONT USE:` please don't select that option since is not going to work.
+## Dealing with Low memory
+On my FrSky QX7 (Probably the one with the lower memory compared to Radiomaster Boxter and maybe Zorro), it will give you "not enouth memory"
+the very first time you try to run it since is compiling + running. Try to run them at least 2 times again, this times wll just run (not compile).
+In some ocations that keeps giving memory problems, i have to restart the radio, and try to run it right after restart.
 
+After it runs fine, and you try to run it the 2nd time and gives "not enouth memory", you have restart the radio.. for me this is random.. 
+sometimes i can run it many times consecutively.. but once it gives memory error, have to restart to be able to run again. 
+Once it starts, it should work find after... is the statup who loads what it needs to memory.
+
+I am running EdgeTX 2.9.2 (there was some memory cleanup in 2.9.0, and 2.9.1 to get a bit more memory)
+I left version 0.55 in the files, since it uses less memory, it can change the mayority of FP parameters, but cannot setup plane or Relearn Servo Settings
+(don't execute the menus who say 'DON'T USE!!').. v0.55 and v0.56 MINs can co-exist.
 
 # Deployment
 
@@ -38,9 +51,13 @@ When upgrading from a previous version of this tool, delete your `/SCRIPTS/TOOLS
 For the MINimalistic version, Your TX SDCard should looks like this:
 
     /SCRIPTS/TOOLS
-        DsmFwdPrg_05_MIN.lua     -- black/white 128x64 Minimal version 
+        DSM FwdPrg_56_MIN.lua     -- Minimalistic version for radios with LOW memory (Can setup planes)
+        DSM FwdPrg_56_STUP.lua    -- `NEW!` Setup plane for minimalistic version (LOW Memory radios)
+        DSM FwdPrg_55_MIN.lua     -- Uses less memory than v56, but cannot do initial setup of the plane
 
     /SCRIPTS/TOOLS/DSMLIB/       -- (ALL CAPITALS) Libraries ane extra files
+        DsmFwPrgMIN_P1.lua            -- Part1 of extra files for Min
+        DsmFwPrgMIN_P2.lua            -- Part2 of extra files for Min
         msg_fwdp_en.txt               -- Menu messages in English  (common for all radios)
         MIN_msg_fwdp_en.txt           -- Menu messages in English  (overrides for 128x164 resolution)
 
@@ -48,7 +65,12 @@ For the MINimalistic version, Your TX SDCard should looks like this:
 
     /LOGS/dsm_log.txt		       	--Readable log of the last RX/TX session, usefull for debugging problems
 
+# NOTE for FC6250HX FC+RX version
+For the full size FC6250HX, Only use V0.55 or newer.
 
+DO NOT use previous versions to do the Setup -> Gyro Settings -> Orientation. The problem was that it did not have the orientation messages.. and you are were choosing blind. The calibration will never stop until you place the RX in the right orientation, even after restarting the RX (if flashing red, is not in the right orientation.. if flashshing white is in the right orientation).  If you run into this problem, and lights are blinking red, rotate the FC on the longer axis until you get white blinking.. keep it stable, will blink white faster andlet calibration finishes.. after that is back to normal.
+
+OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink white, but when exit FP, will blink red...is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the OpenTX code since it only happens with this helis FC. 
 
 # Common Questions
 1. `RX not accepting channels higher than Ch6 for Flight-mode o Gains:`
