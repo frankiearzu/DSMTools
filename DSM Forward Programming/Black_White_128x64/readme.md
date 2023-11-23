@@ -39,6 +39,9 @@ I am running EdgeTX 2.9.2 (there was some memory cleanup in 2.9.0, and 2.9.1 to 
 I left version 0.55 in the files, since it uses less memory, it can change the mayority of FP parameters, but cannot setup plane or Relearn Servo Settings
 (don't execute the menus who say 'DON'T USE!!').. v0.55 and v0.56 MINs can co-exist.
 
+Video of how to deal with memory:
+https://www.youtube.com/watch?v=kG3RfVa_brU
+
 # Deployment
 
 Uncompress the Zip file (ZIP version) into your local computer.
