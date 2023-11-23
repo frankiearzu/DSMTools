@@ -84,10 +84,13 @@ OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and 
 
 
 # Changes and fixes 
-V0.54 Beta:
-- First version for the small screens, and limited memory.  Only can change existing values, it cannot setup a brand new plane or new RX from Zero
-- Fix problem on editing the SAFE Mode Attitude Trim
-- First version with externalize merges, so that it can be translated to other languages
+
+v0.56:
+1. Fix Tail-Type "Taileron" functionality that was not working. Also validated V-Tail and Delta wings.
+2. Added Taileron and two Rudder config (Many Freewing Jets like F18,F16, etc)
+3. Gyro-Reverse Screen now shows what is the channel/port used for (Ail, Ele, Rud, etc)
+4. COLOR ONLY: Gyro-Reverse Screen now shows what information that shared with the RX about each channel (Role, Slave, Reverse).
+5. NEW!! Initial version of Plane Setup for B&W radios
 
 V0.55:
 1. Finally found where the TX reports to the RX how many channels is transmiting. The TX now reports itself as a 12ch radio instead of 6h. (DSM Multi-Module limit).  This fixes a few things:
@@ -104,6 +107,11 @@ V0.55:
 
 3. Support for FC6250HX (the one with separate RX).. Setup Swashplate type, RX orientation works properly.. This are menu options that the smaller version that comes in the
 Blade 230S did not have.
+
+V0.54 Beta:
+- First version for the small screens, and limited memory.  Only can change existing values, it cannot setup a brand new plane or new RX from Zero
+- Fix problem on editing the SAFE Mode Attitude Trim
+- First version with externalize merges, so that it can be translated to other languages
 
 # Tested Radios and RXs
 - Radio: FrSky QX7:   Due to limited memory, could be that the first time is does not start (not enouth memory to compile+run), but try again after a fresh TX restart.
