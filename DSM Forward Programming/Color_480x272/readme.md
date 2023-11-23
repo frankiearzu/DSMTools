@@ -4,17 +4,23 @@ Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
 
-# NOTE for FC6250HX FC+RX version
-For the full size FC6250HX, Only use V0.55 or newer.
+# Introduction  (v0.56)
 
-DO NOT use previous versions to do the Setup -> Gyro Settings -> Orientation. The problem was that it did not have the orientation messages.. and you are were choosing blind. The calibration will never stop until you place the RX in the right orientation, even after restarting the RX (if flashing red, is not in the right orientation.. if flashshing white is in the right orientation).  If you run into this problem, and lights are blinking red, rotate the FC on the longer axis until you get white blinking.. keep it stable, will blink white faster andlet calibration finishes.. after that is back to normal.
+NOTE: Unless you use special tail types, probably not worth the upgrade. The changes are mostly cosmetic on the Gyro Reverse page to show extra information.
 
-OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink white, but when exit FP, will blink red...is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the OpenTX code since it only happens with this helis FC. 
+In 0.56, focused on validating and fixing the Wing and Tail type special mixing. Vtail/Delta was working but Taileron was not. The Gyro Reverse screen now show what type of servo information is sharing with the TX.  This affects the Gyro AS3X and SAFE behaviour, you still needs to set your TX with the proper mixes to do V-Tail/Taileron/etc.
 
-# Introduction  (v0.55/v0.55a)
+- The first is the "Role" of the port (`Ail/Ele/Rud/Thr`). Combination is posible for for special types of wing/tails: Vtail:`EleRud`, Delta & Taileron: `AilEle`.
+- The `-` (Minus) is Reverse.
+- Information is if it the Master or Slave (Master is implicit)
+- The type of mix applied: for V-Tail, the left/right Elevators (`EleRud`) uses `M_Rud` (Mix Rudder), For Delta, the left/right Ailerons (`AilEle`) uses `M_Ele` (Mix Elevator), and finally the Tailerons, the the left/right Elevators (`AilEle`) uses `M_Ail` (Mix Aileron).  Looks like the Mixes are for the entire RX and only needs to be set in one of the ports, The difference between the "A" and "B" configuration is just if the mix is set on the Master or Slave port (like Taileron_A or Taileron_B) and affects the direction.. sometimes you have to try both. Start by setting the right direction for the primary roll, and then use the A/B configurations. For exmaple, in Taileron, the primary roll is Elevators, the secondary roll is Aileron (Mix Aileron).    Below is a Taileron example: Two independent Elevators and 2 independent ailerons. 
 
-The only difference between v0.55 and v0.55a is a small fix specific for OpenTx.. if you have EdgeTX, both are the same.
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/4bbeb234-c92c-4663-b464-549df1c134a0)
+![image](https://github.com/frankiearzu/DSMTools/assets/32604366/f8fa62b4-9843-4d81-9c67-7c8bfcf252f2)
+
+
 With spektrum constantly updating its firmware, you only need to update the message file if you see in the screen any message "Unknown_xyz".
+
 
 This script library enhances the original DSM Forward Programming tool. DSM Forward Programming is needed to setup many of the new Spektrum Receivers with Gyro AS3X/SAFE features. For the Gyro (/Safe) to correct the plane in flight, it needs to move the right surfaces therefore the RX needs to know the configuration of the plane (Wing Type, Tail Type, Mixers, Servo Assignments, Servo Reverse). That info tells the RX where the aileron(s) are (one or two), where the elevator(s) are (one or two),  V-Tail, Delta Wing, etc. 
 
@@ -24,7 +30,7 @@ During `"Gyro Settings->initial setup"`, the RX asks the TX for model informatio
 
 # Deployment
 
-When upgrading from a previous version of this tool, delete your /SCRIPTS/TOOLS/DSMLIB before copying the new one (if you customized your images, inside "DSMLIB/img" do a backup first)
+When upgrading from a previous version of this tool, delete your /SCRIPTS/TOOLS/DSMLIB before copying the new one (if you customized your images, inside "DSMLIB/img" do a backup first). Also you can delete the previous DSM_FwdProg*.* from /SCRIPTS/TOOLS.
 
 Uncompress the Zip file (ZIP version) into your local computer.
 In another window, open your TX SDCard.
@@ -35,9 +41,8 @@ In another window, open your TX SDCard.
 Your TX SDCard should looks like this:
 
     /SCRIPTS/TOOLS/     -- you only need one of the 3 to save some space in your TOOLS screen
-        DSM FwdPrg_05_BW.lua      -- black/white text only 
-        DSM FwdPrg_05_Color.lua   -- Color and touch radios
-        DSM FwdPrg_05_MIN.lua     -- `NEW!` Minimalistic version for radios with LOW memory (cannot setup new planes)
+        DSM FwdPrg_56_Color.lua   -- Color and touch radios
+
         
     /SCRIPTS/TOOLS/DSMLIB/        -- (ALL CAPITALS) Libraries ane extra files
             DsmFwPrgLib.lua       -- DSM Protocol Message and Menu   engine
@@ -53,7 +58,12 @@ Other Directories
     /MODELS/DSMDATA                 --(ALL CAPITALS) Data of model config (Wing Type, Servo Assignments)
     /LOGS/dsm_log.txt		    --Readable log of the last RX/TX session, usefull for debugging problems
 
+# NOTE for FC6250HX FC+RX version
+For the full size FC6250HX, Only use V0.55 or newer.
 
+DO NOT use previous versions to do the Setup -> Gyro Settings -> Orientation. The problem was that it did not have the orientation messages.. and you are were choosing blind. The calibration will never stop until you place the RX in the right orientation, even after restarting the RX (if flashing red, is not in the right orientation.. if flashshing white is in the right orientation).  If you run into this problem, and lights are blinking red, rotate the FC on the longer axis until you get white blinking.. keep it stable, will blink white faster andlet calibration finishes.. after that is back to normal.
+
+OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink white, but when exit FP, will blink red...is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the OpenTX code since it only happens with this helis FC. 
 
 # Common Questions
 1. `RX not accepting channels higher than Ch6 for Flight-mode o Gains:`
@@ -90,6 +100,14 @@ The multi-module is already adjusting the TX/FrSky servo range internally to mat
 ---
 
 # Changes and fixes 
+V0.56:
+
+1. Fix Tail-Type "Taileron" functionality that was not working. Also validated V-Tail and Delta wings.
+2. Added Taileron and two Rudder config (Many Freewing Jets like F18,F16, etc)
+3. Gyro-Reverse Screen now shows what is the channel/port used for (Ail, Ele, Rud, etc)
+4. COLOR ONLY: Gyro-Reverse Screen now shows what information that shared with the RX about each channel (Role, Slave, Reverse).
+5. NEW!! Initial version of Plane Setup for B&W radios
+
 V0.55a:
 1. Fix loading external messages file for OpenTX.
    
