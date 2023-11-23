@@ -23,7 +23,7 @@ With Spektrum constantly updating their firmware, if you see a messages who appe
 
 ## Black & White Minimal version
 Starting at V0.56, now you can setup completly planes from zero.  V0.55 was limited to only change some parameters.
-There is still significan memory limitations in older radios, but i think with some tricks/restarts it will run on older radios. Please read the part "Dealing with memory problems".   Newer radios like the RM Boxter and TX12 Mk2 has more memory and should run without issues.
+There is still significant memory limitations in older radios, but i think with some tricks/restarts it will run on older radios. Please read the part "Dealing with memory problems".   Newer radios like the RM Boxter and TX12 Mk2 has more memory and should run without issues.
 
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/be03ad40-3e2f-45e1-8f50-d231c3931169)
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/5010a361-1234-4c83-97b2-2eb6ae0d1061)
