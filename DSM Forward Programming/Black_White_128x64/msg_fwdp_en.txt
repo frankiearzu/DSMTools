@@ -258,6 +258,7 @@ T |0x00E7|Left
 T |0x00E8|Right
 T |0x00EA|Low Throttle
 --
+T |0x00F1|Deadband
 T |0x00F2|Governor
 T |0x00F4|Soft Start 
 --
