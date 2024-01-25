@@ -3,6 +3,17 @@ Code is based on the code/work by: Pascal Langer (Author of the Multi-Module)
 Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
+# Note
+
+Due to memory, it will not run on all radios. So far this is what we know.
+
+1. FrSky Taranis X9D:  Not enouth memory
+2. FrSky Taranis QX7:  Works sometimes.. see note related to memory usage below
+3. Radimaster  TX12:  No reports yet
+4. Radimaster TX12 MK2: yes
+5. Radiomaster Zorro: Yes
+6. Radiomaster Boxter: Yes
+
 
 # Introduction  (v0.56 Black & White  Small Radios)
 
