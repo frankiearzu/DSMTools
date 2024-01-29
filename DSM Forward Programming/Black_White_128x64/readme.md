@@ -13,6 +13,7 @@ Due to memory, it will not run on all radios. So far this is what we know.
 4. Radimaster TX12 MK2: yes
 5. Radiomaster Zorro: Yes
 6. Radiomaster Boxter: Yes
+7. Radiomaster Pocket w 4-in-1: yes
 
 
 # Introduction  (v0.56 Black & White  Small Radios)
