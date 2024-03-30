@@ -80,6 +80,7 @@ LT|0x005F|Hold Last
 LT|0x0060|Preset
 --LT|0x0061|Custom
 --
+LT|0x0070|SRXL2
 T |0x0071|Proportional
 T |0x0072|Integral
 T |0x0073|Derivate
