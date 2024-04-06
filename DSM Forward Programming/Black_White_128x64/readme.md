@@ -8,12 +8,13 @@ Thanks to all the people volunteered to test it.
 Due to memory, it will not run on all radios. So far this is what we know.
 
 1. FrSky Taranis X9D:  Not enouth memory
-2. FrSky Taranis QX7:  Works sometimes.. see note related to memory usage below
-3. Radimaster  TX12:  No reports yet
-4. Radimaster TX12 MK2: yes
-5. Radiomaster Zorro: Yes
-6. Radiomaster Boxter: Yes
-7. Radiomaster Pocket w 4-in-1: yes
+2. FrSky Taranis X9D+ 2019: works
+3. FrSky Taranis QX7:  Works sometimes.. see note related to memory usage below
+4. Radimaster  TX12:  No reports yet
+5. Radimaster TX12 MK2: yes
+6. Radiomaster Zorro: Yes
+7. Radiomaster Boxter: Yes
+8. Radiomaster Pocket w 4-in-1: yes
 
 
 # Introduction  (v0.56 Black & White  Small Radios)
