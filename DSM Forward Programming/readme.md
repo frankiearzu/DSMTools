@@ -4,6 +4,9 @@ Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
 
+IMPORTANT: v0.57 is a workaround to problem on EdgeTX 2.10.x where LUA scripts writting to the /LOGS folder on some ocations can corrupt the /LOGS directiry  (you will see filenames with weird naming and garbage).
+This version has writting to the logs turned OFF.  Besides that is the same as 0.57
+
 Please use:
 - Color_480x272:  for Radiomaster TX16S or equivalent screen (480x272)
 - Black_White:    MINimal memory usage for older radios (Smaller screens 128x64 and limited memory)

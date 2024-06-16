@@ -4,9 +4,10 @@ Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
 
-# Introduction  (v0.56)
+# Introduction  (v0.57)
 
-NOTE: Unless you use special tail types, probably not worth the upgrade. The changes are mostly cosmetic on the Gyro Reverse page to show extra information.
+IMPORTANT: v0.57 is a workaround to problem on EdgeTX 2.10.x where LUA scripts writting to the /LOGS folder on some ocations can corrupt the /LOGS directiry  (you will see filenames with weird naming and garbage).
+This version has writting to the logs turned OFF.  Besides that is the same as 0.57
 
 In 0.56, focused on validating and fixing the Wing and Tail type special mixing. Vtail/Delta was working but Taileron was not. The Gyro Reverse screen now show what type of servo information is sharing with the TX.  This affects the Gyro AS3X and SAFE behaviour, you still needs to set your TX with the proper mixes to do V-Tail/Taileron/etc.
 
@@ -41,7 +42,7 @@ In another window, open your TX SDCard.
 Your TX SDCard should looks like this:
 
     /SCRIPTS/TOOLS/     -- you only need one of the 3 to save some space in your TOOLS screen
-        DSM FwdPrg_56_Color.lua   -- Color and touch radios
+        DSM FwdPrg_57_Color.lua   -- Color and touch radios
 
         
     /SCRIPTS/TOOLS/DSMLIB/        -- (ALL CAPITALS) Libraries ane extra files
@@ -100,6 +101,8 @@ The multi-module is already adjusting the TX/FrSky servo range internally to mat
 ---
 
 # Changes and fixes 
+v0.57:
+1.  In EdgeTX 2.10.x, sometimes the /LOGS dirctory/folder gets currupted after using some Lua scripts who writes to the logs. To avoid any problems, this version has the writting to the logs turned OFF.  It can be turn on later if needed for debuging purposes. Besides that, is the same as v0.56
 V0.56:
 
 1. Fix Tail-Type "Taileron" functionality that was not working. Also validated V-Tail and Delta wings.
