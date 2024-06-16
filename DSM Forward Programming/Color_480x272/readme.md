@@ -6,7 +6,7 @@ Thanks to all the people volunteered to test it.
 
 # Introduction  (v0.57)
 
-**IMPORTANT:** v0.57 is a workaround to problem on EdgeTX 2.10.x where LUA scripts writting to the /LOGS folder on some ocations can corrupt the /LOGS directiry  (you will see filenames with weird naming and garbage).
+**IMPORTANT:** v0.57 is a workaround to problem on EdgeTX 2.10.x where LUA scripts writting to the /LOGS folder on some ocations can corrupt the /LOGS directory  (you will see filenames with weird naming and garbage).
 This version has writting to the logs turned OFF.  Besides that is the same as 0.56. See the DEPLOYMENT section below for upgrade instructions.
 
 In 0.56, focused on validating and fixing the Wing and Tail type special mixing. Vtail/Delta was working but Taileron was not. The Gyro Reverse screen now show what type of servo information is sharing with the TX.  This affects the Gyro AS3X and SAFE behaviour, you still needs to set your TX with the proper mixes to do V-Tail/Taileron/etc.
