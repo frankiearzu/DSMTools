@@ -103,8 +103,8 @@ The multi-module is already adjusting the TX/FrSky servo range internally to mat
 # Changes and fixes 
 v0.57:
 1.  In EdgeTX 2.10.x, sometimes the /LOGS dirctory/folder gets currupted after using some Lua scripts who writes to the logs. To avoid any problems, this version has the writting to the logs turned OFF.  It can be turn on later if needed for debuging purposes. Besides that, is the same as v0.56
-V0.56:
 
+V0.56:
 1. Fix Tail-Type "Taileron" functionality that was not working. Also validated V-Tail and Delta wings.
 2. Added Taileron and two Rudder config (Many Freewing Jets like F18,F16, etc)
 3. Gyro-Reverse Screen now shows what is the channel/port used for (Ail, Ele, Rud, etc)
