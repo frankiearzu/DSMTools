@@ -67,36 +67,36 @@ DO NOT use previous versions to do the Setup -> Gyro Settings -> Orientation. Th
 OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and "Telemetry recovered".. The FC led will blink white, but when exit FP, will blink red...is not problem.. but will need to be power cycled to get blinking green again.. i think is something related to temporarilly loosing the connection with the radio..researching the OpenTX code since it only happens with this helis FC. 
 
 # Common Questions
-1. `RX not accepting channels higher than Ch6 for Flight-mode o Gains:`
+1. `RX is not detected:` Forward Prog needs the telemetry return to be working properly to get the menus from the RX. Make sure that you bind the RX with DSM-X2F, or If you use "Auto", after binding, verify that it resolved to X2F. Also do model->telemetry->"discover sensors" and make sure that you are getting the sensors refreshed. Also remember that Forward programming is only supported in newer "smart" line of RXs... The Airplane AR636 don't have FP, But AR630/AR631/AR637 who are common, does.
+
+3. `RX not accepting channels higher than Ch6 for Flight-mode o Gains:`
 - V0.55 and newer:  Problem solved.. Should allow you to select up to 12ch with the switch technique or with the scroller.
 
 - V0.53/0.54:  The RX is listening to channel changes for this options. Configure the Switch to the channel, togling once the switch will select the channel on the menu field.  
 
-2. `Only able to switch to Fligh-mode 2 and 3, but not 1:`
+3. `Only able to switch to Fligh-mode 2 and 3, but not 1:`
 Check that the module "Enable max throw" is OFF in you Multi-Module settings (where you do BIND), otherwise the TX signals will be out of range.
 The multi-module is already adjusting the TX/FrSky servo range internally to match Spektrum.
 
-3. `Why Ch1 says Ch1 (TX:Ch3/Thr)?`:
+4. `Why Ch1 says Ch1 (TX:Ch3/Thr)?`:
  Radios with Multi-Module are usually configured to work the standard AETR convention. Spektrum uses TAER. The multi-module does the conversion when transmitting the signals. So `Spektrum Ch1 (Throttle)` really comes from the `TX Ch3`.  We show both information (+name from the TX output).  If your multi-module/radio is setup as TAER, the script will not do the re-arrangement.  
 
-4. `If i change the model name, the original model settings are lost.` This is correct, the model name is used to generate the file name (inside /MODEL/DSMDATA) who stores the model configuration. Currently EdgeTx and OpenTX has differt features where i could get either the Model Name or the YAML file where the EdgeTX model configuration is stored.. to keep the code compatible, the model name is used.
+5. `If i change the model name, the original model settings are lost.` This is correct, the model name is used to generate the file name (inside /MODEL/DSMDATA) who stores the model configuration. Currently EdgeTx and OpenTX has differt features where i could get either the Model Name or the YAML file where the EdgeTX model configuration is stored.. to keep the code compatible, the model name is used.
 
-5. `Reversing a channel in my TX do not reverse the AS3X/SAFE reaction.` Correct, the chanel stick direction and the Gyro direction are two separate things.
+6. `Reversing a channel in my TX do not reverse the AS3X/SAFE reaction.` Correct, the chanel stick direction and the Gyro direction are two separate things.
 
-    5.1: First, you have setup your model so that the sticks and switches moves the surfaces in the right direction.
+    6.1: First, you have setup your model so that the sticks and switches moves the surfaces in the right direction.
  
-    5.2: Go to the script, `Model Setup` and setup your wing type, tail type, and select the channel assigment for each surface. Leave the servo settings the same as the values in the TX to start.
+    6.2: Go to the script, `Model Setup` and setup your wing type, tail type, and select the channel assigment for each surface. Leave the servo settings the same as the values in the TX to start.
  
-    5.3: Go to `Forward programming->Gyro Setting->Initial Setup` (New/factory reset), or `Forward programming->Gyro Setting->System Setup->Relearn Servo Settings` (not new). This will load your current Gyro servo settings into the plane's RX. This moves the current servo TX settings to the RX, so it is now in a known state.
+    6.3: Go to `Forward programming->Gyro Setting->Initial Setup` (New/factory reset), or `Forward programming->Gyro Setting->System Setup->Relearn Servo Settings` (not new). This will load your current Gyro servo settings into the plane's RX. This moves the current servo TX settings to the RX, so it is now in a known state.
  
-    5.4: Verify that the AS3X and SAFE reacts in the proper direction. You can use the Flight mode configured as "Safe Mode: Auto-Level" to see if it moves the surfaces in the right direction.  
+    6.4: Verify that the AS3X and SAFE reacts in the proper direction. You can use the Flight mode configured as "Safe Mode: Auto-Level" to see if it moves the surfaces in the right direction.  
  
-    5.5: If a surface don't move in the right direction, go to the `Model Setup->Gyro Channel Reverse` to reverse the Gyro on the channels needed, and do again the `Forward programming->Gyro Setting->System Setup->Relearn Servo Settings` to tranfer the new settings to the RX.
+    6.5: If a surface don't move in the right direction, go to the `Model Setup->Gyro Channel Reverse` to reverse the Gyro on the channels needed, and do again the `Forward programming->Gyro Setting->System Setup->Relearn Servo Settings` to tranfer the new settings to the RX.
 
-    5.6: Specktrum TX always passes the TX servo reverse as the Gyro Reverse, but on many OpenTX/EdgeTX radios, the Rud/Ail are usually reversed by default compared to Specktrum. So far i don't think that i can use this as a rule, that is why the `Gyro Channel Reverse` page exist. 
+    6.6: Specktrum TX always passes the TX servo reverse as the Gyro Reverse, but on many OpenTX/EdgeTX radios, the Rud/Ail are usually reversed by default compared to Specktrum. So far i don't think that i can use this as a rule, that is why the `Gyro Channel Reverse` page exist. 
     
-
-
 ---
 ---
 
