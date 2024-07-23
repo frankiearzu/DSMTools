@@ -19,6 +19,9 @@ Tested with Radimaster TX16S and FrSky QX7
 
 ## Versions
 
+## v1.2  
+Fix on Textgen to support smaller screens (like the zorro).. it was not showing the last lines. Move the header to the right side to make more vertical space.
+
 ## v1.1  (EdgeTX v2.8.3 or later... no OpenTx)
 
 It uses direct access to the telemetry data (EdgeTX only).  This allow to fix fomating or math problems with the values of the sensors in the tool, instead of the EdgeTX firmware. It bypasses the EdgeTX sensors.
