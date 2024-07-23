@@ -17,16 +17,14 @@ Due to memory, it will not run on all radios. So far this is what we know.
 8. Radiomaster Pocket w 4-in-1: yes
 
 
-# Introduction  (v0.57 Black & White  Small Radios)
+# Introduction  (v0.58 Black & White  Small Radios)
 
-IMPORTANT: v0.57 is a workaround to problem on EdgeTX 2.10.x where LUA scripts writting to the /LOGS folder on some ocations can corrupt the /LOGS directiry  (you will see filenames with weird naming and garbage).
-This version has writting to the logs turned OFF.  Besides that is the same as 0.57
 
 # How to Use it
 
 Step #1: Make sure that the /MODELS/DSMDATA folder exist.
 
-Step #2: Run the "DSM FwdPrg_57_STUP" first to setup the plane wing, tail and channels to use for each surface. At the end it will ask you to "save" the configuration. That saves a file in the /MODELS/DSMDATA folder.
+Step #2: Run the "DSM FwdPrg_58_STUP" first to setup the plane wing, tail and channels to use for each surface. At the end it will ask you to "save" the configuration. That saves a file in the /MODELS/DSMDATA folder.
 
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/be03ad40-3e2f-45e1-8f50-d231c3931169)
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/5010a361-1234-4c83-97b2-2eb6ae0d1061)
@@ -35,7 +33,7 @@ Step #2: Run the "DSM FwdPrg_57_STUP" first to setup the plane wing, tail and ch
 Why the RX needs to know the Plane Setup??   The AS3X/Gyro and SAFE needs to know what surfaces to move to do the proper correction in flight. It needs to know what channels are you using for ailerons, elevarors and rudders (could be 1 or 2 of each). Also if you have special Wing like a delta wing, the elevator and aileron functions are on the same channels.. same with V-Trails, Ruder/Elevator are combined. All this information is shared with the RX during "First Time Setup" as well as "Relearn Servo Setting".   Older version of 0.55 MIN hardcoded this info to be a plain 4-ch regular plane, thats why we discourage to use those function.
 
 
-Step #3: Run the "DSM FwdPrg_57_MIN". It uses the model configuration created in step #2 to properly tell the receiver the plane configuration for initial setup.  If you get "Cannot load model config", that means that the file was not created on step #2.   Once it shows the intial forward programming page for your receiver, usuall "Gyro Settings and Other Settings". You can properly setup the a plane from initial setup... if you are not familiar with this step, view some of the videos. There are already multiple videos showing how to do it EdgeTX color version, or the Spektrum official videos, the menus are the same.
+Step #3: Run the "DSM FwdPrg_58_MIN". It uses the model configuration created in step #2 to properly tell the receiver the plane configuration for initial setup.  If you get "Cannot load model config", that means that the file was not created on step #2.   Once it shows the intial forward programming page for your receiver, usuall "Gyro Settings and Other Settings". You can properly setup the a plane from initial setup... if you are not familiar with this step, view some of the videos. There are already multiple videos showing how to do it EdgeTX color version, or the Spektrum official videos, the menus are the same.
 
 
 ## Dealing with Low memory
@@ -66,8 +64,8 @@ When upgrading from a previous version of this tool, delete your `/SCRIPTS/TOOLS
 For the MINimalistic version, Your TX SDCard should looks like this:
 
     /SCRIPTS/TOOLS
-        DSM FwdPrg_57_MIN.lua     -- Minimalistic version for radios with LOW memory (Can setup planes)
-        DSM FwdPrg_57_STUP.lua    -- `NEW!` Setup plane for minimalistic version (LOW Memory radios)
+        DSM FwdPrg_58_MIN.lua     -- Minimalistic version for radios with LOW memory (Can setup planes)
+        DSM FwdPrg_58_STUP.lua    -- `NEW!` Setup plane for minimalistic version (LOW Memory radios)
 
     /SCRIPTS/TOOLS/DSMLIB/       -- (ALL CAPITALS) Libraries ane extra files
         DsmFwPrgMIN_P1.lua            -- Part1 of extra files for Min
@@ -98,6 +96,9 @@ OpenTX: When you enter "forward programming" you will hear "Telemetry lost" and 
 
 
 # Changes and fixes 
+v0.58:
+Support for new Spektrum Firmware 3.x that introduce AS3X+ to many common receivers.
+
 v0.57:
 1.  In EdgeTX 2.10.x, sometimes the /LOGS dirctory/folder gets currupted after using some Lua scripts who writes to the logs. To avoid any problems, this version has the writting to the logs turned OFF.  It can be turn on later if needed for debuging purposes. Besides that, is the same as v0.56
 

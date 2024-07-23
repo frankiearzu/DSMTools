@@ -4,7 +4,9 @@ Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
 
-# Introduction  (v0.57)
+# Introduction  (v0.58)
+
+v0.58 adds support for Spektrum Firmware 3.x with many common receivers adding AS3X+ functionality.
 
 **IMPORTANT:** v0.57 is a workaround to problem on EdgeTX 2.10.x where LUA scripts writting to the /LOGS folder on some ocations can corrupt the /LOGS directory  (you will see filenames with weird naming and garbage).
 This version has writting to the logs turned OFF.  Besides that is the same as 0.56. See the DEPLOYMENT section below for upgrade instructions.
@@ -42,7 +44,7 @@ In another window, open your TX SDCard.
 Your TX SDCard should looks like this:
 
     /SCRIPTS/TOOLS/     -- you only need one of the 3 to save some space in your TOOLS screen
-        DSM FwdPrg_57_Color.lua   -- Color and touch radios
+        DSM FwdPrg_58_Color.lua   -- Color and touch radios
 
         
     /SCRIPTS/TOOLS/DSMLIB/        -- (ALL CAPITALS) Libraries ane extra files
@@ -101,6 +103,9 @@ The multi-module is already adjusting the TX/FrSky servo range internally to mat
 ---
 
 # Changes and fixes 
+v0.58:
+Adds support for Spektrum Firmware 3.x. It adds AS3X+ functionality to many common receivers.
+
 v0.57:
 1.  In EdgeTX 2.10.x, sometimes the /LOGS dirctory/folder gets currupted after using some Lua scripts who writes to the logs. To avoid any problems, this version has the writting to the logs turned OFF.  It can be turn on later if needed for debuging purposes. Besides that, is the same as v0.56
 
