@@ -28,7 +28,7 @@ local VERSION  = "v0.58"
 ------------------------------------------------------------------------------
 
 local SIMULATION_ON = true   -- false: dont show simulation menu, TRUE: show simulation menu 
-local DEBUG_ON = 0           -- 0=NO DEBUG, 1=HIGH LEVEL 2=LOW LEVEL   (Debug logged into the /LOGS/dsm.log)
+local DEBUG_ON = 1           -- 0=NO DEBUG, 1=HIGH LEVEL 2=LOW LEVEL   (Debug logged into the /LOGS/dsm.log)
 local USE_SPECKTRUM_COLORS = true -- true: Use spectrum colors, false: use theme colors (default on OpenTX) 
 local DSMLIB_PATH = "/SCRIPTS/TOOLS/DSMLIB/"
 local IMAGE_PATH = DSMLIB_PATH .. "img/"
@@ -478,7 +478,7 @@ local function GUI_Display()
   for i = 0, menuLib.MAX_MENU_LINES do
     local line = ctx.MenuLines[i]
 
-    if line ~= nil and line.Type ~= 0 then
+    if line ~= nil and line.Text ~= nil then
       if line.Type == LINE_TYPE.MENU then 
         GUI_Display_Line_Menu(i, line, i == ctx.SelLine)
       else
@@ -499,8 +499,8 @@ local function GUI_Display()
             end
           end -- if Line[i]~=nil
           GUI_Display_Line_Value(i, line, value, i == ctx.SelLine, i == ctx.EditLine)
-        end
-      end -- if ~MENU
+        end -- if ~MENU
+      end -- Valid line
   end  -- for
 
   if IS_EDGETX and ctx.isEditing()  then

@@ -46,7 +46,7 @@ local SendDataToRX        = 1   -- Initiate Sending Data
 local Text                = {}
 local List_Text           = {}
 local List_Text_Img       = {}
-local Flight_Mode         = "Flight Mode"
+local Flight_Mode         = {[0]="Fligh Mode %s", "Flight Mode %s", "Gyro System %s / Flight Mode %s"}
 local RxName              = {}
 
 local TXInactivityTime    = 0
@@ -142,7 +142,7 @@ local function isSelectable(line)
   if (line.TextId == 0x00CD) then return true end                          -- Exceptiom: Level model and capture attitude
   if (line.Type == LT_MENU and line.ValId == line.MenuId) then return false end -- Menu to same page
   if (line.Type ~= LT_MENU and  line.Max == 0 and line.Min == 0) then return false end            -- Read only data line 
-  if (line.Type ~= 0 and line.TextId < 0x8000) then return true end          -- Not Flight Mode
+  if (line.TextId > 0 and line.TextId < 0x8000) then return true end          -- Not Flight Mode
   return false;
 end
 
@@ -281,7 +281,7 @@ local function Get_Text(index)
   end 
 
   if (index >= 0x8000) then
-    out = Flight_Mode
+    out = Flight_Mode [index - 0x8000]
   end 
 
   return out
@@ -679,7 +679,7 @@ local function DSM_ProcessResponse()
     menu.BackId = Dsm_to_Int16(multiBuffer(20), multiBuffer(21))
 
     for i = 0, 6 do     -- clear menu
-      MenuLines[i] = { Type = 0  }
+      MenuLines[i] = { Type = 0, TextId=0  }
     end
     ctx_CurLine = -1
     ctx_SelLine = -1     -- highlight Back
@@ -858,6 +858,27 @@ local function drawButton(x, y, text, active)
   lcd.drawText(x, y, text, attr)
 end
 
+function GetFlightModeValue(line)
+  local ret = line.Text
+  local val = line.Val
+
+  if (val==nil) then return string.format(ret,"--","--") end
+
+  local gyroNum = bit32.rshift(val,8)
+  local fmNum =   bit32.band(val,0xFF)
+  local fmStr =  (fmNum + 1) .. ""
+
+  -- No adjustment needed
+  if (fmNum==190) then
+      fmStr = "Err:Out of Range"
+  end
+  if (gyroNum > 0) then
+      return string.format(ret,(gyroNum+1).."", fmStr)
+  else
+      return string.format(ret,fmStr,fmStr)
+  end
+end
+
 local ver_rx_count = 0
 
 local function DSM_Display()
@@ -897,12 +918,11 @@ local function DSM_Display()
 
     local line = MenuLines[i]
 
-    if line.Type ~= 0 then
+    if line.Text ~= nil then
       local heading = line.Text
 
       if (line.TextId >= 0x8000) then     -- Flight mode
-        heading = "   " .. Flight_Mode .. " " 
-        if (line.Val==nil) then heading = heading .. "--" else heading = heading .. ((line.Val or 0) + 1) end
+        heading = GetFlightModeValue(line)
       else
         local text = nil
         if line.Type ~= LT_MENU then       -- list/value
@@ -990,7 +1010,7 @@ local function load_msg_from_file(fileName, offset, FileState)
           elseif (type == "LI") then
             List_Text_Img[index] = filePos
           elseif (type == "FM") then
-            Flight_Mode = text
+            Flight_Mode[index-0x8000] = text
           elseif (type == "RX") then
             RxName[index] = text
           else

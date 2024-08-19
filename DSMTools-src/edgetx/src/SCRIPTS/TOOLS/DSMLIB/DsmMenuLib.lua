@@ -110,7 +110,7 @@ local Text = {}             -- Text for Menu and Menu Lines   (Headers only)
 local List_Text = {}        -- Messages for List Options (values only)
 local List_Text_Img = {}    -- If the Text has Attached Images
 local List_Values = {}      -- Additiona restrictions on List Values when non contiguos  (L_M1 lines has this problem) 
-local Flight_Mode = {[0]="Fligh Mode"}
+local Flight_Mode = {[0]="Fligh Mode %s", "Flight Mode %s", "Gyro System %s / Flight Mode %s"}
 local RxName = {}
 
 local StartTime = 0
@@ -133,7 +133,7 @@ end
 
 function MenuLib.isSelectableLine(line)   -- is the display line Selectable??
     -- values who are not selectable
-    if (line.Type == 0) then return false end -- Empty Line
+    if (line.Text == nil) then return false end -- Empty Line
     if (line.Type == LINE_TYPE.MENU and line.ValId == line.MenuId and bit32.band(line.TextAttr, DISP_ATTR.FORCED_MENU)==0) then return false end -- Menu that navigates to Itself?
     if (line.Min==0 and line.Max==0 and line.Def==0) then return false end -- Values with no Range are only for display 
     if (line.Type == LINE_TYPE.VALUE_NUM_I8_NC and MenuLib.isFlightModeLine(line)) then return false end -- Flight mode is not Selectable
@@ -142,7 +142,8 @@ end
 
 function MenuLib.isEditableLine(line) -- is the display line editable??
     -- values who are not editable
-    if (line.Type == 0 or line.Type == LINE_TYPE.MENU) then return false end -- Menus are not editable
+    --if (line.Type == 0 or line.Type == LINE_TYPE.MENU) then return false end -- Menus are not editable
+    if (line.Type == LINE_TYPE.MENU) then return false end -- Menus are not editable
     if (line.Min==0 and line.Max==0 and line.Def==0) then return false end -- Values with no Range are only for display 
     if (line.Type == LINE_TYPE.VALUE_NUM_I8_NC and MenuLib.isFlightModeLine(line)) then return false end -- Flight mode is not Editable 
     -- any other is Editable
@@ -181,7 +182,7 @@ end
 ------------------------------------------------------------------------------------------------------------
 function MenuLib.Get_Text(index)
     if (index >= 0x8000) then
-        return Flight_Mode[0]
+        return Flight_Mode[index-0x8000]
     end
 
     if (index >= 0x5000) then
@@ -333,7 +334,7 @@ function MenuLib.MenuPostProcessing(menu)
 end
 
 function MenuLib.MenuLinePostProcessing(line)
-    if (line.Text==nil) then
+    if (line.Text==nil and line.TextId > 0) then
         line.Text   = MenuLib.Get_Text(line.TextId) -- Get Textual Line headeing text 
     end
 
@@ -506,7 +507,7 @@ end
 function MenuLib.clearMenuLines() 
     local ctx = DSM_Context
     for i = 0, MAX_MENU_LINES do -- clear menu
-        ctx.MenuLines[i] = { MenuId = 0, lineNum = 0, Type = 0, Text = "", TextId = 0, ValId = 0, Min=0, Max=0, Def=0, TextStart=0, Val=nil }
+        ctx.MenuLines[i] = { MenuId = 0, lineNum = 0, Type = 0, Text = nil, TextId = 0, ValId = 0, Min=0, Max=0, Def=0, TextStart=0, Val=nil }
     end
 end
 
@@ -534,32 +535,36 @@ function MenuLib.PostProcessMenu()
 end
 
 function MenuLib.GetFlightModeValue(line)
-    local ret = line.Text.." "
+    local ret = line.Text
     local val = line.Val
 
-    if (val==nil) then return ret.."--" end
+    if (val==nil) then return string.format(ret,"--","--") end
+
+    local gyroNum = bit32.rshift(val,8)
+    local fmNum =   bit32.band(val,0xFF)
+    local fmStr =  (fmNum + 1) .. ""
 
     -- Adjust the displayed value for Flight mode line as needed
     if (DSM_Context.RX.Id == RX.FC6250HX) then
-        -- Helicopter Flights modes 
-        if (val==0)     then ret = ret .. "1 / HOLD" 
-        elseif (val==1) then ret = ret .. "2 / Normal" 
-        elseif (val==2) then ret = ret .. "3 / Stunt 1" 
-        elseif (val==3) then ret = ret .. "4 / Stunt 2" 
-        elseif (val==4) then ret = ret .. "5 / Panic" 
-        else
-            ret = ret .. " " .. (val + 1)
+        -- Helicopter Flights modes
+        if (fmNum==0)     then fmStr = "1 / HOLD" 
+        elseif (fmNum==1) then fmStr = "2 / Normal" 
+        elseif (fmNum==2) then fmStr = "3 / Stunt 1" 
+        elseif (fmNum==3) then fmStr = "4 / Stunt 2" 
+        elseif (fmNum==4) then fmStr = "5 / Panic" 
         end
+        return string.format(ret,fmStr)
     else
         -- No adjustment needed
-        if (val==190) then
-            ret=ret.."Err:Out of Range"
-        else
-            ret=ret..(val + 1)
+        if (fmNum==190) then
+            fmStr = "Err:Out of Range"
         end
-        
+        if (gyroNum > 0) then
+            return string.format(ret,(gyroNum+1).."", fmStr)
+        else
+            return string.format(ret,fmStr,fmStr)
+        end
     end    
-    return ret
 end
 
 function MenuLib.Init()
@@ -654,7 +659,7 @@ function MenuLib.LoadTextFromFile(fileName, mem)
           elseif (a == "LI") then
             List_Text_Img[index] = c
           elseif (a == "FM") then
-            Flight_Mode[0] = c
+            Flight_Mode[index-0x8000] = c
           elseif (a == "RX") then
             RxName[index] = c
           else
@@ -754,7 +759,7 @@ function MenuLib.INC_LoadTextFromFile(fileName, FileState)
             elseif (type == "LI") then
               List_Text_Img[index] = text
             elseif (type == "FM") then
-              Flight_Mode[0] = text
+              Flight_Mode[index-0x8000] = text
             elseif (type == "RX") then
               RxName[index] = text
             else

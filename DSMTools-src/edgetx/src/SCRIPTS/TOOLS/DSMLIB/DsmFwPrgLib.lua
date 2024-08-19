@@ -436,7 +436,7 @@ local function DSM_parseMenu()
     menu.NextId = Dsm_to_Int16(multiBuffer(18), multiBuffer(19))
     menu.BackId = Dsm_to_Int16(multiBuffer(20), multiBuffer(21))
     for i = 0, MAX_MENU_LINES do -- clear menu
-        ctx.MenuLines[i] = { MenuId = 0, lineNum = 0, Type = 0, Text = "", TextId = 0, ValId = 0, Min=0, Max=0, Def=0, Val=nil }
+        ctx.MenuLines[i] = { MenuId = 0, lineNum = 0, Type = 0, Text = nil, TextId = 0, ValId = 0, Min=0, Max=0, Def=0, Val=nil }
     end
     ctx.CurLine = -1
 
