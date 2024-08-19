@@ -196,13 +196,13 @@ local function DSM_getFirstMenuLine(menuId)
     DSM_send(0x13, 0x04, int16_MSB(menuId), int16_LSB(menuId)) -- line 0
 end
 
-local function DSM_getNextMenuLine(menuId, curLine)
-    Log.LOG_write("SEND DSM_getNextLine(MenuId=0x%X,LastLine=%s)\n", menuId, curLine)
+local function DSM_ackMenuLine(menuId, curLine)
+    Log.LOG_write("SEND DSM_ackMenuLine(MenuId=0x%X,Line=%s)\n", menuId, curLine)
     DSM_send(0x14, 0x06, int16_MSB(menuId), int16_LSB(menuId), 0x00, curLine) -- line X
 end
 
-local function DSM_getNextMenuValue(menuId, valId, text)
-    Log.LOG_write("SEND DSM_getNextMenuValue(MenuId=0x%X, LastValueId=0x%X) Extra: Text=\"%s\"\n", menuId, valId,
+local function DSM_ackMenuValue(menuId, valId, text)
+    Log.LOG_write("SEND DSM_ackMenuValue(MenuId=0x%X, ValueId=0x%X) Extra: Text=\"%s\"\n", menuId, valId,
             text)
     DSM_send(0x15, 0x06, int16_MSB(menuId), int16_LSB(menuId), int16_MSB(valId), int16_LSB(valId)) -- line X
 end
@@ -218,8 +218,8 @@ local function DSM_validateMenuValue(valId, text, line)
     DSM_send(0x19, 0x04, int16_MSB(valId), int16_LSB(valId)) 
 end
 
-local function DSM_editingValue(lineNum, text, line)
-    Log.LOG_write("SEND DSM_editingValue(lineNo=0x%X) Extra: Text=\"%s\"  Val=%s\n", lineNum, text, menuLib.lineValue2String(line))
+local function DSM_editingValueBegin(lineNum, text, line)
+    Log.LOG_write("SEND DSM_editingValueBegin(lineNo=0x%X) Extra: Text=\"%s\"  Val=%s\n", lineNum, text, menuLib.lineValue2String(line))
     DSM_send(0x1A, 0x04, int16_MSB(lineNum), int16_LSB(lineNum))
 end
 
@@ -363,12 +363,12 @@ local function DSM_sendRequest()
         if ctx.CurLine == -1 then -- No previous menu line loaded ?
             DSM_getFirstMenuLine(ctx.Menu.MenuId)
         else
-            DSM_getNextMenuLine(ctx.Menu.MenuId, ctx.CurLine)
+            DSM_ackMenuLine(ctx.Menu.MenuId, ctx.CurLine)
         end
 
     elseif ctx.Phase == PHASE.MENU_VALUES then -- request menu values
         local line = ctx.MenuLines[ctx.CurLine]
-        DSM_getNextMenuValue(ctx.Menu.MenuId, line.ValId, line.Text)
+        DSM_ackMenuValue(ctx.Menu.MenuId, line.ValId, line.Text)
 
     elseif ctx.Phase == PHASE.VALUE_CHANGING then -- send value
         local line = ctx.MenuLines[ctx.SelLine] -- Updated Value of SELECTED line  
@@ -389,11 +389,18 @@ local function DSM_sendRequest()
 
     elseif ctx.Phase == PHASE.VALUE_CHANGING_WAIT then
         local line = ctx.MenuLines[ctx.SelLine]
-        DSM_editingValue(line.lineNum, line.Text, line)
+        if (line.Type == LINE_TYPE.LIST_MENU_TOG) then
+            -- Don't send the editing value message for Toggle 
+            ctx.Phase=PHASE.WAIT_CMD
+        else
+            DSM_editingValueBegin(line.lineNum, line.Text, line)
+        end
     elseif ctx.Phase == PHASE.VALUE_CHANGE_END then -- send value
         local line = ctx.MenuLines[ctx.SelLine] -- Update Value of SELECTED line
-
-        if (Change_Step==0) then
+        if (line.Type == LINE_TYPE.LIST_MENU_TOG) then
+            -- Don't send the editing End value message for Toggle 
+            ctx.Phase=PHASE.WAIT_CMD
+        elseif (Change_Step==0) then
             DSM_updateMenuValue(line.ValId, line.Val, line.Text, line)
             Change_Step=1; ctx.SendDataToRX=1  -- Send inmediatly after 
         elseif (Change_Step==1) then

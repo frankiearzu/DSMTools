@@ -606,23 +606,29 @@ local function DSM_SendRequest()
   elseif Phase == PH_LINES then -- request menu lines
     if ctx_CurLine == -1 then
       DSM_Send(0x13, 0x04, menuMSB, menuLSB) -- GetFirstLine
+      LOG_write("TX:GetFirstLine(MenuId=%02X%02X)\n", menuMSB,menuLSB)
     else
       DSM_Send(0x14, 0x06, menuMSB, menuLSB, 0x00, ctx_CurLine) -- line X
+      LOG_write("TX:AckLine(Line=%d)\n", ctx_CurLine)
     end
-    LOG_write("TX:GetNextLine(LastLine=%d)\n", ctx_CurLine)
+    
 
   elseif Phase == PH_VALUES then -- request menu values
     local valId  = MenuLines[ctx_CurLine].ValId
     DSM_Send(0x15, 0x06,
       menuMSB, menuLSB,
       int16_MSB(valId), int16_LSB(valId))
-    LOG_write("TX:GetNextValue(LastVId=0x%04X)\n", valId)
+    LOG_write("TX:AckValue(VId=0x%04X)\n", valId)
 
   elseif Phase == PH_VAL_EDITING then --  Editing a line (like a HB)
     local line = MenuLines[ctx_SelLine]
-    DSM_Send(0x1A, 0x04, 0x00, ctx_SelLine)
-    LOG_write("TX:EditingValueLine(L=%d)\n", ctx_SelLine)
-
+    if (line.Type == LT_LIST_TOG) then
+      -- Don't send Line-Editting  message for Toggle 
+      Phase = PH_WAIT_CMD
+    else
+      DSM_Send(0x1A, 0x04, 0x00, ctx_SelLine)
+      LOG_write("TX:EditingValueBegin(L=%d)\n", ctx_SelLine)
+    end
   elseif Phase == PH_VAL_CHANGING then  -- change value during editing
     local line = MenuLines[ctx_SelLine]
     if (Change_Step==0) then
@@ -639,7 +645,10 @@ local function DSM_SendRequest()
   elseif Phase == PH_VAL_EDIT_END then -- Done Editing line 
     local line = MenuLines[ctx_SelLine]
 
-    if (Change_Step==0) then
+    if (line.Type == LT_LIST_TOG) then
+      -- Don't send the editing END  message for Toggle 
+      Phase = PH_WAIT_CMD
+    elseif (Change_Step==0) then
       DSM_SendUpdate(line)
       Change_Step=1
     elseif (Change_Step==1) then
