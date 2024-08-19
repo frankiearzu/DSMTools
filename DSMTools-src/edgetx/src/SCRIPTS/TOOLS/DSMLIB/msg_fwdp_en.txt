@@ -81,7 +81,6 @@ T |0x005A|Output Channel 10
 LT|0x005F|Hold Last
 LT|0x0060|Preset
 --LT|0x0061|Custom
-LT|0x0067|Not-Set
 --
 LT|0x0070|SRXL2
 T |0x0071|Proportional
@@ -525,9 +524,7 @@ T |0x02BB|Pitch Offset
 T |0x0300|No compatible DSM RX...
 T |0x0301|Waiting for RX to Restart
 --
-FM|0x8000|Flight Mode %s/c/b
-FM|0x8001|Flight Mode %s/c/b
-FM|0x8002|Gyro System %s / Flight Mode %s/c/b
+FM|0x8000|Flight Mode/c/b
 --
 RX|0x0001|AR636
 RX|0x0014|SPM4651T
