@@ -1,5 +1,5 @@
 local Log, menuLib, modelLib, DEBUG_ON, SIMULATION_ON = ... -- Get DebugON from parameters
-local MAIN_MENU_LIB_VERSION = "0.58"
+local MAIN_MENU_LIB_VERSION = "0.59"
 local MODEL     = modelLib.MODEL
 
 local PHASE     = menuLib.PHASE

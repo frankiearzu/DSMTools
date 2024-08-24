@@ -24,7 +24,7 @@
 ------------------------------------------------------------------------------
 
 local Log, menuLib, modelLib, DEBUG_ON, SIMULATION_ON = ... -- Get DebugON from parameters
-local SETUP_LIB_VERSION = "0.58"
+local SETUP_LIB_VERSION = "0.59"
 
 local DATA_PATH = modelLib.DATA_PATH
 

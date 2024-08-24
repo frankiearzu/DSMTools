@@ -1,4 +1,4 @@
-local toolName = "TNS|DSM Frwd Prog v0.58 (MIN)|TNE"
+local toolName = "TNS|DSM Frwd Prog v0.59 (MIN)|TNE"
 
 ---- #########################################################################
 ---- #                                                                       #
@@ -18,10 +18,10 @@ local toolName = "TNS|DSM Frwd Prog v0.58 (MIN)|TNE"
 ---- #########################################################################
 
 
-local VERSION             = "v0.58"
+local VERSION             = "v0.59"
 local LANGUAGE            = "en"
 local DSMLIB_PATH         = "/SCRIPTS/TOOLS/DSMLIB/"
-local DEBUG_ON            = 0
+local DEBUG_ON            = 1
 
 local LOG_FILE            = "/LOGS/dsm_min_log.txt"
 local MSG_FILE            = DSMLIB_PATH.."msg_fwdp_" .. LANGUAGE .. ".txt"
@@ -30,7 +30,7 @@ local MSG_MIN_FILE_OFFSET = 20000
 
 -- Phase
 local PH_INIT = 0
-local PH_RX_VER, PH_TITLE, PH_TX_INFO, PH_LINES, PH_VALUES = 1, 2, 3, 4, 5
+local PH_RX_VER, PH_GET_MENU, PH_TX_INFO                   = 1, 2, 3
 local PH_VAL_CHANGING, PH_VAL_EDITING, PH_VAL_EDIT_END     = 6, 7, 8
 local PH_WAIT_CMD, PH_EXIT_REQ, PH_EXIT_DONE               = 9, 10, 11
 
@@ -46,7 +46,7 @@ local SendDataToRX        = 1   -- Initiate Sending Data
 local Text                = {}
 local List_Text           = {}
 local List_Text_Img       = {}
-local Flight_Mode         = {[0]="Fligh Mode %s", "Flight Mode %s", "Gyro System %s / Flight Mode %s"}
+local Flight_Mode         = {[0]="Fligh Mode %s", "Flight Mode %s", "Gyro Sys %s / Flight Mode %s"}
 local RxName              = {}
 
 local TXInactivityTime    = 0
@@ -57,6 +57,7 @@ local Change_Step         = 0
 local originalValue       = 0
 
 local TX_MAX_CH           = 12 - 6 -- Number of Channels after Ch6
+local TX_FIRMWARE_VER     = 0x15
 
 --local ctx = {
 local  ctx_SelLine = 0      -- Current Selected Line
@@ -99,21 +100,6 @@ local TEXT_ATTR           = SMLSIZE
 local function gc()
   collectgarbage("collect")
 end
-
---[[
-local function gcTable(t)
-  if type(t)=="table" then
-    for i,v in pairs(t) do
-      if type(v) == "table" then
-        gcTable(v)
-      end
-      t[i] = nil
-    end
-  end
-  gc()
-  return t 
-end
---]]
 
 local function LOG_open()
   if (DEBUG_ON == 0) then return end
@@ -338,10 +324,12 @@ local function DSM_Send(...)
     multiBuffer(3 + i, arg[i])
   end
   multiBuffer(3, 0x70 + #arg)
+
+  TXInactivityTime = getTime() + 200
 end
 ---------------------
 
-function ChangePhase(newPhase)
+local function ChangePhase(newPhase)
   Phase = newPhase
   SendDataToRX = 1
 end
@@ -382,14 +370,14 @@ local function GotoMenu(menuId, lastSelectedLine)
   Menu.MenuId = menuId
   ctx_SelLine = lastSelectedLine
   -- Request to load the menu Again
-  ChangePhase(PH_TITLE)
+  ChangePhase(PH_GET_MENU)
 end
 
 local function DSM_HandleEvent(event)
   if event == EVT_VIRTUAL_EXIT then
-    if Phase == PH_RX_VER then
-      Phase = PH_EXIT_DONE -- Exit program
-    else
+    --if Phase == PH_RX_VER then
+    --  Phase = PH_EXIT_DONE -- Exit program
+    --else
       if isEditing() then   -- Editing a Line, need to  restore original value
         MenuLines[ctx_EditLine].Val = originalValue
         event = EVT_VIRTUAL_ENTER
@@ -401,7 +389,7 @@ local function DSM_HandleEvent(event)
           ChangePhase(PH_EXIT_REQ)
         end
       end
-    end
+    --end
   end -- Exit
 
   if Phase == PH_RX_VER then return end -- nothing else to do 
@@ -579,91 +567,69 @@ local function DSM_SendRequest()
   local menuMSB = int16_MSB(menuId)
 
   if Phase == PH_RX_VER then   -- request RX version
-    DSM_Send(0x11, 0x06, TX_MAX_CH, 0x15, 0x00, 0x00)
-    LOG_write("TX:GetVersion(TX_MAX_CH=%d)\n",TX_MAX_CH+6)
+    DSM_Send(0x11, 0x06, TX_MAX_CH, TX_FIRMWARE_VER, 0x00, 0x00)
+    LOG_write("TX:GetVersion(TX_MAX_CH=%d, TX_FIRMWARE = 0x%02X)\n",TX_MAX_CH+6, TX_FIRMWARE_VER)
 
   elseif Phase == PH_WAIT_CMD then     -- keep connection open
-    DSM_Send(0x00, 0x04, 0x00, 0x00)
+    DSM_Send(0x00, 0x04, 0x00, 0x00) -- HB
     --LOG_write("TX:TxHb\n")
 
-  elseif Phase == PH_TITLE then     -- request menu title
-    if menuId == 0 then
-      -- very first menu only
-      DSM_Send(0x12, 0x06, TX_MAX_CH, 0x15, 0x00, 0x00) 
-    else
-      -- Any other menu
-      DSM_Send(0x16, 0x06, menuMSB, menuLSB, 0x00, ctx_SelLine)
-      if (menuId == 0x0001) then -- Executed Save&Reset menu
-        Phase = PH_RX_VER
-        ctx_isReset = true
-      end
+  elseif Phase == PH_GET_MENU then     -- request menu title
+    DSM_Send(0x16, 0x06, menuMSB, menuLSB, 0x00, ctx_SelLine)
+    if (menuId == 0x0001) then -- Executed Save&Reset menu
+      Phase = PH_RX_VER
+      ctx_isReset = true
     end
     LOG_write("TX:GetMenu(M=0x%04X,L=%d)\n", menuId, ctx_SelLine)
 
   elseif Phase == PH_TX_INFO then -- TX Info
     SendTxInfo(ctx_CurLine)
 
-  elseif Phase == PH_LINES then -- request menu lines
-    if ctx_CurLine == -1 then
-      DSM_Send(0x13, 0x04, menuMSB, menuLSB) -- GetFirstLine
-      LOG_write("TX:GetFirstLine(MenuId=%02X%02X)\n", menuMSB,menuLSB)
-    else
-      DSM_Send(0x14, 0x06, menuMSB, menuLSB, 0x00, ctx_CurLine) -- line X
-      LOG_write("TX:AckLine(Line=%d)\n", ctx_CurLine)
-    end
-    
-
-  elseif Phase == PH_VALUES then -- request menu values
-    local valId  = MenuLines[ctx_CurLine].ValId
-    DSM_Send(0x15, 0x06,
-      menuMSB, menuLSB,
-      int16_MSB(valId), int16_LSB(valId))
-    LOG_write("TX:AckValue(VId=0x%04X)\n", valId)
-
   elseif Phase == PH_VAL_EDITING then --  Editing a line (like a HB)
     local line = MenuLines[ctx_SelLine]
-    if (line.Type == LT_LIST_TOG) then
-      -- Don't send Line-Editting  message for Toggle 
+    if (line.Type == LT_LIST_TOG) then -- Dont send it for Toggle options
       Phase = PH_WAIT_CMD
     else
       DSM_Send(0x1A, 0x04, 0x00, ctx_SelLine)
-      LOG_write("TX:EditingValueBegin(L=%d)\n", ctx_SelLine)
+      LOG_write("TX:EditingValueLine(L=%d)\n", ctx_SelLine)
     end
+
   elseif Phase == PH_VAL_CHANGING then  -- change value during editing
     local line = MenuLines[ctx_SelLine]
     if (Change_Step==0) then
       DSM_SendUpdate(line)
-      if line.Type == LT_LIST then -- Incremental Validation??
+      if line.Type == LT_LIST or line.Type == LT_LIST_TOG then -- Incremental Validation??
         Change_Step=1
+        SendDataToRX=1
       end
     else -- Change_Step==1
       DSM_SendValidate(line)
       Change_Step=0
+      Phase = PH_VAL_EDITING
     end
-    if (Change_Step==0) then Phase=PH_VAL_EDITING else SendDataToRX=1 end -- Done with change?  
-
+ 
   elseif Phase == PH_VAL_EDIT_END then -- Done Editing line 
     local line = MenuLines[ctx_SelLine]
-
-    if (line.Type == LT_LIST_TOG) then
-      -- Don't send the editing END  message for Toggle 
+    if (line.Type == LT_LIST_TOG) then -- Dont send it for Toggle options
       Phase = PH_WAIT_CMD
     elseif (Change_Step==0) then
       DSM_SendUpdate(line)
       Change_Step=1
+      SendDataToRX=1
     elseif (Change_Step==1) then
       DSM_SendValidate(line)
       Change_Step=2
+      SendDataToRX=1
     else -- Change_Step==3
       LOG_write("TX:EditValueEnd(L=%d)\n", ctx_SelLine)
       DSM_Send(0x1B, 0x04, 0x00, ctx_SelLine)
       Change_Step=0
     end
-    if (Change_Step==0) then Phase = PH_WAIT_CMD else SendDataToRX=1 end -- Done with change?
 
   elseif Phase == PH_EXIT_REQ then -- EXIT Request 
     DSM_Send(0x1F, 0x02, 0xAA)
     LOG_write("TX:TX Exit Request\n") 
+    Phase = PH_EXIT_DONE
   end
 end
 
@@ -674,8 +640,12 @@ local function DSM_ProcessResponse()
     RX_Version = multiBuffer(14) .. "." .. multiBuffer(15) .. "." .. multiBuffer(16)
 
     Menu.MenuId = 0
-    Phase = PH_TITLE
     LOG_write("RX:Version: %s %s\n", RX_Name, RX_Version)
+
+    -- ACK Version, this will trigger getting the first menu 
+    DSM_Send(0x12, 0x06, TX_MAX_CH, TX_FIRMWARE_VER, 0x00, 0x00)
+    LOG_write("TX:AckVersion()\n")
+    Phase = PH_WAIT_CMD
 
   elseif cmd == 0x02 then     -- read menu title
     local menu  = Menu
@@ -698,7 +668,10 @@ local function DSM_ProcessResponse()
     if (menu.MenuId == 0x0001) then  -- Still in RESETTING MENU???
       Phase = PH_RX_VER
     else
-      Phase = PH_LINES
+      local menuId  = Menu.MenuId
+      DSM_Send(0x13, 0x04, int16_MSB(menuId), int16_LSB(menuId)) -- ACK Menu
+      LOG_write("TX:AckMenu()\n")
+      Phase = PH_WAIT_CMD
     end
 
   elseif cmd == 0x03 then     -- read menu lines
@@ -746,7 +719,10 @@ local function DSM_ProcessResponse()
       Menu.MenuId = line.MenuId 
     end
 
-    Phase = PH_LINES
+    local menuId  = line.MenuId
+    DSM_Send(0x14, 0x06, int16_MSB(menuId), int16_LSB(menuId), 0x00, ctx_CurLine) -- ACK Line
+    LOG_write("TX:AckLine()\n")
+    Phase = PH_WAIT_CMD
 
   elseif cmd == 0x04 then     -- read menu values
     -- Identify the line and update the value
@@ -778,25 +754,28 @@ local function DSM_ProcessResponse()
     --if (updatedLine == nil) then
     --  LOG_write("Cannot Find Line for ValueId=%x\n", valId)
     --end
-    Phase = PH_VALUES
+
+    local menuId  = Menu.MenuId
+    DSM_Send(0x15, 0x06, int16_MSB(menuId), int16_LSB(menuId), int16_MSB(valId), int16_LSB(valId))
+    LOG_write("TX:AckValue()\n")
 
   elseif cmd == 0x05 then -- Request TX info
     ctx_CurLine  = multiBuffer(12)
     TX_Info_Type = multiBuffer(13)
-    TX_Info_Step = 0
-    Phase = PH_TX_INFO
+
     LOG_write("RX:TXInfoReq: Port=%d T=0x%02X\n", ctx_CurLine, TX_Info_Type)
+    Phase = PH_TX_INFO
+    TX_Info_Step = 0
+    SendDataToRX = 1 -- Send inmediate after
 
   elseif cmd == 0xA7 then -- RX EXIT Request
-    if Phase == PH_EXIT_REQ then -- Response to our EXIT req
       Phase = PH_EXIT_DONE
-    else -- Unexpected RX Exit
+      LOG_write("RX:ExitReq\n")
       DSM_Release()
       error("RX Connection Drop")
-    end
 
   elseif cmd == 0x00 then  -- RX Heartbeat
-    LOG_write("RX:RxHb\n")
+    --LOG_write("RX:RxHb\n")
   end
 
   return cmd
@@ -811,20 +790,11 @@ local function DSM_Send_Receive()
     -- Data processed
     multiBuffer(10, 0x00)
     RXInactivityTime = getTime() + 800   -- Reset Inactivity timeout (8s)
-
-    if (cmd > 0x00) then -- RX-HeartBeat??  
-      -- Only change to SEND mode if we received a valid response  (Ignore heartbeat)
-      SendDataToRX = 1
-    end
   else
     -- Check if enouth time has passed from last Received activity
-    if (getTime() > RXInactivityTime and Phase~=PH_RX_VER and Phase~= PH_EXIT_DONE) then
-      if (isEditing()) then -- If Editing, extend time
-        RXInactivityTime = getTime() + 400
-      else
+    if (getTime() > RXInactivityTime and Phase==PH_WAIT_CMD) then
         DSM_Release()
         error("RX Disconnected")
-      end
     end
   end
 
@@ -832,17 +802,10 @@ local function DSM_Send_Receive()
   if SendDataToRX == 1 then
     SendDataToRX = 0
     DSM_SendRequest()
-    TXInactivityTime = getTime() + 200 -- Reset Inactivity timeout (2s)
   else
     -- Check if enouth time has passed from last transmit activity
     if getTime() > TXInactivityTime then
-      SendDataToRX = 1   -- Switch to Send mode to send heartbeat
-
-      -- Change to Idle/HB mode if we are wating for RX version
-      if Phase ~= PH_RX_VER then 
-        -- Phase = If IsEditing then PH_VAL_EDITING else PH_WAIT_CMD
-        Phase = (isEditing() and PH_VAL_EDITING) or PH_WAIT_CMD        
-      end
+      SendDataToRX = 1   -- Switch to Send mode to send HB
     end
   end
 end
@@ -871,7 +834,7 @@ function GetFlightModeValue(line)
   local ret = line.Text
   local val = line.Val
 
-  if (val==nil) then return string.format(ret,"--","--") end
+  if (val==nil) then return string.format(ret,"-","-") end
 
   local gyroNum = bit32.rshift(val,8)
   local fmNum =   bit32.band(val,0xFF)

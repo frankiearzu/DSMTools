@@ -81,6 +81,7 @@ T |0x005A|Output Channel 10
 LT|0x005F|Hold Last
 LT|0x0060|Preset
 --LT|0x0061|Custom
+LT|0x0067|Not-Set
 --
 LT|0x0070|SRXL2
 T |0x0071|Proportional
@@ -177,9 +178,9 @@ T |0x00C8|Sensor is Calibrating.. Wait
 T |0x00CA|SAFE & Panic Mode Setup
 --
 T |0x00CD|Level model & capt attitude/m -- SPECIAL MENU to itself who is not a comment
-T |0x00CE|Error TX Conf
-T |0x00CF|Invalid TX Ch Conf 1
-T |0x00D0|Invalid TX Ch Conf 2
+T |0x00CE|ATTENTION!
+T |0x00CF|Your transmitter requires
+T |0x00D0|newer LUA FP
 --
 -- RX Orientations for AR631/AR637, Optionally attach an Image + Alt Text to display
 LT|0x00CB|Pos 1
@@ -524,7 +525,9 @@ T |0x02BB|Pitch Offset
 T |0x0300|No compatible DSM RX...
 T |0x0301|Waiting for RX to Restart
 --
-FM|0x8000|Flight Mode/c/b
+FM|0x8000|Flight Mode %s/c/b
+FM|0x8001|Flight Mode %s/c/b
+FM|0x8002|Gyro Sys %s / Flight Mode %s/c/b
 --
 RX|0x0001|AR636
 RX|0x0014|SPM4651T

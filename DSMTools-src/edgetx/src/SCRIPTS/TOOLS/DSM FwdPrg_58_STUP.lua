@@ -1,4 +1,4 @@
-local toolName = "TNS|DSM Frwd Prog v0.58 (MIN-SETUP)|TNE"
+local toolName = "TNS|DSM Frwd Prog v0.59 (MIN-SETUP)|TNE"
 
 ---- #########################################################################
 ---- #                                                                       #
@@ -18,7 +18,7 @@ local toolName = "TNS|DSM Frwd Prog v0.58 (MIN-SETUP)|TNE"
 ---- #########################################################################
 
 
-local VERSION             = "v0.58"
+local VERSION             = "v0.59"
 local DSMLIB_PATH         = "/SCRIPTS/TOOLS/DSMLIB/"
 local DATA_PATH           = "/MODELS/DSMDATA"
 
@@ -27,9 +27,9 @@ local DEBUG_ON            = 0
 
 -- Phase
 local PH_INIT = 0
-local PH_RX_VER, PH_TITLE  = 1, 2
-local PH_VAL_CHANGING, PH_VAL_EDITING, PH_VAL_EDIT_END     = 6, 7, 8
-local PH_WAIT_CMD, PH_EXIT_REQ, PH_EXIT_DONE               = 9, 10, 11
+local PH_RX_VER, PH_GET_MENU  = 1, 2
+local PH_VAL_EDITING, PH_VAL_EDIT_END     =  7, 8
+local PH_WAIT_CMD, PH_EXIT_REQ, PH_EXIT_DONE  = 9, 10, 11
 
 -- Line Types
 local LT_MENU, LT_LIST_NC = 0x1C, 0x6C
@@ -658,24 +658,20 @@ end
 local function GotoMenu(menuId, lastSelectedLine)
   Menu.MenuId = menuId
   ctx_SelLine = lastSelectedLine
-  ChangePhase(PH_TITLE)
+  ChangePhase(PH_GET_MENU)
 end
 
 local function DSM_HandleEvent(event)
   if event == EVT_VIRTUAL_EXIT then
-    if Phase == PH_RX_VER then
-      Phase = PH_EXIT_DONE -- Exit program
+    if isEditing() then   -- Editing a Line, need to  restore original value
+      MenuLines[ctx_EditLine].Val = originalValue
+      event = EVT_VIRTUAL_ENTER
     else
-      if isEditing() then   -- Editing a Line, need to  restore original value
-        MenuLines[ctx_EditLine].Val = originalValue
+      if (Menu.BackId > 0 ) then -- Back??
+        ctx_SelLine = -1 --Back Button
         event = EVT_VIRTUAL_ENTER
       else
-        if (Menu.BackId > 0 ) then -- Back??
-          ctx_SelLine = -1 --Back Button
-          event = EVT_VIRTUAL_ENTER
-        else
-          ChangePhase(PH_EXIT_REQ)
-        end
+        ChangePhase(PH_EXIT_REQ)
       end
     end
   end -- Exit
@@ -766,12 +762,12 @@ end
 local function DSM_Send_Receive()
 
     if Phase == PH_RX_VER then -- request RX version
-        Phase = PH_TITLE
+        Phase = PH_GET_MENU
         Menu.MenuId = 0x01001
         Refresh_Display = true
     elseif Phase == PH_WAIT_CMD then 
         
-    elseif Phase == PH_TITLE then -- request menu title
+    elseif Phase == PH_GET_MENU then -- request menu title
         ST_LoadMenu(Menu.MenuId)
         if (Phase~=PH_EXIT_DONE) then
           Phase = PH_WAIT_CMD

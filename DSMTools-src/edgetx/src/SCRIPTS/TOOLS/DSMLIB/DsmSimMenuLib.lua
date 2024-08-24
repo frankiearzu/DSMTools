@@ -26,7 +26,7 @@
 
 
 local Log, menuLib, modelLib, DEBUG_ON = ... -- Get DebugON from parameters
-local SIM_LIB_VERSION = "0.58"
+local SIM_LIB_VERSION = "0.59"
 local MSG_FILE = "/SCRIPTS/TOOLS/DSMLIB/msg_fwdp_en.txt"
 
 local PHASE = menuLib.PHASE

@@ -1,5 +1,5 @@
-local toolName = "TNS|DSM Forward Prog v0.58 (Color) |TNE"
-local VERSION  = "v0.58"
+local toolName = "TNS|DSM Forward Prog v0.59 (Color) |TNE"
+local VERSION  = "v0.59"
 
 ---- #########################################################################
 ---- #                                                                       #

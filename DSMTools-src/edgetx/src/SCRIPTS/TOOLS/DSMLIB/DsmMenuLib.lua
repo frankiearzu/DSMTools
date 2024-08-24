@@ -35,13 +35,11 @@ local PHASE = {
     WAIT_CMD = 2,
     MENU_TITLE = 3,
     MENU_REQ_TX_INFO = 4,
-    MENU_LINES = 5, 
-    MENU_VALUES = 6,
-    VALUE_CHANGING = 7, 
-    VALUE_CHANGING_WAIT = 8, 
-    VALUE_CHANGE_END = 9,
-    EXIT = 10, 
-    EXIT_DONE = 11
+    VALUE_CHANGING = 5, 
+    VALUE_CHANGING_WAIT = 6, 
+    VALUE_CHANGE_END = 7,
+    EXIT = 8, 
+    EXIT_DONE = 9
 }
 
 local LINE_TYPE = {
@@ -538,7 +536,7 @@ function MenuLib.GetFlightModeValue(line)
     local ret = line.Text
     local val = line.Val
 
-    if (val==nil) then return string.format(ret,"--","--") end
+    if (val==nil) then return string.format(ret,"-","-") end
 
     local gyroNum = bit32.rshift(val,8)
     local fmNum =   bit32.band(val,0xFF)
@@ -575,8 +573,6 @@ function MenuLib.Init()
     PhaseText[PHASE.WAIT_CMD]            = "WAIT_CMD"
     PhaseText[PHASE.MENU_TITLE]          = "MENU_TITLE"
     PhaseText[PHASE.MENU_REQ_TX_INFO]    = "MENU_REQ_TX_INFO"
-    PhaseText[PHASE.MENU_LINES]          = "MENU_LINES"
-    PhaseText[PHASE.MENU_VALUES]         = "MENU_VALUES"
     PhaseText[PHASE.VALUE_CHANGING]      = "VALUE_CHANGING"
     PhaseText[PHASE.VALUE_CHANGING_WAIT] = "VALUE_EDITING"
     PhaseText[PHASE.VALUE_CHANGE_END]    = "VALUE_CHANGE_END"

@@ -40,7 +40,7 @@
 
 
 local Log, menuLib, modelLib, DEBUG_ON = ... -- Get Debug_ON from parameters.  -- 0=NO DEBUG, 1=HIGH LEVEL 2=MORE DETAILS 
-local LIB_VERSION = "0.58"
+local LIB_VERSION = "0.59"
 local MSG_FILE = "/SCRIPTS/TOOLS/DSMLIB/msg_fwdp_en.txt"
 
 local PHASE = menuLib.PHASE
@@ -69,6 +69,10 @@ local TxInfo_Step = 0
 local Change_Step = 0
 
 local IS_EDGETX = false 
+local TX_FIRMWARE=0x15 -- Capabilities??
+local TX_MAX_CH = modelLib.TX_CHANNELS - 6   --number of channels after 6  (6Ch=0, 10ch=4, etc)
+
+
 
 ------------------------------------------------------------------------------------------------------------
 
@@ -128,6 +132,8 @@ local function DSM_send(...)
         end
         LOG_write("DSM_SEND: [%s]\n", str) 
     end
+
+    TXInactivityTime = getTime() + SEND_TIMEOUT  -- Reset Inactivity timeout 
 end
 
 
@@ -170,20 +176,14 @@ local function DSM_sendHeartbeat()
     DSM_send(0x00, 0x04, 0x00, 0x00)
 end
 
-local function DSM_getRxVerson()
-    local TX_CAP=0x15 -- Capabilities??
-    local TX_MAX_CH = modelLib.TX_CHANNELS - 6   --number of channels after 6  (6Ch=0, 10ch=4, etc)
-    
-    Log.LOG_write("SEND DSM_getRxVersion(Ch:0x%X,Cap:0x%X)\n",TX_MAX_CH,TX_CAP)
-    DSM_send(0x11, 0x06, TX_MAX_CH, TX_CAP, 0x00, 0x00)
+local function DSM_getRxVerson()    
+    Log.LOG_write("SEND DSM_getRxVersion(Ch:0x%X,Firmware:0x%X)\n",TX_MAX_CH,TX_FIRMWARE)
+    DSM_send(0x11, 0x06, TX_MAX_CH, TX_FIRMWARE, 0x00, 0x00)
 end
 
-local function DSM_getMainMenu()
-    local TX_CAP=0x15 -- Capabilities??
-    local TX_MAX_CH = modelLib.TX_CHANNELS - 6   --number of channels after 6  (6Ch=0, 10ch=4, etc)
-    
-    Log.LOG_write("SEND DSM_getMainMenu(Ch:0x%X,Cap:0x%X) -- TX_Channels=%d\n",TX_MAX_CH,TX_CAP,TX_MAX_CH+6)
-    DSM_send(0x12, 0x06, TX_MAX_CH, TX_CAP, 0x00, 0x00) -- first menu only
+local function DSM_ackVersion()
+    Log.LOG_write("SEND DSM_ackVersion(Ch:0x%X,Firmware:0x%X) -- TX_Channels=%d\n",TX_MAX_CH,TX_FIRMWARE,TX_MAX_CH+6)
+    DSM_send(0x12, 0x06, TX_MAX_CH, TX_FIRMWARE, 0x00, 0x00) -- This will trigger getting first menu 
 end
 
 local function DSM_getMenu(menuId, latSelLine)
@@ -191,8 +191,8 @@ local function DSM_getMenu(menuId, latSelLine)
     DSM_send(0x16, 0x06, int16_MSB(menuId), int16_LSB(menuId), 0x00, latSelLine)
 end
 
-local function DSM_getFirstMenuLine(menuId)
-    Log.LOG_write("SEND DSM_getFirstMenuLine(MenuId=0x%X)\n", menuId)
+local function DSM_ackMenu(menuId)
+    Log.LOG_write("SEND DSM_ackMenu(MenuId=0x%X)\n", menuId)
     DSM_send(0x13, 0x04, int16_MSB(menuId), int16_LSB(menuId)) -- line 0
 end
 
@@ -201,9 +201,8 @@ local function DSM_ackMenuLine(menuId, curLine)
     DSM_send(0x14, 0x06, int16_MSB(menuId), int16_LSB(menuId), 0x00, curLine) -- line X
 end
 
-local function DSM_ackMenuValue(menuId, valId, text)
-    Log.LOG_write("SEND DSM_ackMenuValue(MenuId=0x%X, ValueId=0x%X) Extra: Text=\"%s\"\n", menuId, valId,
-            text)
+local function DSM_ackMenuValue(menuId, valId)
+    Log.LOG_write("SEND DSM_ackMenuValue(MenuId=0x%X, ValueId=0x%X)\n", menuId, valId)
     DSM_send(0x15, 0x06, int16_MSB(menuId), int16_LSB(menuId), int16_MSB(valId), int16_LSB(valId)) -- line X
 end
 
@@ -342,33 +341,17 @@ local function DSM_sendRequest()
         DSM_sendHeartbeat()
 
     elseif ctx.Phase == PHASE.MENU_TITLE then -- request menu title
-        if ctx.Menu.MenuId == 0 then  -- First time loading a menu ?
-            DSM_getMainMenu()
-        else
-            DSM_getMenu(ctx.Menu.MenuId, ctx.SelLine) 
+        DSM_getMenu(ctx.Menu.MenuId, ctx.SelLine) 
 
-            if (ctx.Menu.MenuId == 0x0001) then  -- Executed the Reset Menu??
-                Log.LOG_write("RX Reset!!!\n")
-                -- Start again retriving RX info 
-                ctx.Menu.MenuId = 0
-                ctx.isReset = true                
-                ctx.Phase = PHASE.RX_VERSION
-            end
+        if (ctx.Menu.MenuId == 0x0001) then  -- Executed the Reset Menu??
+            Log.LOG_write("RX Reset!!!\n")
+            -- Start again retriving RX info 
+            ctx.Menu.MenuId = 0
+            ctx.isReset = true                
+            ctx.Phase = PHASE.RX_VERSION
         end
-
     elseif ctx.Phase == PHASE.MENU_REQ_TX_INFO then 
         DSM_sentTxInfo(ctx.Menu.MenuId, ctx.CurLine)
-
-    elseif ctx.Phase == PHASE.MENU_LINES then -- request next menu lines
-        if ctx.CurLine == -1 then -- No previous menu line loaded ?
-            DSM_getFirstMenuLine(ctx.Menu.MenuId)
-        else
-            DSM_ackMenuLine(ctx.Menu.MenuId, ctx.CurLine)
-        end
-
-    elseif ctx.Phase == PHASE.MENU_VALUES then -- request menu values
-        local line = ctx.MenuLines[ctx.CurLine]
-        DSM_ackMenuValue(ctx.Menu.MenuId, line.ValId, line.Text)
 
     elseif ctx.Phase == PHASE.VALUE_CHANGING then -- send value
         local line = ctx.MenuLines[ctx.SelLine] -- Updated Value of SELECTED line  
@@ -376,7 +359,7 @@ local function DSM_sendRequest()
         if (Change_Step==0) then
             DSM_updateMenuValue(line.ValId, line.Val, line.Text, line)
 
-            if line.Type == menuLib.LINE_TYPE.LIST_MENU then -- Validation on every Step??
+            if line.Type == menuLib.LINE_TYPE.LIST_MENU or line.Type == menuLib.LINE_TYPE.LIST_MENU_TOG then -- Validation on every Step??
                 Change_Step=1; ctx.SendDataToRX=1  -- Send inmediatly after 
             else
                 ctx.Phase = PHASE.VALUE_CHANGING_WAIT 
@@ -414,6 +397,7 @@ local function DSM_sendRequest()
     elseif ctx.Phase == PHASE.EXIT then
         Log.LOG_write("CALL DSM_TX_Exit()\n")
         DSM_send(0x1F, 0x02, 0xFF, 0xFF) -- 0xAA
+        ctx.Phase = PHASE.EXIT_DONE
     end
 end
 
@@ -529,7 +513,8 @@ local function DSM_parseMenuValue()
     else
         Log.LOG_write("RESPONSE MenuValue: UPDATED: %s\n", menuLib.menuLine2String(updatedLine))
     end
-    return updatedLine ~= nil
+    
+    return menuId, valId
 end
 
 local function DSM_parseReqTxInfo() 
@@ -553,13 +538,15 @@ local function DSM_processResponse()
 
     if cmd == 0x01 then -- read version
         DSM_parseRxVersion()
-        --Lib.Init_Text(DSM_Context.RX.Id)
+        DSM_ackVersion()
+
         ctx.isReset = false  -- no longer resetting  
-        ctx.Phase = PHASE.MENU_TITLE
+        ctx.Phase = PHASE.WAIT_CMD
         ctx.Menu.MenuId = 0
 
     elseif cmd == 0x02 then -- read menu title
         local menu = DSM_parseMenu()
+        DSM_ackMenu(menu.MenuId)
 
         -- Update Selected Line navigation
         if menu.NextId ~= 0 then
@@ -574,12 +561,13 @@ local function DSM_processResponse()
             ctx.Menu.MenuId = 0
             ctx.Phase = PHASE.RX_VERSION
         else
-            ctx.Phase = PHASE.MENU_LINES
+            ctx.Phase = PHASE.WAIT_CMD
         end
         
 
     elseif cmd == 0x03 then --  menu lines
         local line = DSM_parseMenuLine()
+        DSM_ackMenuLine(line.MenuId,line.lineNum)
 
         -- Update Selected line navigation
         if (ctx.SelLine == BACK_BUTTON or ctx.SelLine == NEXT_BUTTON or ctx.SelLine == PREV_BUTTON)
@@ -587,28 +575,24 @@ local function DSM_processResponse()
             ctx.SelLine = line.lineNum
         end
 
-        ctx.Phase = PHASE.MENU_LINES
+        ctx.Phase = PHASE.WAIT_CMD
 
     elseif cmd == 0x04 then -- read menu values
-        if DSM_parseMenuValue() then 
-            ctx.Phase = PHASE.MENU_VALUES
-        else
-            ctx.Phase = PHASE.WAIT_CMD
-        end
-        
+        local menuId, valId = DSM_parseMenuValue()
+        DSM_ackMenuValue(menuId, valId)
+      
     elseif cmd == 0x05 then -- Request TX Info
         local portNo = DSM_parseReqTxInfo()         
         ctx.CurLine = portNo
         ctx.Phase = PHASE.MENU_REQ_TX_INFO
+        ctx.SendDataToRX = 1  -- send response inmediatly
 
     elseif cmd == 0xA7 then -- answer to EXIT command
         Log.LOG_write("RESPONSE RX Exit\n")
-        if (ctx.Phase==PHASE.EXIT) then -- Expected RX Exit
-            ctx.Phase = PHASE.EXIT_DONE
-        else -- UnExpected RX Exit
-            DSM_ReleaseConnection()
-            error("RX Connection Drop, Press RTN to exit")
-        end
+        ctx.Phase = PHASE.EXIT_DONE
+
+        DSM_ReleaseConnection()
+        error("RX Connection Drop, Press RTN to exit")
 
     elseif cmd == 0x00 then -- NULL response (or RX heartbeat)
         -- 09 00 01 00 00 00 00 00 00 00 00 00 00 00 00
@@ -636,37 +620,26 @@ local function DSM_Send_Receive()
 
         if (cmd > 0x00) then -- RX HeartBeat ??
             -- Only change to SEND mode if we received a valid response  (Ignore heartbeat)
-            ctx.SendDataToRX = 1
+            --ctx.SendDataToRX = 1
             ctx.Refresh_Display = true
         end
     else
-        if  (getTime() > RXInactivityTime and ctx.Phase ~= PHASE.RX_VERSION and ctx.Phase ~= PHASE.EXIT_DONE) then
-            if (ctx.isEditing()) then -- If Editing, Extend Timeout
-                RXInactivityTime = getTime() + SEND_TIMEOUT*4 
-            else
+        if  (getTime() > RXInactivityTime and ctx.Phase == PHASE.WAIT_CMD) then
                 Log.LOG_write("%3.3f %s: RX INACTIVITY TIMEOUT\n", menuLib.getElapsedTime(), menuLib.phase2String(ctx.Phase))
                 DSM_ReleaseConnection()
                 error("RX Disconnected. Press RTN to exit")
-            end
         end
     end
 
     -----TX Part --------------------------------------
     if ctx.SendDataToRX == 1 then   -- Need to send a request
         ctx.SendDataToRX = 0
-        DSM_sendRequest()
-        TXInactivityTime = getTime() + SEND_TIMEOUT  -- Reset Inactivity timeout 
+        DSM_sendRequest() 
     else
         -- Check if enouth time has passed from last transmit/receive activity
         if getTime() > TXInactivityTime then
             ctx.SendDataToRX = 1 -- Switch to Send mode to send heartbeat
             ctx.Refresh_Display = true
-
-            -- Only change to WAIT_CMD if we are NOT wating for RX version
-            if ctx.Phase ~= PHASE.RX_VERSION then
-                -- Phase = If IsEditing then VALUE_CHANGING_WAIT else WAIT_CMD
-                ctx.Phase = (ctx.isEditing() and PHASE.VALUE_CHANGING_WAIT) or PHASE.WAIT_CMD
-            end
         end
     end
 end
