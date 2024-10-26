@@ -8,7 +8,10 @@ Copy the Uncompressed files into your radio /SCRIPTS/TOOLS
 
 The SDCard should look like this:
 
-    /scripts/dsm-telemetry/main.lua
+    /scripts/
+            dsm-SMART-tel/
+                            main.lua
+                            icon.png
 
 ---
 ## Screenshots
