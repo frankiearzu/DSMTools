@@ -1,5 +1,6 @@
 # DSM Telemetry Script Tools for Ethos
 
+NOTE: Requires Ethos 1.6.0 nightly
 
 # Deployment/Installation
 
@@ -8,10 +9,6 @@ Copy the Uncompressed files into your radio /SCRIPTS/TOOLS
 The SDCard should look like this:
 
     /scripts/dsm-telemetry/main.lua
-
-
-
-Tested with X10S Ethos 1.6.0 nightly
 
 ---
 ## Screenshots
