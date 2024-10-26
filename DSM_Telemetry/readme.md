@@ -15,6 +15,17 @@ The SDCard should look like this:
 
 Tested with Radimaster TX16S and FrSky QX7
 
+# ScreenShots
+![tools-screen](https://github.com/user-attachments/assets/325153a0-8fe7-4ad5-9b71-e5a7bf4a7955)
+![SmartTel-main](https://github.com/user-attachments/assets/8893dbea-6f9c-4853-a01e-b8ea648b732f)
+![smartTel-FlightLog](https://github.com/user-attachments/assets/c9d30aaa-3f14-4d09-accd-45ee3184886b)
+![SmartTel-Safe](https://github.com/user-attachments/assets/eb36abfd-22c0-44e8-a38d-0e24db457f66)
+![SmartTel-TextGen-Avian](https://github.com/user-attachments/assets/28ca767a-d62d-4470-9a08-a473b7bb5de3)
+![SmartTel-TextGen-Lemon](https://github.com/user-attachments/assets/cf401dc2-9cbc-4984-9deb-d195fe57413e)
+![SmartTel-ESC](https://github.com/user-attachments/assets/836c0b0a-58fc-4689-a9f6-3b4ce196f471)
+
+
+
 ---
 
 ## Versions
