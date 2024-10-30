@@ -15,7 +15,16 @@ The SDCard should look like this:
 
 Tested with Radimaster TX16S and FrSky QX7
 
-# ScreenShots
+# ScreenShots EdgeTX
+![Smart-RX-Tel](https://github.com/user-attachments/assets/e6b9e972-8738-43cf-b2f2-e745e9c40e9b)
+![Smart-RX-Tel2](https://github.com/user-attachments/assets/cf5f5196-e9e7-4d9d-867d-52d674f59d71)
+![Smart-Tel-TextGen](https://github.com/user-attachments/assets/ee546fc1-661b-4b66-befa-1f681608aa4d)
+![screen-2024-09-08-113913](https://github.com/user-attachments/assets/7c3fbbfd-c2a5-44ea-9e46-81a753367ffb)
+
+
+
+
+# ScreenShots Ethos
 ![tools-screen](https://github.com/user-attachments/assets/325153a0-8fe7-4ad5-9b71-e5a7bf4a7955)
 ![SmartTel-main](https://github.com/user-attachments/assets/8893dbea-6f9c-4853-a01e-b8ea648b732f)
 ![smartTel-FlightLog](https://github.com/user-attachments/assets/c9d30aaa-3f14-4d09-accd-45ee3184886b)

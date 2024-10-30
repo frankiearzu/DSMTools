@@ -4,11 +4,14 @@ NOTE: Requires Ethos 1.6.0 nightly
 
 # Deployment/Installation
 
-Copy the Uncompressed files into your radio /SCRIPTS/TOOLS
+Copy the Uncompressed files into your radio /scripts
 
 The SDCard should look like this:
 
-    /scripts/dsm-telemetry/main.lua
+    /scripts/
+            dsm-smart-tel/
+                            main.lua
+                            icon.png
 
 ---
 ## Screenshots
