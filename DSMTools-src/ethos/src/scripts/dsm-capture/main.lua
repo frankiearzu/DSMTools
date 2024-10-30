@@ -99,13 +99,13 @@ local function getTelemetryFrame(I2C_ID)
     return { 0x7F, 0x00, 0x00, 0x00}
   end
 
-  --local data =  multiSensor:popFrame({i2cAddress=I2C_ID})
-  local data =  multiSensor:popFrame()
+  local data =  multiSensor:popFrame({i2cAddress=I2C_ID})
+  --local data =  multiSensor:popFrame()
 
   if (data) then
-    local i2cId = data[1] or 0
+    local i2cId = data[4] or 0
     if (I2C_ID > 0 and i2cId ~= I2C_ID) then   -- not the data we want?
-      data = nil
+      --data = nil
     end
   end
 
@@ -152,7 +152,7 @@ function CaptureProcessor.wakeup(I2C_ID)
 
   if (data ~= nil) then   
       this.debugHex = ""
-      for i=1,16 do
+      for i=4,19 do
           this.debugHex=this.debugHex .. string.format(" %02X", (data[i] or 0xFF))
       end
 

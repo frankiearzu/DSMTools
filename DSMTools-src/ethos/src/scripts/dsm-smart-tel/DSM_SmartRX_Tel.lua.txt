@@ -1,3 +1,5 @@
+local toolName = "TNS|DSM Smart RX Tel v1.4|TNE"
+local version  = "1.4"
 ---- #########################################################################                                                                  #
 ---- # License GPLv2: http://www.gnu.org/licenses/gpl-2.0.html               #
 ---- #                                                                       #
@@ -15,12 +17,10 @@
 ------------------------------------------------------------------------------ 
 -- Developer: Francisco Arzu
 
-local translations = {en="DSM Tel 1.4"}
-
 local SIMULATION            = false
 
-local TEXT_SIZE             = FONT_STD
-local TEXT_SIZE_BIG         = FONT_BOLD
+local TEXT_SIZE             = 0 -- NORMAL
+local TEXT_SIZE_BIG         = MIDSIZE
 local LCD_COL1_HEADER       = 6
 local LCD_COL1_DATA         = 60
 local LCD_COL2_HEADER       = 170
@@ -31,11 +31,8 @@ local LCD_ROW_DATA          = LCD_ROW_HEADER + LCD_LINE_HEIGHT*2
 local LCD_DATA_LEN          = 80 
 local LCD_DATA_SPACE        = 5
 
-local LCD_TEXT_COLOR         = lcd.themeColor(THEME_DEFAULT_COLOR)
-local LCD_FOCUS_COLOR        = lcd.themeColor(THEME_FOCUS_COLOR)
-
-local C_UP                  = "^"
-local C_DOWN                = "v"
+local C_UP                  = CHAR_UP
+local C_DOWN                = CHAR_DOWN
 
 local MENU_MAX_PER_PAGE     = 7
 
@@ -59,8 +56,6 @@ local I2C_FP_BATT           = 0x34
 local I2C_SMART_BAT         = 0x42
 local I2C_QOS               = 0x7F
 
-
-local multiSensor           = nil
 
 local MainScreen = {
   ItemHighlight   = 2,
@@ -167,40 +162,33 @@ MainScreen.menu = {
 -----------------------------------------------------------------------------------
 
 local function openTelemetryRaw(i2cId)
-  --Init telemetry Queue
-  if (multiSensor==nil) then
-    multiSensor = multimodule.getSensor()
+  --Init telemetry  (Spectrun Telemetry Raw STR)
+  for i=0,15 do
+    FrameData[i] = U8_NODATA
   end
+
+  multiBuffer( 0, string.byte('S') )
+  multiBuffer( 1, string.byte('T') )
+  multiBuffer( 2, string.byte('R') ) 
+  multiBuffer( 3, i2cId ) -- Monitor this teemetry data
+  multiBuffer( 4, 0 ) -- Allow to get Data
 end
 
 local function closeTelemetryRaw()
-  multiSensor = nil
+  multiBuffer(0, 0) -- Destroy the STR header 
+  multiBuffer(3, 0) -- Not requesting any Telementry ID
 end
 
-local function getFrameData(I2C_ID) 
-  local data = nil
-
-  if (SIMULATION) then
-    if (I2C_ID == I2C_QOS) then
-        data = { 0x00, 0x00, 0x00, 0x7F,0x00,0x00,0x5A,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x02,0x03,0x01 }
-    end
-  else
-    data =  multiSensor:popFrame({i2cAddress=I2C_ID})
-    --data =  multiSensor:popFrame()
+local function getFrameData(i2cId) 
+  if (multiBuffer(0)~=string.byte('S') or multiBuffer(3) ~= i2cId ) then -- First time run???
+    openTelemetryRaw(i2cId) -- I2C_ID 
   end
 
-
-  if (data) then
-    local i2cId = data[4] or 0
-    if (I2C_ID > 0 and i2cId ~= I2C_ID) then   -- not the data we want?
-      data = nil
+  if multiBuffer( 4 ) == i2cId then
+    for i=0,15 do
+      FrameData[0+i] = multiBuffer(4+i)
     end
-  end
-
-  if (data) then
-    for i=1,16 do  -- Copy from 1 based array into 0 base array
-      FrameData[i-1] = data[i+3] or 0xFF
-    end
+    multiBuffer( 4, 0 ) -- Allow to get Data
     return true
   end
   return false
@@ -225,36 +213,36 @@ local function getU8(p)
 end
 
 local function getI16LE(p)
-     local val = FrameData[p] + (FrameData[p+1] << 8)
+     local val = FrameData[p] + bit32.lshift(FrameData[p+1], 8)
      if (val == I16_NODATA) then return nil else return Unsigned_to_SInt16(val) end
 end
 
 local function getU16LE(p)
-  local val = FrameData[p] + (FrameData[p+1] << 8)
+  local val = FrameData[p] + bit32.lshift(FrameData[p+1], 8)
   if (val == U16_NODATA) then return nil else return val end
 end
 
 local function getU16(p)
-  local val = (FrameData[p] << 8) + FrameData[p+1]
+  local val = bit32.lshift(FrameData[p], 8) + FrameData[p+1]
   if (val == U16_NODATA) then return nil else return val end
 end
 
 local function getI16(p)
-  local val = (FrameData[p] << 8) + FrameData[p+1]
+  local val = bit32.lshift(FrameData[p], 8) + FrameData[p+1]
   if (val == I16_NODATA) then return nil else return val end
 end
 
 local function getI32(p)
-  local val = (FrameData[p] << 24) + (FrameData[p+1] << 16) + 
-              (FrameData[p+2] << 8)  + FrameData[p+3]
+  local val = bit32.lshift(FrameData[p], 24) + bit32.lshift(FrameData[p+1], 16) + 
+              bit32.lshift(FrameData[p+2], 8)  + FrameData[p+3]
   local mask = 0x80000000
-  val = (val ~ mask) - mask
+  val = bit32.bxor(val, mask) - mask
   if (val == I32_NODATA) then return nil else return val end
 end
 
 local function getU32LE(p)
-  local val = (FrameData[p+3] << 24) + (FrameData[p+2] << 16) + 
-              (FrameData[p+1] << 8)  + FrameData[p]
+  local val = bit32.lshift(FrameData[p+3], 24) + bit32.lshift(FrameData[p+2], 16) + 
+              bit32.lshift(FrameData[p+1], 8)  + FrameData[p]
   if (val == U32_NODATA) then return nil else return val end
 end
 
@@ -282,8 +270,8 @@ end
 
 local function getBCD(p)
   local ch = FrameData[p]
-  local d1 = (ch >> 4) & 0x0F
-  local d2 = ch & 0x0F
+  local d1 = bit32.band(bit32.rshift(ch, 4), 0x0F)
+  local d2 = bit32.band(ch, 0x0F)
 
   return d1*10 + d2
 end
@@ -311,9 +299,9 @@ end
 -----------------------------------------------------------------------------------
 
 function DefaultProcessor.event(key)
-  if key == KEY_RTN_BREAK then
+  if key == EVT_VIRTUAL_EXIT then
+      closeTelemetryRaw()
       MainScreen.ItemSelected = 1 -- Main Menu
-      lcd.invalidate()
   end
 end
 
@@ -322,7 +310,11 @@ end
 function FlightLog.wakeup()
   local this = FlightLog
 
-  if getFrameData(I2C_QOS) then
+  if (SIMULATION) then
+    FrameData   = {[0]=0x7F,0x00,0x00,0x5A,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x02,0x02}
+  end
+
+  if  getFrameData(I2C_QOS) then
     this.QOS_Value[0] = getU16(2) -- A
     this.QOS_Value[1] = getU16(4) -- B
     this.QOS_Value[2] = getU16(6) -- L
@@ -333,9 +325,7 @@ function FlightLog.wakeup()
     if (holds == I16_NODATA) then holds = nil end
     this.QOS_Value[5] = holds
 
-    this.QOS_Value[6] = getU16(14) -- Bat
-
-    lcd.invalidate()
+    this.QOS_Value[6] = getU16(14)
   end
 end
 
@@ -343,34 +333,25 @@ function FlightLog.paint()
   -- draw labels and params on screen
   local this = FlightLog
   
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, LCD_ROW_HEADER, "Flight Log")
+  lcd.clear()
+  lcd.drawText (LCD_COL1_HEADER, LCD_ROW_HEADER, "Flight Log", TEXT_SIZE + INVERS)
 
   local activeParam = (this.QOS_Value[5] or 0) - 1 -- H 
 
   local y = LCD_LINE_HEIGHT+LCD_ROW_DATA
 
   for iParam=0,3 do   -- A,B,L,R 
-    lcd.color(LCD_TEXT_COLOR)
-    
-  
     -- highlight selected parameter  (rund)
-    if ((activeParam % 4)==iParam) then
-      lcd.color(LCD_FOCUS_COLOR)
-    end
+    local attr = ((activeParam % 4)==iParam) and INVERS or 0
 
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER, y, this.QOS_Title[iParam])
+    lcd.drawText (LCD_COL1_HEADER, y, this.QOS_Title[iParam], TEXT_SIZE)
     
     -- Values
     local val = this.QOS_Value[iParam] 
     if (val==0x4000) then  -- Active value
-        lcd.color(LCD_FOCUS_COLOR)
-        lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, "  ", RIGHT)
+        lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, "  ", attr + TEXT_SIZE + RIGHT + INVERS)
     else
-        lcd.font(FONT_STD)
-        lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, formatNilValue(val), RIGHT)
+        lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, formatNilValue(val), attr + TEXT_SIZE + RIGHT)
     end
 
     y = y + LCD_LINE_HEIGHT
@@ -378,9 +359,8 @@ function FlightLog.paint()
 
   y = LCD_LINE_HEIGHT+LCD_ROW_DATA
   for iParam=4,5 do  -- F, H
-    lcd.font(FONT_L)
-    lcd.drawText (LCD_COL2_HEADER, y, this.QOS_Title[iParam])
-    lcd.drawText (LCD_COL2_DATA + LCD_DATA_LEN, y, formatNilValue(this.QOS_Value[iParam]), RIGHT)
+    lcd.drawText (LCD_COL2_HEADER, y, this.QOS_Title[iParam], TEXT_SIZE_BIG)
+    lcd.drawText (LCD_COL2_DATA + LCD_DATA_LEN, y, formatNilValue(this.QOS_Value[iParam]), TEXT_SIZE_BIG + RIGHT)
     y = y + LCD_LINE_HEIGHT*2
   end
 
@@ -388,11 +368,9 @@ function FlightLog.paint()
   local bat = this.QOS_Value[6]
   if (bat ~= nil) then bat = string.format("%0.2f", bat/100) else bat = "--" end
   y = y + LCD_LINE_HEIGHT
-
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL2_HEADER, y, "Bat:")
-  lcd.drawText (LCD_COL2_DATA + LCD_DATA_LEN, y, bat, RIGHT)
-  lcd.drawText (LCD_COL2_DATA + LCD_DATA_LEN + LCD_DATA_SPACE, y, " v")
+  lcd.drawText (LCD_COL2_HEADER, y, "Bat:", TEXT_SIZE)
+  lcd.drawText (LCD_COL2_DATA + LCD_DATA_LEN, y, bat, TEXT_SIZE + RIGHT)
+  lcd.drawText (LCD_COL2_DATA + LCD_DATA_LEN + LCD_DATA_SPACE, y, " v", TEXT_SIZE)
 end
 
 FlightLog.event = DefaultProcessor.event
@@ -402,23 +380,21 @@ FlightLog.event = DefaultProcessor.event
 function AS3XSettings.paint(page)
   local this =  AS3XSettings
   
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
+  lcd.clear()
   if (page==1) then
-    lcd.drawText (1,0, "AS3X Settings")
+    lcd.drawText (1,0, "AS3X Settings", TEXT_SIZE + INVERS)
   else
-    lcd.drawText (1,0, "SAFE Limits")
+    lcd.drawText (1,0, "SAFE Limits", TEXT_SIZE + INVERS)
   end
 
   local y = LCD_ROW_DATA
   -- Flight Mode
-  lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_HEADER,y, "FM: "..this.AS3X_FmMsg)
-  lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN*0.4,y, "Flags: "..formatNilValue(this.AS3X_Flags))
-  lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN*0.7,y, "State: "..formatNilValue(this.AS3X_State))
+  lcd.drawText (LCD_COL1_HEADER,y, "FM: "..this.AS3X_FmMsg, TEXT_SIZE)
+  lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN*0.4,y, "Flags: "..formatNilValue(this.AS3X_Flags), TEXT_SIZE)
+  lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN*0.7,y, "State: "..formatNilValue(this.AS3X_State), TEXT_SIZE)
 
   y = y + LCD_LINE_HEIGHT
-  lcd.drawText (LCD_COL1_HEADER,y, this.AS3X_FlagsMsg)
+  lcd.drawText (LCD_COL1_HEADER,y, this.AS3X_FlagsMsg, TEXT_SIZE)
 
   y = y + LCD_LINE_HEIGHT
 
@@ -427,29 +403,23 @@ function AS3XSettings.paint(page)
   end
 
   if (page==1) then
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER+LCD_DATA_LEN*0.3,y, "AS3X Gains")
-    lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN*0.3,y, "AS3X Headings")
+    lcd.drawText (LCD_COL1_HEADER+LCD_DATA_LEN*0.3,y, "AS3X Gains", TEXT_SIZE+BOLD)
+    lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN*0.3,y, "AS3X Headings", TEXT_SIZE+BOLD)
     
     y = y + LCD_LINE_HEIGHT
-    lcd.drawText (LCD_COL1_HEADER,y, "Roll:")
-    lcd.font(FONT_STD)
-    lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[0]), RIGHT) -- Roll G 
-    lcd.drawText (LCD_COL2_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[3]), RIGHT) -- Roll H 
+    lcd.drawText (LCD_COL1_HEADER,y, "Roll:", TEXT_SIZE)
+    lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[0]), TEXT_SIZE + RIGHT) -- Roll G 
+    lcd.drawText (LCD_COL2_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[3]), TEXT_SIZE + RIGHT) -- Roll H 
 
     y = y + LCD_LINE_HEIGHT
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER,y, "Pitch:")
-    lcd.font(FONT_STD)
-    lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[1]), RIGHT)  -- Pitch G
-    lcd.drawText (LCD_COL2_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[4]), RIGHT) -- Pitch H 
+    lcd.drawText (LCD_COL1_HEADER,y, "Pitch:", TEXT_SIZE)
+    lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[1]), TEXT_SIZE + RIGHT)  -- Pitch G
+    lcd.drawText (LCD_COL2_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[4]), TEXT_SIZE + RIGHT) -- Pitch H 
 
     y = y + LCD_LINE_HEIGHT
-    lcd.font(FONT_BOLD)
     lcd.drawText (LCD_COL1_HEADER,y, "Yaw:", TEXT_SIZE)
-    lcd.font(FONT_STD)
-    lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[2]), RIGHT) -- Yaw G
-    lcd.drawText (LCD_COL2_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[5]), RIGHT) -- Yaw H
+    lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[2]), TEXT_SIZE + RIGHT) -- Yaw G
+    lcd.drawText (LCD_COL2_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[5]), TEXT_SIZE + RIGHT) -- Yaw H
   end
 
 
@@ -457,50 +427,35 @@ function AS3XSettings.paint(page)
     local x_data1 = LCD_COL1_DATA+LCD_DATA_LEN
     local x_data2 = LCD_COL2_HEADER+LCD_DATA_LEN*1.6
 
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER+LCD_DATA_LEN*0.3,y, "SAFE Gains")
-    lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN*0.1,y, "Angle Limits")
+    lcd.drawText (LCD_COL1_HEADER+LCD_DATA_LEN*0.3,y, "SAFE Gains", TEXT_SIZE+BOLD)
+    lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN*0.1,y, "Angle Limits", TEXT_SIZE+BOLD)
   
     y = y + LCD_LINE_HEIGHT
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER,y, "Roll:")
-    lcd.font(FONT_STD)
-    lcd.drawText (x_data1,y, formatNilValue(this.AS3X_Data[6]), RIGHT)
+    lcd.drawText (LCD_COL1_HEADER,y, "Roll:", TEXT_SIZE)
+    lcd.drawText (x_data1,y, formatNilValue(this.AS3X_Data[6]), TEXT_SIZE + RIGHT)
 
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL2_HEADER,y, "Roll R:")
-    lcd.font(FONT_STD)
-    lcd.drawText (x_data2,y, formatNilValue(this.AS3X_Data[12]), RIGHT)
+    lcd.drawText (LCD_COL2_HEADER,y, "Roll R:", TEXT_SIZE)
+    lcd.drawText (x_data2,y, formatNilValue(this.AS3X_Data[12]), TEXT_SIZE + RIGHT)
 
 
     y = y + LCD_LINE_HEIGHT
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER,y, "Pitch:")
-    lcd.font(FONT_STD)
-    lcd.drawText (x_data1,y,formatNilValue(this.AS3X_Data[7]), RIGHT)
+    lcd.drawText (LCD_COL1_HEADER,y, "Pitch:", TEXT_SIZE)
+    lcd.drawText (x_data1,y,formatNilValue(this.AS3X_Data[7]), TEXT_SIZE + RIGHT)
 
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL2_HEADER,y, "Roll L:" )
-    lcd.font(FONT_STD)
-    lcd.drawText (x_data2,y,formatNilValue(this.AS3X_Data[13]), RIGHT)
+    lcd.drawText (LCD_COL2_HEADER,y, "Roll L:", TEXT_SIZE)
+    lcd.drawText (x_data2,y,formatNilValue(this.AS3X_Data[13]), TEXT_SIZE + RIGHT)
 
 
     y = y + LCD_LINE_HEIGHT
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER,y, "Yaw:")
-    lcd.font(FONT_STD)
-    lcd.drawText (x_data1,y, formatNilValue(this.AS3X_Data[8]), RIGHT)
+    lcd.drawText (LCD_COL1_HEADER,y, "Yaw:", TEXT_SIZE)
+    lcd.drawText (x_data1,y, formatNilValue(this.AS3X_Data[8]), TEXT_SIZE + RIGHT)
 
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL2_HEADER,y, "Pitch U:")
-    lcd.font(FONT_STD)
-    lcd.drawText (x_data2,y, formatNilValue(this.AS3X_Data[14]), RIGHT)
+    lcd.drawText (LCD_COL2_HEADER,y, "Pitch U:", TEXT_SIZE)
+    lcd.drawText (x_data2,y, formatNilValue(this.AS3X_Data[14]), TEXT_SIZE + RIGHT)
 
     y = y + LCD_LINE_HEIGHT
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL2_HEADER,y, "Pitch D:")
-    lcd.font(FONT_STD)
-    lcd.drawText (x_data2,y, formatNilValue(this.AS3X_Data[15]), RIGHT)
+    lcd.drawText (LCD_COL2_HEADER,y, "Pitch D:", TEXT_SIZE)
+    lcd.drawText (x_data2,y, formatNilValue(this.AS3X_Data[15]), TEXT_SIZE + RIGHT)
   end
 end
 
@@ -513,19 +468,19 @@ function AS3XSettings.wakeup()
     this.AS3X_Flags = getU8(2)
     this.AS3X_State = getU8(3)
 
-    local fm =   FrameData[4] & 0xF
-    local axis = FrameData[5] & 0xF  -- 0=Gains,1=Headings,2=Angle Limits (cointinus iterating to provide all values)
+    local fm = bit32.band(FrameData[4],0xF)
+    local axis = bit32.band(FrameData[5],0xF)  -- 0=Gains,1=Headings,2=Angle Limits (cointinus iterating to provide all values)
   
     if (fm ~= 0x0E) then
       local separator=""
       
       this.AS3X_FmMsg = ""..(fm+1)
       -- flags bits:  Safe Envelop, ?, Angle Demand, Stab 
-      if (this.AS3X_Flags & 0x1 ~= 0) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg.."AS3X Stab"; separator=", " end
+      if (bit32.band(this.AS3X_Flags,0x1)~=0) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg.."AS3X Stab"; separator=", " end
       -- This one, only one should show
-      if (this.AS3X_Flags & 0x2 ~=0) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Safe Level" 
-      elseif (this.AS3X_Flags & 0x8 ~=0 ) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Safe Envelope" 
-      elseif (this.AS3X_Flags & 0x4 ~=0 ) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Heading" end
+      if (bit32.band(this.AS3X_Flags,0x2)~=0) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Safe Level" 
+      elseif (bit32.band(this.AS3X_Flags,0x8)~=0) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Safe Envelope" 
+      elseif (bit32.band(this.AS3X_Flags,0x4)~=0) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Heading" end
   
       --axis: 0=Gains+Headings (RG,PG,YG,RH,PH,YH), 1=Safe Gains (R,P,Y),2=Angle Limits(L,R,U,D) 
       --Constantly changing from 0..2 to represent different data, thats why we have to store the values
@@ -540,8 +495,6 @@ function AS3XSettings.wakeup()
       elseif (this.AS3X_State==2) then this.AS3X_FlagsMsg="Error: FM-Switch-Range" end
     end  
   end
-
-  lcd.invalidate()
 end
 
 AS3XSettings.event = DefaultProcessor.event
@@ -550,24 +503,24 @@ AS3XSettings.event = DefaultProcessor.event
 function SmartESC.paint()
   local this = SmartESC
 
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-  lcd.drawText (1,0, "ESC")
+  lcd.clear() 
+  lcd.drawText (1,0, "ESC", TEXT_SIZE+INVERS)
 
   local y = 0
   local x_data = LCD_COL1_DATA+LCD_DATA_LEN*1.5
   local x_data2 = LCD_COL2_DATA+LCD_DATA_LEN*0.5
   local x_data3 = x_data2 + LCD_DATA_LEN*0.8
 
-  lcd.font(FONT_BOLD)
-  lcd.drawText (x_data,y , "Status", RIGHT)
-  lcd.drawText (x_data2,y, "Min", RIGHT)
-  lcd.drawText (x_data3,y, "Max", RIGHT)
+  local fontD = TEXT_SIZE + RIGHT
+  local fontH1 = TEXT_SIZE + BOLD + RIGHT
+
+  lcd.drawText (x_data,y , "Status", fontH1)
+  lcd.drawText (x_data2,y, "Min", fontH1)
+  lcd.drawText (x_data3,y, "Max", fontH1)
   
   y = LCD_ROW_DATA
   for i=1,9 do
-      lcd.font(FONT_BOLD)
-      lcd.drawText (LCD_COL1_HEADER,y, this.ESC_Title[i])
+      lcd.drawText (LCD_COL1_HEADER,y, this.ESC_Title[i], TEXT_SIZE)
 
       local val = this.ESC_Value[i]
       local min = this.ESC_Min[i]
@@ -577,12 +530,10 @@ function SmartESC.paint()
         min = formatWithComma(min)
         max = formatWithComma(max)
       end
-
-      lcd.font(FONT_STD)
-      lcd.drawText (x_data,y, formatNilValue(val), RIGHT)
-      lcd.drawText (x_data,y, this.ESC_uom[i])
-      lcd.drawText (x_data2,y, formatNilValue(min), RIGHT)
-      lcd.drawText (x_data3,y, formatNilValue(max), RIGHT)
+      lcd.drawText (x_data,y, formatNilValue(val), fontD)
+      lcd.drawText (x_data,y, this.ESC_uom[i], TEXT_SIZE)
+      lcd.drawText (x_data2,y, formatNilValue(min), fontD)
+      lcd.drawText (x_data3,y, formatNilValue(max), fontD)
       y = y + LCD_LINE_HEIGHT
   end
 end
@@ -619,8 +570,6 @@ function SmartESC.wakeup()
       if (voltsB) then setDataMinMax(7,voltsB/20,"%0.2f") end -- Volts BEC
       if (tempB) then setDataMinMax(8,tempB/10) end -- Temp BEC
       if (currB) then setDataMinMax(9,currB/10) end -- Cur BEC
-
-      lcd.invalidate()
   end
 end
 
@@ -630,18 +579,15 @@ SmartESC.event = DefaultProcessor.event
 function SmartBat.paint()
   local this = SmartBat
 
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-  lcd.drawText (1,0, "Battery Stats")
+  lcd.clear()
+  lcd.drawText (1,0, "Battery Stats", TEXT_SIZE+INVERS)
   
   local y = LCD_ROW_DATA
   local x_data = LCD_COL1_DATA+LCD_DATA_LEN+LCD_DATA_SPACE*3
   for i=1,6 do
-      lcd.font(FONT_BOLD)
-      lcd.drawText (LCD_COL1_HEADER, y, this.BAT_Title[i])
-      lcd.font(FONT_STD)
-      lcd.drawText (x_data, y, formatNilValue(this.BAT_Values[i]), RIGHT)
-      lcd.drawText (x_data+LCD_DATA_SPACE, y, this.BAT_uom[i])
+      lcd.drawText (LCD_COL1_HEADER, y, this.BAT_Title[i], TEXT_SIZE + BOLD)
+      lcd.drawText (x_data, y, formatNilValue(this.BAT_Values[i]), TEXT_SIZE + RIGHT)
+      lcd.drawText (x_data+LCD_DATA_SPACE, y, this.BAT_uom[i], TEXT_SIZE)
       y = y + LCD_LINE_HEIGHT
   end
 
@@ -649,11 +595,9 @@ function SmartBat.paint()
   x_data = LCD_COL2_DATA+LCD_DATA_LEN+LCD_DATA_SPACE*5
   for i=0,8 do
       if ((this.BAT_Cells[i] or 0) > 0) then
-        lcd.font(FONT_BOLD)
-        lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN/2,y, "Cel "..(i+1)..":")
-        lcd.font(FONT_STD)
-        lcd.drawText (x_data,y, string.format("%2.2f",this.BAT_Cells[i]), RIGHT)
-        lcd.drawText (x_data+LCD_DATA_SPACE,y, "v")
+        lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN/2,y, "Cel "..(i+1)..":", TEXT_SIZE + BOLD)
+        lcd.drawText (x_data,y, string.format("%2.2f",this.BAT_Cells[i]), TEXT_SIZE + RIGHT)
+        lcd.drawText (x_data+LCD_DATA_SPACE,y, "V", TEXT_SIZE)
       end
       y = y + LCD_LINE_HEIGHT
   end
@@ -716,8 +660,6 @@ function SmartBat.wakeup()
     --end
 
     this.BAT_Values[1] = string.format("%0.2f",vTotal)
-
-    lcd.invalidate()
   end
 end
 
@@ -728,13 +670,12 @@ SmartBat.event = DefaultProcessor.event
 function TextGen.paint()
   local this = TextGen
 
-  lcd.color(LCD_TEXT_COLOR)
-
+  lcd.clear()
   local y = LCD_ROW_DATA
   local x = LCD_COL1_HEADER
-  local hAttr = 0
+  local hAttr = TEXT_SIZE + INVERS + BOLD
 
-  if (LCD_Y_MAX <= 64) then 
+  if (LCD_H <= 64) then 
     -- Need to be able to show 8 lines of data + heather
     -- show header on the right hand side to gain 1 line
     x = 128
@@ -744,17 +685,16 @@ function TextGen.paint()
     y = LCD_ROW_DATA + LCD_LINE_HEIGHT
   end
 
-  lcd.font(FONT_BOLD)
   lcd.drawText (x,0, "TextGen", hAttr)
   if (this.TG_Lines[0]) then   -- Header
     lcd.drawText (x,LCD_LINE_HEIGHT, this.TG_Lines[0], hAttr)
   end
 
   -- Menu lines
-  lcd.font(FONT_STD)
+  
   for i=1,8 do
     if (this.TG_Lines[i]) then
-      lcd.drawText (LCD_COL1_HEADER,y,  this.TG_Lines[i])
+      lcd.drawText (LCD_COL1_HEADER,y,  this.TG_Lines[i], TEXT_SIZE)
     end
     y = y + LCD_LINE_HEIGHT
   end
@@ -782,13 +722,12 @@ function TextGen.wakeup()
       this.TG_Lines[lineNo]=line
     end
   end
-
-  lcd.invalidate()
 end
 
 
 function TextGen.event(key)
-  if key == KEY_RTN_BREAK then -- Exit?? Clear menu data
+  if key == EVT_VIRTUAL_EXIT then -- Exit?? Clear menu data
+    closeTelemetryRaw()
     DefaultProcessor.event(key)
   end
 end
@@ -799,22 +738,21 @@ function FlightPack.paint()
   local this = FlightPack
   -- draw labels and params on screen
   local y = LCD_ROW_HEADER
+  local attrH2= TEXT_SIZE + RIGHT + INVERS
+  local attrD = TEXT_SIZE + RIGHT
 
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Flight Pack")
+  lcd.clear()
+  lcd.drawText (LCD_COL1_HEADER, y, "Flight Pack", TEXT_SIZE + INVERS)
 
   y = y + LCD_LINE_HEIGHT + LCD_LINE_HEIGHT
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN, y, "Batt 1", RIGHT)
-  lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN, y, "Batt 2", RIGHT)
+  lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN, y, "Batt 1", attrH2)
+  lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN, y, "Batt 2", attrH2)
 
   y = y + LCD_LINE_HEIGHT
 
 
   for i=0,2 do
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER, y, this.FP_Title[i])
+    lcd.drawText (LCD_COL1_HEADER, y, this.FP_Title[i], TEXT_SIZE)
 
     local disp1,disp2
     if (i==1) then
@@ -826,12 +764,11 @@ function FlightPack.paint()
       disp1 = formatFloat1(this.FP_Value[i])
       disp2 = formatFloat1(this.FP_Value[i+3])
     end
-    lcd.font(FONT_STD)
-    lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, disp1, RIGHT)
-    lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, this.FP_uom[i])
+    lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, disp1, attrD)
+    lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, this.FP_uom[i], TEXT_SIZE)
 
-    lcd.drawText (LCD_COL2_HEADER + LCD_DATA_LEN, y, disp2, RIGHT)
-    lcd.drawText (LCD_COL2_HEADER + LCD_DATA_LEN, y, this.FP_uom[i])
+    lcd.drawText (LCD_COL2_HEADER + LCD_DATA_LEN, y, disp2, attrD)
+    lcd.drawText (LCD_COL2_HEADER + LCD_DATA_LEN, y, this.FP_uom[i], TEXT_SIZE)
     y = y + LCD_LINE_HEIGHT
   end
 end
@@ -852,8 +789,6 @@ function FlightPack.wakeup()
     this.FP_Value[3] =  c 
     this.FP_Value[4] =  getI16LE(10) -- Used 2
     this.FP_Value[5] =  getI16LE(12) -- Temp 2
-
-    lcd.invalidate()
   end
 end
 
@@ -911,7 +846,7 @@ function Gps.parseGPS_Loc(pos)
   -- formula from code in gps.cpp
   local value = deg * 1000000 + (min * 100000 + fmin * 10) / 6;
 
-  if ((gpsFlags & GPS_INFO_FLAGS_IS_NORTH) == 0) then  -- SOUTH, negative
+  if (bit32.band(gpsFlags,GPS_INFO_FLAGS_IS_NORTH) == 0) then  -- SOUTH, negative
     value = -value;
     this.GPS_Lat_Str = this.GPS_Lat_Str .. " S"
   else
@@ -925,7 +860,7 @@ function Gps.parseGPS_Loc(pos)
   min = getBCD(pos+8);
   deg = getBCD(pos+9);
 
-  if ((gpsFlags & GPS_INFO_FLAGS_LONGITUDE_GREATER_99) ~= 0) then
+  if (bit32.band(gpsFlags,GPS_INFO_FLAGS_LONGITUDE_GREATER_99) ~= 0) then
     deg = deg + 100;
   end
 
@@ -934,13 +869,13 @@ function Gps.parseGPS_Loc(pos)
   -- formula from code in gps.cpp
   local value = deg * 1000000 + (min * 100000 + fmin * 10) / 6;
 
-  if ((gpsFlags & GPS_INFO_FLAGS_IS_EAST) == 0) then  -- WEST, negative
+  if (bit32.band(gpsFlags,GPS_INFO_FLAGS_IS_EAST) == 0) then  -- WEST, negative
     value = -value;
     this.GPS_Lon_Str = this.GPS_Lon_Str .. " W"
   else
     this.GPS_Lon_Str = this.GPS_Lon_Str .. " E"
   end
-  this.GPS_Lon = value
+  this.GPS_Lon = value;
 end
 
 
@@ -949,53 +884,40 @@ function Gps.paint()
 
   -- draw labels and params on screen
   local y = LCD_ROW_HEADER
+  local attrH2= TEXT_SIZE 
+  local attrD = TEXT_SIZE + RIGHT
 
-
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "GPS")
+  lcd.clear()
+  lcd.drawText (LCD_COL1_HEADER, y, "GPS", TEXT_SIZE + INVERS)
 
   y = y + LCD_LINE_HEIGHT + LCD_LINE_HEIGHT
 
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "LAT:")
-  lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*5, y, string.format("%f (%s)",this.GPS_Lat/1000000,this.GPS_Lat_Str), RIGHT)
+  lcd.drawText (LCD_COL1_HEADER, y, "LAT:", attrH2)
+  lcd.drawText (LCD_COL1_DATA*5, y, string.format("%f (%s)",this.GPS_Lat/1000000,this.GPS_Lat_Str), attrD)
   y = y + LCD_LINE_HEIGHT
 
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "LON:")
-  lcd.drawText (LCD_COL1_DATA*5, y, string.format("%f (%s)",this.GPS_Lon/1000000,this.GPS_Lon_Str), RIGHT)
+  lcd.drawText (LCD_COL1_HEADER, y, "LON:", attrH2)
+  lcd.drawText (LCD_COL1_DATA*5, y, string.format("%f (%s)",this.GPS_Lon/1000000,this.GPS_Lon_Str), attrD)
   y = y + LCD_LINE_HEIGHT
 
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Speed:")
-  lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*3, y, string.format("%3.1f knots",this.GPS_Speed), RIGHT)
+  lcd.drawText (LCD_COL1_HEADER, y, "Speed:", attrH2)
+  lcd.drawText (LCD_COL1_DATA*3, y, string.format("%3.1f knots",this.GPS_Speed), attrD)
   y = y + LCD_LINE_HEIGHT
 
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Alt:")
-  lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*3, y, string.format("%3.1f feet",this.GPS_Alt + this.GPS_AltHigh*1000), RIGHT)
+  lcd.drawText (LCD_COL1_HEADER, y, "Alt:", attrH2)
+  lcd.drawText (LCD_COL1_DATA*3, y, string.format("%3.1f feet",this.GPS_Alt + this.GPS_AltHigh*1000), attrD)
   y = y + LCD_LINE_HEIGHT
 
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Course:")
-  lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*3, y, string.format("%3.1f deg",this.GPS_Course), RIGHT)
+  lcd.drawText (LCD_COL1_HEADER, y, "Course:", attrH2)
+  lcd.drawText (LCD_COL1_DATA*3, y, string.format("%3.1f deg",this.GPS_Course), attrD)
   y = y + LCD_LINE_HEIGHT
 
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Time (UTC):")
-  lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*3, y, this.GPS_Time_UTC, RIGHT)
+  lcd.drawText (LCD_COL1_HEADER, y, "Time (UTC):", attrH2)
+  lcd.drawText (LCD_COL1_DATA*3, y, this.GPS_Time_UTC, attrD)
   y = y + LCD_LINE_HEIGHT
 
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Sats:")
-  lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*3, y, formatNilValue(this.GPS_Sats), RIGHT)
+  lcd.drawText (LCD_COL1_HEADER, y, "Sats:", attrH2)
+  lcd.drawText (LCD_COL1_DATA*3, y, formatNilValue(this.GPS_Sats), attrD)
   y = y + LCD_LINE_HEIGHT
 end
 
@@ -1012,7 +934,6 @@ function Gps.wakeup()
       Gps.parseGPS_Loc(2)
       this.GPS_Step = 0
     end
-    lcd.invalidate()
     return
   end
 
@@ -1020,13 +941,11 @@ function Gps.wakeup()
     if getFrameData(I2C_GPS_STATS) then -- Specktrum Telemetry ID of data received
       Gps.parseGPS_Stats(2)
       this.GPS_Step = 1
-      lcd.invalidate()
     end
   else
     if getFrameData(I2C_GPS_LOC) then -- Specktrum Telemetry ID of data received
       Gps.parseGPS_Loc(2)
       this.GPS_Step = 0
-      lcd.invalidate()
     end
   end
 end
@@ -1046,7 +965,7 @@ function GpsBin.wakeup()
       FrameData   = {[0]=0x26,0x00,0x05,0x16,0x12,0x08,0xB6,0xB1,0xC5,0xA7,0xFF,0xFF,0x0C,0x2F,0x01}
   end
 
-  if SIMULATION or getFrameData(I2C_GPS_BIN) then -- Specktrum Telemetry ID of data received
+  if getFrameData(I2C_GPS_BIN) then -- Specktrum Telemetry ID of data received
     this.GPS_Alt = (getU16(2) - 1000) * 105 / 32  -- conver m to feet
     this.GPS_Lat = getI32(4) / 10
     this.GPS_Lon = getI32(8) / 10
@@ -1056,8 +975,6 @@ function GpsBin.wakeup()
 
     this.GPS_Lat_Str = string.format("%4.10f",this.GPS_Lat / 1000000)
     this.GPS_Lon_Str = string.format("%4.10f",this.GPS_Lon / 1000000)
-
-    lcd.invalidate()
   end
 end
 
@@ -1079,14 +996,10 @@ function SkyGps.wakeup()
     if (this.GPS_Step == 0) then
       FrameData   = {[0]= 0x27, 0x16, 0x36, 0x48, 0x28, 0x96, 0x09, 0x33, 0x72, 0x16, 0x35, 0x11, 0x00,0x00,0x28,0x3D,0x20}
       this.GPS_Step = 1
-      Gps.parseGPS_Loc(2)
     else
       FrameData   = {[0]= 0x27, 0x17, 0x00, 0x00, 0x10, 0x17, 0x08, 0x01, 0x07, 0x00 }
-      Gps.parseGPS_Stats(2)
       this.GPS_Step = 0
     end
-    
-    lcd.invalidate()
     return
   end
 
@@ -1097,7 +1010,6 @@ function SkyGps.wakeup()
       elseif (packetType==I2C_GPS_LOC) then
         Gps.parseGPS_Loc(2)
       end
-      lcd.invalidate()
   end
 end
 
@@ -1114,41 +1026,34 @@ function SkyRemoteId.paint()
 
   -- draw labels and params on screen
   local y = LCD_ROW_HEADER
+  local attrH2= TEXT_SIZE 
+  local attrD = TEXT_SIZE 
 
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "RemoteID")
+  lcd.clear()
+  lcd.drawText (LCD_COL1_HEADER, y, "RemoteID", TEXT_SIZE + INVERS)
 
   y = y + LCD_LINE_HEIGHT + LCD_LINE_HEIGHT
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "OWNER_INFO:")
-  lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*2, y, SkyRemoteId.RID_OwnerInfo)
+  lcd.drawText (LCD_COL1_HEADER, y, "OWNER_INFO:", attrH2)
+  lcd.drawText (LCD_COL1_DATA*2, y, SkyRemoteId.RID_OwnerInfo, attrD)
   y = y + LCD_LINE_HEIGHT
 
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "UAS_ID:")
-  lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*2, y, this.RID_UAS_ID)
+  lcd.drawText (LCD_COL1_HEADER, y, "UAS_ID:", attrH2)
+  lcd.drawText (LCD_COL1_DATA*2, y, this.RID_UAS_ID, attrD)
   y = y + LCD_LINE_HEIGHT
 
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "DEV_INFO:")
-  lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*2, y, this.DEV_LA0_S)
+  lcd.drawText (LCD_COL1_HEADER, y, "DEV_INFO:", attrH2)
+  lcd.drawText (LCD_COL1_DATA*2, y, this.DEV_LA0_S, attrD)
   y = y + LCD_LINE_HEIGHT
-  
-  lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*2, y, "Hex:"..this.DEV_LA0_H)
-  y = y + LCD_LINE_HEIGHT
+  lcd.drawText (LCD_COL1_DATA*2, y, "Hex:"..this.DEV_LA0_H, attrD)
 
-  lcd.drawText (LCD_COL1_HEADER, y, "Flight Status :"..this.RID_Status)
   y = y + LCD_LINE_HEIGHT
-  lcd.drawText (LCD_COL1_HEADER, y, "Dev Model : "..this.DEV_MODEL)
+  lcd.drawText (LCD_COL1_HEADER, y, "Flight Status :"..this.RID_Status, attrD)
   y = y + LCD_LINE_HEIGHT
-  lcd.drawText (LCD_COL1_HEADER, y, "Dev Serial : "..DEV_SERIAL)
+  lcd.drawText (LCD_COL1_HEADER, y, "Dev Model : "..this.DEV_MODEL, attrD)
   y = y + LCD_LINE_HEIGHT
-  lcd.drawText (LCD_COL1_HEADER, y, "Owner ID : "..RID_OWNER_ID)
+  lcd.drawText (LCD_COL1_HEADER, y, "Dev Serial : "..DEV_SERIAL, attrD)
+  y = y + LCD_LINE_HEIGHT
+  lcd.drawText (LCD_COL1_HEADER, y, "Owner ID : "..RID_OWNER_ID, attrD)
 end
 
 function SkyRemoteId.wakeup()
@@ -1175,7 +1080,6 @@ function SkyRemoteId.wakeup()
         this.RID_OwnerInfo = this.OID_L00 .. this.OID_L20 .. this.OID_L40
         this.RID_UAS_ID =  this.UAS_L60 .. this.UAS_L80
       end
-      lcd.invalidate()
   end
 end
 
@@ -1194,36 +1098,27 @@ end
 function MainScreen.paint()
   local this    =  MainScreen
 
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-
-  lcd.drawText (LCD_COL1_HEADER, LCD_ROW_HEADER, "Main Tel (Smart RXs) v1.4")
+  lcd.clear()
+  lcd.drawText (LCD_COL1_HEADER, LCD_ROW_HEADER, "Main Tel (Smart RXs) v"..version, TEXT_SIZE + INVERS)
 
   local x = LCD_COL1_DATA * 0.5
 
   for iParam=2 + this.Offset, #this.menu do    
-    lcd.color(LCD_TEXT_COLOR)
-    lcd.font(FONT_STD)
-
     -- highlight selected parameter
-    if (this.ItemHighlight==iParam) then
-      lcd.color(LCD_FOCUS_COLOR)
-      lcd.font(FONT_BOLD)
-    end
-
+    local attr = (this.ItemHighlight==iParam) and INVERS or 0
     -- set y draw coord
     local y = (iParam-this.Offset)*LCD_LINE_HEIGHT+LCD_ROW_DATA 
     
     -- Title
     local title = this.menu[iParam][1] -- Title
-    lcd.drawText (x, y, title)
+    lcd.drawText (x, y, title, attr + TEXT_SIZE)
 
     -- Draw UP/DOWN Arrows
     if ((iParam == this.Offset +  MENU_MAX_PER_PAGE) and (iParam < #this.menu)) then 
-      lcd.drawText (LCD_COL1_HEADER, y, C_DOWN)
+      lcd.drawText (LCD_COL1_HEADER, y, C_DOWN, TEXT_SIZE)
       break 
     elseif (iParam == this.Offset+2 and this.Offset > 0) then
-      lcd.drawText (LCD_COL1_HEADER, y, C_UP)
+      lcd.drawText (LCD_COL1_HEADER, y, C_UP, TEXT_SIZE)
     end
   end
 end
@@ -1233,7 +1128,7 @@ function  MainScreen.event(key)
 
   --print("MainScreenProcessor.event() called")
 
-  if key == KEY_ROTARY_LEFT then
+  if key == EVT_VIRTUAL_PREV then
     if (this.ItemHighlight>2) then 
       this.ItemHighlight = this.ItemHighlight - 1 
 
@@ -1241,7 +1136,7 @@ function  MainScreen.event(key)
         this.Offset = this.Offset - 1
       end
     end
-  elseif key == KEY_ROTARY_RIGHT then
+  elseif key == EVT_VIRTUAL_NEXT then
     if (this.ItemHighlight<#this.menu) then 
       this.ItemHighlight = this.ItemHighlight + 1 
 
@@ -1249,27 +1144,47 @@ function  MainScreen.event(key)
         this.Offset = this.Offset + 1
       end
     end
-  elseif key == KEY_ENTER_BREAK then
+  elseif key == EVT_VIRTUAL_ENTER then
     this.ItemSelected = this.ItemHighlight
   end
-
-  lcd.invalidate()
 end
 
----------------------------------------------------------------------------------------------
+local function run(event)
+  if event == nil then
+    error("Cannot be run as a model script!")
+    return 2
+  end
 
-local function name(widget)
-  local locale = system.getLocale()
-  return translations[locale] or translations["en"]
+  local m  =  MainScreen
+  local param = m.menu[m.ItemSelected][3] -- Prameter
+  local Proc   = m.menu[m.ItemSelected][2] -- Processor
+
+  -- draw specific page 
+  if (Proc.paint) then
+    Proc.paint(param)
+  end
+
+  if (Proc.wakeup) then
+    Proc.wakeup(param)
+  end
+
+  if event == EVT_VIRTUAL_EXIT then
+    if (m.ItemSelected==1) then -- on Main?? Exit Script
+      closeTelemetryRaw()
+      return 1 
+    end   
+  end
+
+  if (Proc.event) then
+    Proc.event(event)
+  end
+
+  return 0
 end
 
-local function create()
-  print("create() called")
+local function init()
 
-  LCD_X_MAX, LCD_Y_MAX = lcd.getWindowSize()
-  
-  -- Recompute line positions
-  if (LCD_X_MAX <= 128 or LCD_Y_MAX <=64) then -- Smaller Screens 
+  if (LCD_W <= 128 or LCD_H <=64) then -- Smaller Screens 
     TEXT_SIZE             = SMLSIZE 
     TEXT_SIZE_BIG         = DBLSIZE
     LCD_COL1_HEADER         = 1
@@ -1290,69 +1205,12 @@ local function create()
     MENU_MAX_PER_PAGE    = 5
   else
     MENU_MAX_PER_PAGE     = 7
+
   end
 
-  lcd.font(FONT_STD)
-  local tw, th = lcd.getTextSize("")
+  local tw, th = lcd.sizeText("", TEXT_SIZE)
   LCD_LINE_HEIGHT  = th + 1
   LCD_ROW_DATA       = LCD_ROW_HEADER + LCD_LINE_HEIGHT
-  openTelemetryRaw() 
-
-  return {}
 end
 
-local function wakeup(widget)
-  local m  =  MainScreen
-  local param = m.menu[m.ItemSelected][3] -- Prameter
-  local Proc   = m.menu[m.ItemSelected][2] -- Processor
-
-  if (Proc.wakeup) then
-    Proc.wakeup(param)
-  end
-end
-
-local function paint(widget)
-  --print("paint() called")
-  local m  =  MainScreen
-  local param = m.menu[m.ItemSelected][3] -- Prameter
-  local Proc   = m.menu[m.ItemSelected][2] -- Processor
-
-  if (Proc.paint) then
-    Proc.paint(param)
-  end
-end
-
-local function event(widget, category, value, x, y)
-  --print("Event received:", category, value, x, y)
-  if category == EVT_KEY then
-    local m  =  MainScreen
-    local param = m.menu[m.ItemSelected][3] -- Prameter
-    local Proc   = m.menu[m.ItemSelected][2] -- Processor
-
-    if (value == KEY_RTN_LONG) then  -- Exit??
-      closeTelemetryRaw()
-      system.exit()
-    elseif (value == KEY_RTN_BREAK) then
-      if (m.ItemSelected==1) then -- on Main?? Exit Script
-        closeTelemetryRaw()
-        system.exit()  
-      end
-    end
-
-  
-
-    if (Proc.event) then
-      Proc.event(value)
-    end
-  end
-  return true
-end
-
-local icon = lcd.loadMask("icon.png")
-
-local function init()
-  --print("init() called")
-  system.registerSystemTool({name=name, icon=icon, create=create, wakeup=wakeup, event=event, paint=paint})
-end
-
-return {init=init}
+return { run=run,  init=init  }
