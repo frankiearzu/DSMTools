@@ -17,15 +17,20 @@ The menu to be displayed is stored at the RX, the GUI only renders the menu titl
 A typical exchange will look like this in the log:
 
     SEND DSM_getMenu(MenuId=0x1010 LastSelectedLine=0)
+    
     RESPONSE Menu: M[Id=0x1010 P=0x0 N=0x0 B=0x1000 Text="Gyro settings"[0xF9]]
-    SEND DSM_getFirstMenuLine(MenuId=0x1010)
-    RESPONSE MenuLine: L[#0 T=M VId=0x1011 Text="AS3X Settings"[0x1DD]   MId=0x1010 ]
-    SEND DSM_getNextLine(MenuId=0x1010,LastLine=0)
-    RESPONSE MenuLine: L[#1 T=M VId=0x1019 Text="SAFE Settings"[0x1E2]   MId=0x1010 ]
-    SEND DSM_getNextLine(MenuId=0x1010,LastLine=1)
-    RESPONSE MenuLine: L[#2 T=M VId=0x1021 Text="F-Mode Setup"[0x87]   MId=0x1010 ]
-    SEND DSM_getNextLine(MenuId=0x1010,LastLine=2)
-    RESPONSE MenuLine: L[#3 T=M VId=0x1022 Text="System Setup"[0x86]   MId=0x1010 ]
+    SEND DSM_ackMenu(MenuId=0x1010)
+    
+    RESPONSE Line: L[#0 T=M VId=0x1011 Text="AS3X Settings"[0x1DD]   MId=0x1010 ]
+    SEND DSM_ackLine(MenuId=0x1010,LastLine=0)
+
+    RESPONSE Line: L[#1 T=M VId=0x1019 Text="SAFE Settings"[0x1E2]   MId=0x1010 ]
+    SEND DSM_ackLine(MenuId=0x1010,LastLine=1)
+
+    RESPONSE Line: L[#2 T=M VId=0x1021 Text="F-Mode Setup"[0x87]   MId=0x1010 ]
+    SEND DSM_ackLine(MenuId=0x1010,LastLine=2)
+    
+    RESPONSE Line: L[#3 T=M VId=0x1022 Text="System Setup"[0x86]   MId=0x1010 ]
 
 ## Menu 
 
@@ -38,7 +43,7 @@ The menu has the following information:
 - `NextId`: The menu ID of the next menu (for navigation), Log shows as `"N="`
 - `BackId`: The menu ID of the back menu (for navigation), Log shows as `"B="`
 - `TextId`: The message number to display (16 bits, Hex). Log shows as [`0xXX`] after the message.  
-- `Text`: Retrived using the `TextId` from the script message `Text` array.
+- `Text`: Retrived using the `TextId` from the script message `Text` array that is stored in the TX
 
 ## Menu Lines
 
@@ -140,7 +145,7 @@ To write a new DSM Fwd Programing command, write the data to address 4..9, and l
 
 When receiving data, address 10 will have the message type we are receiving, or 0 if nothing has been received.
 
-## Starting a new DSM Forward programming Connection 
+## Starting a new DSM Forward programming Connection with the MultiModule 
 
 - Write 0x00 at address 3
 - Write 0x00 at address 10
@@ -174,27 +179,27 @@ Msg| Len | ?? | ??
  ## DSM_getRxVersion()
 Request the RX information.
 TXCh is the number of channels sent by the TX after CH6. For example, 0=6Ch,2=8ch,6=12Ch.
+Current FP firmware version is 0x15 
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg| Len | TXCh | ?? |??|??
-0x11|0x06|0x06|0x14|0x00|0x00
+Msg| Len | TXCh-6 | Firm.Ver |??|??
+0x11|0x06|0x06|0x15|0x00|0x00
 
     SEND DSM_getRxVersion() 
-    DSM_SEND: [11 06 06 14 00 00 ]
+    DSM_SEND: [11 06 06 15 00 00 ]
 
-## DSM_getMainMenu()
-Request data for the main menu of the RX.
-TXCh (See getRXVersion).
-The RX will request information about all the channels reported by the TX via
-`RequestTXChInfo`.
+## DSM_ackVersion()
+Acks the version information received. 
+After that, the very first menu will be sent by the RX
+
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
-Msg| Len | TXCh | ?? |??|??
-0x12|0x06|0x06|0x14|0x00|0x00
+Msg| Len | TXCh | Firm. Ver |??|??
+0x12|0x06|0x06|0x15|0x00|0x00
 
-    SEND DSM_getMainMenu()
+    SEND DSM_ackVersion()
     DSM_SEND: [12 06 06 14 00 00 ]
 
 
@@ -211,8 +216,8 @@ Msg|Len | MSB (menuId) | LSB (MenuId) | MSB (lineNo)| LSB (lineNo)
     SEND DSM_getMenu(MenuId=0x1060 LastSelectedLine=1)
     DSM_SEND: [16 06 10 60 00 01 ]
 
-## DSM_getFirstMenuLine(menuId)
-Request the first line of a menu identified as `menuId`. The response will be the first line of the menu. 
+## DSM_ackMenu(menuId)
+Aks a menu identified as `menuId`. After this, the RX will start sending menu lines. 
 
 On the MainMenu, it will start requesing TxChannel info only the very first time before start sending the menu lines.
 
@@ -221,30 +226,30 @@ On the MainMenu, it will start requesing TxChannel info only the very first time
 Msg|Len | MSB (menuId) | LSB (MenuId) 
 0x13|0x04|0x10|0x60
 
-    SEND DSM_getFirstMenuLine(MenuId=0x1000)
+    SEND DSM_ackMenu(MenuId=0x1000)
     DSM_SEND: [13 04 10 00 ]
 
-## DSM_getNextMenuLine(menuId, curLine)
-Request the retrival of the next line following the current line. Response is either the next line, or the next value, or nothing.
+## DSM_ackLine(menuId, curLine)
+Ack reception of a menu line. RX will send the next menu line (if any), or values
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
 Msg|Len | MSB (menuId) | LSB (MenuId) | MSB (line#)??| LSB (line#)
 0x14|0x06|0x10|0x60|0x00|0x01
 
-    SEND DSM_getNextLine(MenuId=0x1000,LastLine=1)
+    SEND DSM_ackLine(MenuId=0x1000,Line=1)
     DSM_SEND: [14 06 10 00 00 01 ]
 
-##  DSM_getNextMenuValue(menuId, valId)
-Retrive the next value after the last `ValId` of the current `menuId`.  text is just for debugging purposes to show the header of the value been retrived.
-The Response is a Menu Value or nothing if no more data.
+##  DSM_ackValue(menuId, valId)
+Acks reception of a menu value. Text is just for debugging purposes to show the header of the value been retrived. After AckValue, the RX will send the next value (if any)
+
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
 Msg|Len | MSB (menuId) | LSB (MenuId) | MSB (ValId)| LSB (ValId)
 0x15|0x06|0x10|0x61|0x10|0x00
 
-    SEND DSM_getNextMenuValue(MenuId=0x1061, LastValueId=0x1000) 
+    SEND DSM_ackValue(MenuId=0x1061, ValId=0x1000) 
     DSM_SEND: [15 06 10 61 10 00 ]
 
 ## DSM_updateMenuValue(valId, val)
@@ -261,7 +266,7 @@ Msg|Len | MSB (ValId) | LSB (ValId) | MSB (Value)| LSB (Value)
     -->DSM_send(0x18, 0x06, int16_MSB(valId), int16_LSB(valId), int16_MSB(value), int16_LSB(value)) 
 
 ## DSM_validateMenuValue(valId)
-Validates the value identified as `valId`. The RX can response an Update value if the value is not valid and needs to be corrected.
+Validates the value identified as `valId`. The RX can response an Menu value message if the value is not valid and needs to be corrected. 
 
 |4|5|6|7|8|9|10
 |--|--|--|--|--|--|--
@@ -272,7 +277,7 @@ Msg|Len | MSB (ValId) | LSB (ValId)
     DSM_validateMenuValue(valId)
     -> DSM_send(0x19, 0x06, int16_MSB(valId), int16_LSB(valId)) 
 
-## DSM_menuEditingValue(lineNo) 
+## DSM_editStart(lineNo) 
 During editing, we need to tell the RX that we are editing a line (LineNo is zero base).. This will lock the screen to any changes of flight mode.  If we are editing a value that represents channel, this will "listen" to Channel changes and populate the value if a swith is flipped.
 
 |4|5|6|7|8|9|10
@@ -280,11 +285,11 @@ During editing, we need to tell the RX that we are editing a line (LineNo is zer
 Msg|Len | MSB (Line#) | LSB (Line#)
 0x1A|0x04|0x__|0x__
 
-    DSM_menuEditingValue(lineno)
+    DSM_editStart(lineno)
     ->DSM_send(0x1A, 0x06, int16_MSB(lineNo), int16_LSB(lineNo))
 
 
-## DSM_menuEditingValueEND(lineNo) 
+## DSM_editEND(lineNo) 
 This tells the RX that we are done editing a line.
 .
 |4|5|6|7|8|9|10
@@ -292,7 +297,7 @@ This tells the RX that we are done editing a line.
 Msg|Len | MSB (Line#) | LSB (Line#)
 0x1B|0x04|0x__|0x__
 
-    DSM_menuEditingValueEND(lineno)
+    DSM_editEND(lineno)
     ->DSM_send(0x1B, 0x06, int16_MSB(lineNo), int16_LSB(lineNo))
 
 
@@ -307,11 +312,11 @@ Msg|Len |
     CALL DSM_exitRequest()
     DSM_SEND: [1F 02 ]
 
-# Response Messages (RX->TX)
+# RX initiated Messages (RX->TX)
 
 All responses will have the a response byte in Multi_Buffer[10]=0x09 (I2C_FORMARD_PROG value 0x09), and the type of message in Multi_Buffer[11].
 
-## RX Version Response
+## RX Version Message
 
 Returns the information about the current RX.
 
@@ -324,10 +329,12 @@ The Display text of name name of the RX is retrive from the `RX_Name` array.
 
     RESPONSE RX: 09 01 00 1E 02 26 05 
     RESPONSE Receiver=AR631 Version 2.38.5
+    SEND     TX: ackVersion(...)
 
-## Menu Response
-Returns the menu information to display and navigation.
+## Menu Message
+Menu information to display and navigation.
 The Display text for the menu is retrive from the `Text` array.
+TX will send an AckMenu() to confirm reception of the data.
 
 
 |10|11|12|13|14|15|16|17|18|19|20|21
@@ -337,13 +344,14 @@ The Display text for the menu is retrive from the `Text` array.
 
     RESPONSE RX: 09 02 5E 10 27 02 00 00 00 00 00 10 00 00 00 00 
     RESPONSE Menu: M[Id=0x105E P=0x0 N=0x0 B=0x1000 Text="Other settings"[0x227]]
+    SEND     TX: ackMenu(...)
 
 
 
-## Menu Line Response
-Returns the menu line information.
+## Menu Line Message
+Menu line information.
 
-The Display text for the menu line is retrive from the `Text` array.
+The Display text for the menu line is retrive from the `Text` array in the TX.
  `Min`,`Max` and `Default` can be signed numbers.
 
 |10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25
@@ -353,9 +361,10 @@ The Display text for the menu line is retrive from the `Text` array.
 
     RESPONSE RX: 09 03 61 10 00 6C 50 00 00 10 36 00 49 00 36 00 
     RESPONSE MenuLine: L[#0 T=LM_nc VId=0x1000 Text="Outputs"[0x50] Val=nil NL=(0->19,0,S=54) [54->73,54] MId=0x1061 ]
+    SEND     TX: ackLine(...)
 
-## Menu Line Value Response
-Returns the Value for a line. 
+## Menu Line Value Message
+Value for a line. 
 
 The response updates the Value in the line identified by `ValId`.
 The Display text for the Value, when it is a list, is retrive from the `List_Text` array.
@@ -367,9 +376,10 @@ The Display text for the Value, when it is a list, is retrive from the `List_Tex
 
     RESPONSE RX: 09 04 61 10 00 10 00 00 
     RESPONSE MenuValue: UPDATED: L[#0 T=L_m0 VId=0x1000 Text="Outputs"[0x50] Val=0|"Throttle" NL=(0->19,0,S=54) [54->73,54] MId=0x1061 ]
+    SEND     TX: ackValue(...)
 
-## Exit Response
-Response from a Exit Request.
+## Exit Message
+RX Exit FP Request.
 
 |10|11
 |--|--
@@ -377,10 +387,10 @@ Response from a Exit Request.
 |0x09|0x07
 
     RESPONSE RX: 09 A7  
-    RESPONSE Exit Confirm
+    RESPONSE FP Exit 
 
 ## NULL Response (HeartBeat)
-Can be use as a response, or heartbeat from the RX to keep the connection open.
+Can be use as a response when there is no more menu data, or heartbeat from the RX to keep the connection open.
 
 |10|11
 |--|--
@@ -399,11 +409,12 @@ The flight controller/RX needs to know what channels are used for Flying surface
 
 ## DSM_getTXChInfo(menuId, Ch)
 
-Request the info of the specific `Ch` (0 based).
+Request the info of the specific `Ch` (0 based). The response is 1 or multiple messages (spaced at least 30ms apart)
+
 `InfoType`: 
-0x00 = Basic + Travel + END
-0x01 = Basic 
-0x1F = Basic + Travel + SubTrim + 0x24 + END
+- 0x00 = Basic + Travel + END  (on old receivers)
+- 0x01 = Basic 
+- 0x1F = Basic + Travel + SubTrim + 0x24 + END
 
 |10|11|12|13
 |--|--|--|--
@@ -429,11 +440,13 @@ Msg|Len | Ch# | Ch# | Role1 | Role2
 
 |MASK|Meaning
 |--|--
+|0x00|No-Role
 |0x01|Ail
 |0x02|Elv
 |0x04|Rud
-|0x40|Thr
+
 |0x20|Reversed
+|0x40|Thr
 |0x80|Slave  (2nd use of same surface)
 
 ### Mix Bits
