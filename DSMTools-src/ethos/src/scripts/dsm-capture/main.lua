@@ -16,7 +16,7 @@
 -- Developer: Francisco Arzu
  
 
-local translations = {en="DSM Capture 2.0"}
+local translations = {en="DSM Capture 1.1"}
 
 local SIMULATOR = false
 --
@@ -38,6 +38,7 @@ local multiSensor = nil
 local CaptureProcessor = {
   firstCapture = true,
   lineCount=0,
+  headerHex="",
   debugHex="",
 }
 
@@ -95,6 +96,10 @@ local function closeTelemetryRaw()
 end
 
 local function getTelemetryFrame(I2C_ID)
+    -- The inbound Frame has the following format starting at index 1:
+    -- MultiModule Header: [1]=RSSI,[2]=Type,[3]=???, 
+    -- Data: [4...19]= data for that frame, starting with I2C_ID
+
   if (SIMULATOR) then
     return { 0x7F, 0x00, 0x00, 0x00}
   end
@@ -119,6 +124,7 @@ function CaptureProcessor.init()
   this.firstCapture = true
   this.lineCount=0
   this.debugHex=""
+  this.haderHex=""
 end
 
 function CaptureProcessor.paint(I2C_ID)
@@ -129,7 +135,8 @@ function CaptureProcessor.paint(I2C_ID)
   lcd.drawText (1,1,  "  Capturing Data.. Press RTN to end   ")
   lcd.drawText (1,LCD_Y_LINE_HEIGHT*2, string.format("Lines: %d",this.lineCount))
   -- 
-  lcd.drawText (1,LCD_Y_DATA*4,this.debugHex)
+  lcd.drawText (1,LCD_Y_DATA*4,this.headerHex)
+  lcd.drawText (1,LCD_Y_DATA*5,this.debugHex)
 end -- Paint
 
 function CaptureProcessor.wakeup(I2C_ID)
@@ -152,12 +159,18 @@ function CaptureProcessor.wakeup(I2C_ID)
 
   if (data ~= nil) then   
       this.debugHex = ""
+      this.headerHex = ""
+
+      for i=1,3 do
+        this.headerHex=this.headerHex .. string.format(" %02X", (data[i] or 0xFF))
+      end
+
       for i=4,19 do
           this.debugHex=this.debugHex .. string.format(" %02X", (data[i] or 0xFF))
       end
 
       this.lineCount=this.lineCount+1
-      LOG_write("%s\n",this.debugHex)
+      LOG_write("Header: %s Data: %s\n",this.headerHex, this.debugHex)
       lcd.invalidate()
   end
 end -- Wakeup
@@ -239,6 +252,7 @@ end
 local function create()
   print("create() called")
   MainScreenProcessor.init()
+  CaptureProcessor.init()
 
   lcd.font(FONT_STD)
   LCD_X_MAX, LCD_Y_MAX = lcd.getWindowSize()

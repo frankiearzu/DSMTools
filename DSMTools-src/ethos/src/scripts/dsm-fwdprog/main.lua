@@ -16,11 +16,11 @@
 ---- #########################################################################
 
 
-local VERSION             = "v0.59"
+local VERSION             = "v0.59a"
 local LANGUAGE            = "en"
 local DSMLIB_PATH         = "/scripts/dsm-fwdprog/"
 local DEBUG_ON            = 1
-local SIMULATOR           = false
+local SIMULATOR           = true
 
 local I2C_FORWARD_PROG    = 0x09
 
@@ -86,6 +86,7 @@ local LCD_X_MAX,LCD_Y_MAX   = 400, 275
 local LCD_X_RIGHT_BUTTONS   = LCD_X_MAX - LCD_W_BUTTONS - 1
 
 local LCD_Y_LINE_HEIGHT   = 7
+local LCD_Y_HEADER_HEIGHT = LCD_Y_LINE_HEIGHT + 7
 local LCD_Y_LOWER_BUTTONS = (8 * LCD_Y_LINE_HEIGHT) + 2
 
 local LCD_TEXT_COLOR        = lcd.themeColor(THEME_DEFAULT_COLOR)
@@ -94,8 +95,16 @@ local LCD_TEXT_BGCOLOR      = lcd.themeColor(THEME_DEFAULT_BGCOLOR)
 local LCD_FOCUS_COLOR        = lcd.themeColor(THEME_FOCUS_COLOR)
 local LCD_FOCUS_BGCOLOR      = lcd.themeColor(THEME_FOCUS_BGCOLOR)
 
-local LCD_HEADER_COLOR       = lcd.themeColor(THEME_DEFAULT_COLOR)
-local LCD_HEADEER_BGCOLOR    = lcd.themeColor(THEME_DEFAULT_BGCOLOR)
+local LCD_HEADER_COLOR       = lcd.themeColor(THEME_FOCUS_COLOR)
+local LCD_HEADER_BGCOLOR     = lcd.themeColor(THEME_DEFAULT_BGCOLOR)
+
+-- Edit is inveted from normal 
+local LCD_EDIT_BGCOLOR       = LCD_TEXT_COLOR
+local LCD_EDIT_COLOR         = LCD_TEXT_BGCOLOR
+
+local LCD_FONT               = FONT_STD
+local LCD_FONT_BOLD          = FONT_BOLD
+local LCD_FONT_HEADER        = FONT_XL
 
 --Channel Types --
 local CT_NONE     = 0x00
@@ -121,12 +130,23 @@ local MT_REVERSE     = 1
 
 local MODEL = {
   modelName = "",            -- The name of the model comming from OTX/ETX
-  modelOutputChannel = {},   -- Output information from OTX/ETX
+  modelOutputChannel = { [0]=    -- Output information from OTX/ETX
+      { min = -1000.0, max = 1000.0 }, -- Ch1
+      { min = -1000.0, max = 1000.0 },
+      { min = -1000.0, max = 1000.0 },
+      { min = -1000.0, max = 1000.0 },
+      { min = -1000.0, max = 1000.0 }, -- Ch5
+      { min = -1000.0, max = 1000.0 },
+      { min = -1000.0, max = 1000.0 },
+      { min = -1000.0, max = 1000.0 },
+      { min = -1000.0, max = 1000.0 },
+      { min = -1000.0, max = 1000.0 },  -- Ch10
+  },  
 
   TX_CH_TEXT= { }, 
   PORT_TEXT = { },
 
-  DSM_ChannelInfo = { [0] =
+  DSM_ChannelInfo = { [0] =  -- Channel Role/Name info 
        {[0]= CMT_NORM, CT_THR, "Ch1"},
        {[0]= CMT_NORM, CT_AIL, "Ch2"},
        {[0]= CMT_NORM, CT_ELE, "Ch3"},
@@ -432,18 +452,18 @@ end
 --------------------
 local function DSM_Send(...)
   local arg = { ... }
-  local out = { 0x70 + #arg } -- Header with the length + 0x70
+  local out = { 0x70 + #arg } -- Header: length + 0x70
 
   local hex = string.format("%02X ",out[1])
   local len = #arg
-  if (len < 6) then len = 6 end
+  if (len < 6) then len = 6 end -- Always 6 bytes
 
   for i = 1, len do
       hex = hex .. string.format("%02X ",arg[i] or 0)
       out[i+1] = arg[i] or 0
   end
 
-  LOG_write("TX:Sending (hex)  %s\n",hex)
+  --LOG_write("TX:Sending (hex)  %s\n",hex)
 
   multiSensor:pushFrame(out)
 end
@@ -616,9 +636,9 @@ local function SendTxInfo(portNo)
   if (TX_Info_Step == 0) then  
       -- AR630 family: Both TxInfo_Type (ManinMenu=0x1,   Other First Time Configuration = 0x1F)
       local info = MODEL.DSM_ChannelInfo[portNo]
-      local b0, b1, b2 = info[0], info[1], info[2]
+      local b0, b1, ChDesc = info[0], info[1], info[2]
       DSM_Send(0x20, 0x06, portNo, portNo, b0,b1)
-      LOG_write("TX:DSM_TxInfo_20(Port=#%d, (%02x, %02x) %s)\n", portNo, b0,b1,b2 or "")
+      LOG_write("TX:DSM_TxInfo_20(Port=#%d, (%02x, %02x) %s)\n", portNo, b0,b1,ChDesc or "")
 
       if (TX_Info_Type == 0x1F) then -- SmartRx
           TX_Info_Step = 1
@@ -639,7 +659,7 @@ local function SendTxInfo(portNo)
     local b1,b2,b3,b4 = 0x00, 0x8E, 0x07, 0x72 -- (192-1904)
   
     local info = MODEL.DSM_ChannelInfo[portNo]
-    if info[1] == 0x40 or info[1] == 0x00 then -- Thr and other switches
+    if info[1] == CT_THR or info[1] == CT_NONE then -- Thr and other switches
       b1,b2,b3,b4 = 0x00, 0x00, 0x07, 0xFF -- (0-2047)      
     end
 
@@ -955,6 +975,7 @@ local function DSM_Send_Receive()
   if SendDataToRX == 1 then
     SendDataToRX = 0
     DSM_SendRequest()
+    lcd.invalidate()
     TXInactivityTime = getTime() + 1   -- Reset Inactivity timeout (2s)
   else
     -- Check if enouth time has passed from last transmit activity
@@ -983,25 +1004,51 @@ local function showBitmap(x, y, imgDesc)
   f = string.gmatch(imgMsg or "", '([^%:]+)')   -- Iterator over values split by ':'
   local p1, p2 = f(), f()
 
-  lcd.drawText(x, y, p1 or "")                     -- Alternate Image MSG
-  lcd.drawText(x, y + LCD_Y_LINE_HEIGHT, p2 or "") -- Alternate Image MSG
+  lcd.font(LCD_FONT)
+  lcd.color(LCD_TEXT_COLOR)
+  lcd.drawText(x + LCD_X_MAX/2, y, p1 or "")                     -- Alternate Image MSG
+  lcd.drawText(x + LCD_X_MAX/2, y + LCD_Y_LINE_HEIGHT, p2 or "") -- Alternate Image MSG
 
   local bitMap = lcd.loadBitmap(IMG_PATH..imgName)
   if (bitMap) then
-    lcd.drawBitmap(x,y + LCD_Y_LINE_HEIGHT*2,bitMap)
+    -- Bitmat resized to 4 line hight, and 1/2 screen width 
+    lcd.drawBitmap(x, y + LCD_Y_LINE_HEIGHT/2, bitMap, LCD_X_MAX/2, LCD_Y_LINE_HEIGHT*4)
   end
-
 end
 
+local function drawMenuBoxed(x, y, text, active)
+  local w =  (LCD_X_MAX / 3) *2
+  flipColor(active,LCD_FOCUS_COLOR,LCD_TEXT_BGCOLOR)
+  lcd.drawFilledRectangle(x, y+1, w-x, LCD_Y_LINE_HEIGHT-2)
+
+  flipColor(active,LCD_FOCUS_BGCOLOR,LCD_TEXT_COLOR)
+  lcd.drawText(x, y+2, text) 
+end
 
 local function drawButton(x, y, text, active)
-  flipColor(active,LCD_FOCUS_BGCOLOR,LCD_TEXT_BGCOLOR)
-  lcd.drawFilledRectangle(x, y, LCD_W_BUTTONS, LCD_Y_LINE_HEIGHT)  
+  flipColor(active,LCD_FOCUS_COLOR,LCD_TEXT_BGCOLOR)
+  lcd.drawFilledRectangle(x, y+1, LCD_W_BUTTONS, LCD_Y_LINE_HEIGHT-2)  
   
-  flipColor(active,LCD_FOCUS_COLOR,LCD_TEXT_COLOR)
-  lcd.drawText(x+3, y+1, text)
-  lcd.drawRectangle(x, y, LCD_W_BUTTONS-1, LCD_Y_LINE_HEIGHT) 
+  flipColor(active,LCD_FOCUS_BGCOLOR,LCD_TEXT_COLOR)
+  lcd.font(LCD_FONT_BOLD)
+  lcd.drawText(x+LCD_W_BUTTONS/2, y+2, text, TEXT_CENTERED)
+  --lcd.drawRectangle(x, y, LCD_W_BUTTONS-1, LCD_Y_LINE_HEIGHT) 
 end
+
+local function drawValue(x, y, text, active, editing)
+  local w =  (LCD_X_MAX / 3)
+  flipColor(active,LCD_FOCUS_COLOR,LCD_TEXT_BGCOLOR)
+  lcd.drawFilledRectangle(x-w, y+1, w, LCD_Y_LINE_HEIGHT-2)  
+  
+  flipColor(active,LCD_FOCUS_BGCOLOR,LCD_TEXT_COLOR)
+  lcd.drawText(x-8, y+2, text, TEXT_RIGHT)
+
+  if (editing) then
+    lcd.color(LCD_TEXT_COLOR)
+    lcd.drawRectangle(x-w, y, w, LCD_Y_LINE_HEIGHT)
+  end 
+end
+
 
 function GetFlightModeValue(line)
   local ret = line.Text
@@ -1027,64 +1074,76 @@ end
 local function DSM_Display()
   -- For Headers
   lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
+  
 
   --Draw RX Menu
   if Phase == PH_RX_VER then
+    lcd.font(LCD_FONT_BOLD)
     lcd.drawText(LCD_X_MAX/2, 0, "DSM Frwd Prog "..VERSION, TEXT_CENTERED)
 
     local msgId = 0x300 -- Waiting for RX
     if (ctx_isReset) then msgId=0x301 end -- Waiting for Reset
+    lcd.font(LCD_FONT)
     lcd.drawText(LCD_X_MAX/2, 3 * LCD_Y_LINE_HEIGHT, Get_Text(msgId), TEXT_CENTERED) 
     return
   end
 
+  if (Phase == PH_TX_INFO) then
+    lcd.font(LCD_FONT)
+    lcd.drawText(LCD_X_MAX / 2, 3 * LCD_Y_LINE_HEIGHT, "Sending CH"..(ctx_CurLine+1), TEXT_CENTERED) 
+  end
+
     -- display RX version
-  local msg = "DSM Frwd Prog "..VERSION.."       " .. RX_Name .. " v" .. RX_Version
-  lcd.drawText(LCD_X_MAX / 2, LCD_Y_LOWER_BUTTONS, msg, TEXT_CENTERED) 
+  if (ctx_EditLine == nil) then
+    local msg = "DSM Frwd Prog "..VERSION.."       " .. RX_Name .. " v" .. RX_Version
+    lcd.font(LCD_FONT_BOLD)
+    lcd.drawText(LCD_X_MAX / 2, LCD_Y_LOWER_BUTTONS+2, msg, TEXT_CENTERED) 
+  end
 
   if Menu.MenuId == 0 then return end; -- No Title yet
 
   -- Got a Menu
-  lcd.font(FONT_BOLD)
-  lcd.color(LCD_TEXT_COLOR)
+  lcd.font(LCD_FONT_HEADER)
+  lcd.color(LCD_HEADER_COLOR)
   lcd.drawText(LCD_X_MAX / 2, 0, Menu.Text, TEXT_CENTERED)
 
-  if (Phase == PH_TX_INFO) then
-    lcd.drawText(LCD_X_MAX / 2, 3 * LCD_Y_LINE_HEIGHT, "Sending CH"..(ctx_CurLine+1), TEXT_CENTERED) 
-  end
+  local y = LCD_Y_HEADER_HEIGHT + 5
 
-  local y = LCD_Y_LINE_HEIGHT + 2
   for i = 0, 6 do
-    lcd.font(FONT_STD)
-    flipColor(i == ctx_SelLine,LCD_FOCUS_BGCOLOR,LCD_TEXT_BGCOLOR)
-    lcd.drawFilledRectangle(0, y, LCD_X_MAX, LCD_Y_LINE_HEIGHT)     
-
+   
     local line = MenuLines[i]
 
     if line.Text ~= nil then
+      lcd.font(LCD_FONT)
+      lcd.color(LCD_TEXT_COLOR)
+  
       local heading = line.Text
-      flipColor(i == ctx_SelLine,LCD_FOCUS_COLOR,LCD_TEXT_COLOR)
 
       if (line.TextId >= 0x8000) then     -- Flight mode
         heading = GetFlightModeValue(line)
-        lcd.font(FONT_BOLD)
+        lcd.font(LCD_FONT_BOLD)
         lcd.drawText(LCD_X_MAX / 2, y, heading, TEXT_CENTERED) -- display text
-      elseif (line.Type == LT_MENU) then
+      elseif (line.TextId >= 0x5000) then     -- Render Image
+        -- Render Image# TextID
+        local imageName = string.format("IMG%X.jpg",line.TextId)
+        showBitmap(1,y, imageName)
+      elseif (line.Type == LT_MENU) then -- Menu or Sub-Headeer
         if (isSelectable(line)) then
           -- Menu to another menu 
-          lcd.drawText(1, y, heading) -- display text
+          lcd.font(LCD_FONT)
+          drawMenuBoxed(1,y, heading, i == ctx_SelLine) -- display text
         else
           -- Menu lines with no navigation.. Just Sub-Header 
-          lcd.font(FONT_BOLD)
+          lcd.font(LCD_FONT)
           lcd.drawText(LCD_X_MAX / 2, y, heading, TEXT_CENTERED) -- display text
         end
       else
         -- Line with Value
+        lcd.font(LCD_FONT)
         lcd.drawText(1, y, heading) -- display text
 
         local text = nil
-          if line.Val ~= nil then -- Value to display??
+        if line.Val ~= nil then -- Value to display??
           text = line.ValText
 
           if isListLine(line) then
@@ -1094,17 +1153,16 @@ local function DSM_Display()
             if (line.Type==LT_LIST_ORI) then offset = offset + 0x100 end --FH6250 hack
             local imgDesc = GetTextFromFile(List_Text_Img[textId+offset])
             
-            if (imgDesc and i == ctx_SelLine) then             -- Optional Image and Msg for selected value
-              showBitmap(5, LCD_Y_LINE_HEIGHT+2, imgDesc) -- 2nd line
+            if (imgDesc and i == ctx_SelLine) then        -- Optional Image and Msg for selected value
+              showBitmap(5, LCD_Y_HEADER_HEIGHT + 1, imgDesc) -- 2nd line
             end
           end -- ListLine
 
-          flipColor(ctx_EditLine == i, lcd.themeColor(THEME_WARNING_COLOR),LCD_TEXT_COLOR)
-          lcd.drawText(LCD_X_MAX, y, text or "--", RIGHT) -- display value
+          drawValue(LCD_X_MAX-3, y, text or "--", i == ctx_SelLine, ctx_EditLine == i)
         end -- Line with value/list
       end  -- not Flight mode
     end
-    y = y + LCD_Y_LINE_HEIGHT
+    y = y + LCD_Y_LINE_HEIGHT + 1
   end     -- for
 
   if Menu.BackId~=0 then
@@ -1118,6 +1176,22 @@ local function DSM_Display()
   if Menu.PrevId~=0 then
     drawButton(1, LCD_Y_LOWER_BUTTONS, "Prev", ctx_SelLine == 8)
   end
+
+  if (ctx_EditLine) then
+    local x = 20
+    drawButton(x, LCD_Y_LOWER_BUTTONS, "<<", false)
+    x = x + LCD_W_BUTTONS + 10
+    drawButton(x, LCD_Y_LOWER_BUTTONS, "-", false)
+    x = x + LCD_W_BUTTONS + 10
+    drawButton(x, LCD_Y_LOWER_BUTTONS, "+", false)
+    x = x + LCD_W_BUTTONS + 10
+    drawButton(x, LCD_Y_LOWER_BUTTONS, ">>", false)
+    x = x + LCD_W_BUTTONS + 10
+    drawButton(x, LCD_Y_LOWER_BUTTONS, "Def", false)
+    x = x + LCD_W_BUTTONS + 10
+    drawButton(x, LCD_Y_LOWER_BUTTONS, "Esc", false)
+  end
+
 end
 
 -----------------------------------------------------------------------------------------
@@ -1242,30 +1316,24 @@ local function getModuleChannelOrder(num)
 end
 
 local function ReadTxModelData()
+  local chNameDef = {[0]="Ail","Ele","Thr","Rud"}
+
+
   local TRANSLATE_AETR_TO_TAER=false
   local table = model.getInfo()   -- Get the model name 
-  MODEL.modelName = table.name
+  MODEL.modelName = table:name()
+  MODEL.modelPath = table:path()
 
-  local module = model.getModule(0) -- Internal
-  if (module==nil or module.Type~=6) then module = model.getModule(1) end -- External
-  if (module~=nil) then
-      if (module.Type==6 ) then -- MULTI-MODULE
-          local chOrder = module.channelsOrder
-          local s = getModuleChannelOrder(chOrder)
-          LOG_write("MultiChannel Ch Order: [%s]  %s\n",chOrder,s) 
-
-          if (s=="AETR") then TRANSLATE_AETR_TO_TAER=true 
-          else TRANSLATE_AETR_TO_TAER=false 
-          end
-      end
-  end
+  -- TODO: Check module to see if is doing channel translation, assume yes
+  -- local module = table.getModule(0).type()
+  TRANSLATE_AETR_TO_TAER=true
 
   -- Read Ch1 to Ch10
   local i= 0
   for i = 0, TX_CHANNELS-1 do 
-      local ch = model.getOutput(i) -- Zero base 
+      local ch = { name=chNameDef[i], min=-1000.0, max=1000.0, revert=false, offset =0, ppmCenter=1500, symetrical=true }  --model.getOutput(i) -- Zero base 
       if (ch~=nil) then
-          MODEL.modelOutputChannel[i] = ch
+          MODEL.modelOutputChannel[i] = ch   -- Table: name, min=-1000.0, max=+1000.0 subtrim=??
           if (string.len(ch.name)==0) then 
               ch.formatCh = string.format("TX:Ch%i",i+1)
           else
@@ -1486,7 +1554,8 @@ local function DSM_Init()
 
   Phase = PH_INIT
 
-  --ReadTxModelData()
+  ReadTxModelData()
+
   --local r = ST_LoadFileData()
   --if (r == 1) then
   --  LOG_write("Creating DSMPort Info\n")
@@ -1783,7 +1852,7 @@ local function DSM_Sim_RX()
   end
   if (Phase == PH_RX_VER) then
     RX_Name = Get_RxName(0x16)
-    RX_Version = "1.3.4"
+    RX_Version = "1.2.3"
     Menu.MenuId = 0
     Phase = PH_TITLE
     LOG_write("Sim-RX:Version: %s %s\n", RX_Name, RX_Version)
@@ -1797,7 +1866,7 @@ local function DSM_Sim_RX()
 end
 
 
-local translations = {en="DSM FP v58"}
+local translations = {en="DSM FP v59a"}
 
 local function name(widget)
   local locale = system.getLocale()
@@ -1810,18 +1879,21 @@ local function create()
   os.mkdir(LOG_PATH)
 
   local w, h = lcd.getWindowSize()
-  if (w > 128 and  h > 64) then
-    LCD_W_BUTTONS       = 60
-    LCD_H_BUTTONS       = 20
-    
-    LCD_X_MAX, LCD_Y_MAX  = w, h
-    LCD_X_RIGHT_BUTTONS   = LCD_X_MAX - LCD_W_BUTTONS - 1
-    
-    lcd.font(FONT_STD)
-    local tw, th = lcd.getTextSize("")
-    LCD_Y_LINE_HEIGHT  = th + 1
-    LCD_Y_LOWER_BUTTONS = (8 * LCD_Y_LINE_HEIGHT) + 2
-  end
+
+  lcd.font(LCD_FONT_XL)
+  local tw, th = lcd.getTextSize("BACK")
+
+  LCD_W_BUTTONS       = tw + 15
+  LCD_H_BUTTONS       = th + 8
+  
+  LCD_X_MAX, LCD_Y_MAX  = w, h
+  LCD_X_RIGHT_BUTTONS   = LCD_X_MAX - LCD_W_BUTTONS - 1
+  
+  LCD_Y_LINE_HEIGHT  = th + 8
+
+  LCD_Y_HEADER_HEIGHT = LCD_Y_LINE_HEIGHT 
+  LCD_Y_LOWER_BUTTONS = LCD_Y_MAX - LCD_Y_LINE_HEIGHT
+
   DSM_Init()
   return {}
 end
