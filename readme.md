@@ -26,6 +26,7 @@ Once you navigate to the ".zip" file that you need, use the download button on t
 All the tools combined into one app. For Ethos, and EdgeTX color (in dev)..  For smaller EdgeTX back & white radios, use the individual scripts (they don't have much memory).
 
 Ethos Screensot:
+
 ![image](https://github.com/user-attachments/assets/22a280e3-3f4b-4591-ac82-e8a2c4ec3193)
 ![image](https://github.com/user-attachments/assets/0da5693b-025c-40a1-b465-81f8fd258fcd)
 
