@@ -22,6 +22,14 @@ Once you navigate to the ".zip" file that you need, use the download button on t
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/2448e43d-94b8-4d24-b055-f91ac0f9dfdf)
 
 
+## DSM Tools Suite
+All the tools combined into one app. For Ethos, and EdgeTX color (in dev)..  For smaller EdgeTX back & white radios, use the individual scripts (they don't have much memory).
+
+Ethos Screensot:
+
+
+
+
 ## DSM Forward Programming
 
 Fully functional DSM Forward programming.  You can setup a plane from zero.  Currently only support radios with microcrontroller chip with good amount of RAM memory (like TX16S, Jumper T16/T18, etc)
@@ -50,13 +58,6 @@ Has been tested on Radiomaster TX16S and FrSky QX7
 ![Smart-Tel-ESC](https://github.com/frankiearzu/DSMTools/assets/32604366/af4a0dda-4dff-4740-93c4-6e8e44219e27)
 ![Smart-Tel-TextGen](https://github.com/frankiearzu/DSMTools/assets/32604366/cb1c66bb-e856-43d8-88e1-b854ab8e0c56)
 ![Smart-Tel-SAFE](https://github.com/frankiearzu/DSMTools/assets/32604366/867970cb-46c6-4d79-9396-c6de32f6bcf5)
-
-
-
-## EdgeTx Firmware with TextGen
-
-Official EdgeTX 2.8.3 Includes my changes for TextGen and other telemetry fixes.
-No need to use the custom firmware any more. 
 
 
 
