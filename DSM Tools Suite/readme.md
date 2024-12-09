@@ -6,7 +6,7 @@ All the tools combined in a single app.
 ## DSM Tools Suite (Ethos Version)
 
 NOTE:  Requires Ethos 1.6.0 or newer
-A release candidate is posted here, should work on Simulators (with fake RX data), as well as the real radios.
+A release candidate is posted here, should work on Simulators (with mocked RX data), as well as the real radios.
 
 ### Main Suite Page
 ![image](https://github.com/user-attachments/assets/22a280e3-3f4b-4591-ac82-e8a2c4ec3193)
