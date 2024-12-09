@@ -1,0 +1,14 @@
+0.001 :Applying  AETR -> TAER translation
+0.001 :Ports/Channels:
+0.001 :Port1 TX:Ch3 [-100,100] Rev=0, Off=0, ppmC=1500, syn=true
+0.001 :Port2 TX:Ch1/AIL [-100,100] Rev=1, Off=0, ppmC=1500, syn=true
+0.001 :Port3 TX:Ch2/ELE [-100,100] Rev=0, Off=0, ppmC=1500, syn=true
+0.001 :Port4 TX:Ch4 [-100,100] Rev=0, Off=0, ppmC=1500, syn=true
+0.001 :Port5 TX:Ch5 [-100,100] Rev=0, Off=0, ppmC=1500, syn=true
+0.001 :Port6 TX:Ch6 [-100,100] Rev=0, Off=0, ppmC=1500, syn=true
+0.001 :Port7 TX:Ch7 [-100,100] Rev=0, Off=0, ppmC=1500, syn=true
+0.001 :Port8 TX:Ch8 [-100,100] Rev=0, Off=0, ppmC=1500, syn=true
+0.001 :Port9 TX:Ch9 [-100,100] Rev=0, Off=0, ppmC=1500, syn=true
+0.001 :Port10 TX:Ch10 [-100,100] Rev=0, Off=0, ppmC=1500, syn=true
+0.001 :Port11 TX:Ch11 [-100,100] Rev=0, Off=0, ppmC=1500, syn=true
+0.001 :Port12 TX:Ch12 [-100,100] Rev=0, Off=0, ppmC=1500, syn=true

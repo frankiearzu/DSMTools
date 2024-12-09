@@ -15,49 +15,50 @@
 ------------------------------------------------------------------------------ 
 -- Developer: Francisco Arzu
 
-local translations = {en="DSM Tel 1.3"}
+local arg = {...}
 
-local SIMULATION            = true
+local config = arg[1]
+
+local SIMULATION <const>    = config.simulation
+
+local sim                   = nil  -- lazy load the sim-lib when needed
 
 local TEXT_SIZE             = FONT_STD
-local TEXT_SIZE_BIG         = FONT_BOLD
-local LCD_COL1_HEADER       = 6
-local LCD_COL1_DATA         = 60
-local LCD_COL2_HEADER       = 170
-local LCD_COL2_DATA         = 220
-local LCD_LINE_HEIGHT       = 20
-local LCD_ROW_HEADER        = 0
-local LCD_ROW_DATA          = LCD_ROW_HEADER + LCD_LINE_HEIGHT*2 
-local LCD_DATA_LEN          = 80 
-local LCD_DATA_SPACE        = 5
 
-local LCD_TEXT_COLOR         = lcd.themeColor(THEME_DEFAULT_COLOR)
+-- Dimesions computed later dynamically
+local LCD_COL1_HEADER       = 0
+local LCD_COL1_DATA         = 0
+local LCD_COL2_HEADER       = 0
+local LCD_COL2_DATA         = 0
+local LCD_LINE_H            = 0
+local LCD_NUMBER_W          = 0 
+
+local LCD_TEXT_COLOR        = lcd.themeColor(THEME_DEFAULT_COLOR)
+local LCD_TEXT_BGCOLOR      = lcd.themeColor(THEME_DEFAULT_BGCOLOR)
+
 local LCD_FOCUS_COLOR        = lcd.themeColor(THEME_FOCUS_COLOR)
+local LCD_FOCUS_BGCOLOR      = lcd.themeColor(THEME_FOCUS_BGCOLOR)
 
-local C_UP                  = "^"
-local C_DOWN                = "v"
-
-local MENU_MAX_PER_PAGE     = 7
-
-local U8_NODATA             = 0xFF
-local U16_NODATA            = 0xFFFF
-local U32_NODATA            = 0xFFFFFFFF
-local I8_NODATA             = 0x7F
-local I16_NODATA            = 0x7FFF
-local I32_NODATA            = 0x7FFFFFFF
+local U8_NODATA <const>     = 0xFF
+local U16_NODATA <const>    = 0xFFFF
+local U32_NODATA <const>    = 0xFFFFFFFF
+local I8_NODATA <const>     = 0x7F
+local I16_NODATA <const>    = 0x7FFF
+local I32_NODATA <const>    = 0x7FFFFFFF
 
 local FrameData             = {[0]=0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF, 0xFF, 0x0FF}
 
-local I2C_FLITECTRL         = 0x05
-local I2C_TEXT_GEN          = 0x0C
-local I2C_GPS_STATS         = 0x17
-local I2C_GPS_LOC           = 0x16
-local I2C_ESC               = 0x20
-local I2C_GPS_BIN           = 0x26
-local I2C_REMOTE_ID         = 0x27
-local I2C_FP_BATT           = 0x34
-local I2C_SMART_BAT         = 0x42
-local I2C_QOS               = 0x7F
+local I2C_FLITECTRL <const> = 0x05
+local I2C_POWERBOX  <const> = 0x0A
+local I2C_TEXT_GEN <const>  = 0x0C
+local I2C_GPS_LOC <const>   = 0x16
+local I2C_GPS_STATS <const> = 0x17
+local I2C_ESC <const>       = 0x20
+local I2C_GPS_BIN <const>   = 0x26
+local I2C_REMOTE_ID <const> = 0x27
+local I2C_FP_BATT <const>   = 0x34
+local I2C_SMART_BAT <const> = 0x42
+local I2C_QOS <const>       = 0x7F
 
 
 local multiSensor           = nil
@@ -71,7 +72,7 @@ local MainScreen = {
 local DefaultProcessor   = {}
 
 local FlightLog = {
-    QOS_Title  = {[0]="A:", "B:", "L:", "R:", "F:", "H:"},
+    QOS_Title  = {[0]="A", "B", "L", "R", "F", "H", "Bat"},
     QOS_Value  = {[0]=nil,nil,nil,nil,nil,nil,nil}
 }
 
@@ -92,7 +93,7 @@ local AS3XSettings = {
 }
 
 local SmartESC = {
-  ESC_Title= {[0]="","RPM:","Volts:","Motor:","Mot Out:","Throttle:","FET Temp:", "BEC V:", "BEC T:", "BEC A:"},
+  ESC_Title= {[0]="","RPM","Volts","Motor","Mot Out","Throttle","FET Temp", "BEC V", "BEC T", "BEC A"},
   ESC_uom  = {[0]="",""," V"," A"," %"," %"," C", " V"," C"," A"},
   ESC_Value= {[0]=nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil},
   ESC_Min  = {[0]=nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil},
@@ -100,16 +101,16 @@ local SmartESC = {
 }
 
 local SmartBat = {
-  BAT_Title   ={[0]="","Bat:","Curr:", "Temp:", "Used:", "Rem :", "RX:"},
+  BAT_Title   ={[0]="","Bat","Curr", "Temp", "Used", "Rem", "RX"},
   BAT_uom     ={[0]="","V","mA","C","mAh","%","V"},
   BAT_Values  ={[0]=nil,nil,nil,nil,nil,nil,nil},
   BAT_Cells   ={[0]=0,0,0,0,0,0,0,0,0,0,0,0}
 }
 
 local FlightPack = {
-  FP_Title= {[0]="Curr:","Used:","Temp:"},
-  FP_uom  = {[0]=" A"," mAh"," C"},
-  FP_Value= {[0]=nil,nil,nil,nil,nil,nil}
+  FP_Title= {[0]="Curr",  "Used", "Temp", "Volts"},
+  FP_uom  = {[0]=" A",    " mAh", " C",   " v"},
+  FP_Value= {[0]=nil,nil,nil,nil,nil,nil,nil}
 }
 
 local Gps = {
@@ -168,51 +169,36 @@ MainScreen.menu = {
 
 local function openTelemetryRaw(i2cId)
   --Init telemetry Queue
-  if (multiSensor==nil) then
+  if (SIMULATION and sim == nil) then
+    print("Loading Simulator")
+    sim = assert(loadfile(config.appsPath.."sim-telemetry-data.lua"))()
+  elseif (multiSensor==nil) then
     multiSensor = multimodule.getSensor()
   end
 end
 
 local function closeTelemetryRaw()
   multiSensor = nil
+  sim = nil
 end
 
-local frameDataIndex = 0
 local function getFrameData(I2C_ID) 
-    -- The inbound Frame has the following format starting at index 1:
-    -- MultiModule Header: [1]=Type,[2]=Len,[3]=RSSI, 
-    -- Data: [4...19]= data for that frame, starting with I2C_ID
-
   local data = nil
 
   if (SIMULATION) then
-    -- This frames can be copy/paste from the capture program.
-    if (I2C_ID == I2C_QOS) then
-        data = { 0x04,0x11,0x1F,0x7F,0x00,0x00,0x5A,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x02,0x03,0x01 }
-    elseif (I2C_ID == I2C_TEXT_GEN) then
-        if (frameDataIndex==0) then     data = { 0x04,0x11,0x1F,0x00,0x20,0x41,0x76,0x69,0x61,0x6E,0x20,0x50,0x72,0x6F,0x67,0x20,0x20} -- Line0/Header:
-        elseif (frameDataIndex==1) then data = { 0x04,0x11,0x1F,0x0C,0x00,0x01,0x45,0x6E,0x74,0x65,0x72,0x20,0x4D,0x65,0x6E,0x75,0x3A,0x20,0x20} -- Line1:
-        elseif (frameDataIndex==2) then data = { 0x04,0x11,0x1F,0x0C,0x00,0x02,0x53,0x74,0x65,0x70,0x20,0x31,0x20,0x20,0x20,0x20,0x20,0x20,0x20} -- Line2:
-        elseif (frameDataIndex==3) then data = { 0x04,0x11,0x1F,0x0C,0x00,0x03,0x48,0x6F,0x6C,0x64,0x20,0x35,0x2D,0x31,0x30,0x73,0x65,0x63,0x20} -- Line3:
-        elseif (frameDataIndex==4) then data = { 0x04,0x11,0x1F,0x0C,0x00,0x04,0x4C,0x6F,0x77,0x20,0x54,0x68,0x72,0x6F,0x74,0x20,0x20,0x20,0x20} -- Line4:
-        end
-        frameDataIndex= (frameDataIndex+1) % 5 
-      elseif (I2C_ID == I2C_FLITECTRL) then
-        if (frameDataIndex==0) then     data = { 0x04,0x11,0x1F,0x05,0x00,0x03,0x02,0x82,0x80,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00} 
-        elseif (frameDataIndex==1) then data = { 0x04,0x11,0x1F,0x05,0x00,0x03,0x02,0x82,0x81,0x23,0x23,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00} 
-        elseif (frameDataIndex==2) then data = { 0x04,0x11,0x1F,0x05,0x00,0x03,0x02,0x82,0x81,0x23,0x23,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00} 
-        end
-        frameDataIndex= (frameDataIndex+1) % 3
-      elseif (I2C_ID == I2C_ESC) then
-        data = { 0x04,0x11,0x1F,0x20,0x00,0x00,0x3B,0x08,0x52,0x01,0x22,0x00,0x00,0xFF,0xFF,0xFF,0xFF,0xC8,0xC8 }   
-    end
+    data = sim.getFrameData(I2C_ID)
   else
     data =  multiSensor:popFrame({i2cAddress=I2C_ID})
   end
 
   if (data) then
-    -- Extract the frame data. 
-    -- FrameData[0]=I2C_ID, Instance, ...more data specific for the frame......
+    local i2cId = data[4] or 0
+    if (I2C_ID > 0 and i2cId ~= I2C_ID) then   -- not the data we want?
+      data = nil
+    end
+  end
+
+  if (data) then
     for i=1,16 do  -- Copy from 1 based array into 0 base array
       FrameData[i-1] = data[i+3] or 0xFF
     end
@@ -303,8 +289,6 @@ local function getBCD(p)
   return d1*10 + d2
 end
 
------------------------------------------------------------------------------------
-
 local function formatNilValue(val, postfix)
   if (val == nil) then return "---" end
   return val .. (postfix or "")
@@ -315,6 +299,10 @@ local function formatFloat1(val,postfix)
   return string.format("%0.1f",val/10) .. (postfix or "")
 end
 
+local function formatFloat2(val,postfix)
+  if (val == nil) then return "---" end
+  return string.format("%0.2f",val/100) .. (postfix or "")
+end
 
 local function formatWithComma(formatted)
   if (formatted==nil) then return nil end
@@ -325,16 +313,57 @@ local function formatWithComma(formatted)
   return formatted
 end
 
------------------------------------------------------------------------------------
-
-function DefaultProcessor.event(key)
-  if key == KEY_RTN_BREAK then
-      MainScreen.ItemSelected = 1 -- Main Menu
-      lcd.invalidate()
-  end
+local function ifThenElse(cond, v1, v2)
+  if (cond) then return v1 else return v2 end
 end
 
 -----------------------------------------------------------------------------------
+
+function DefaultProcessor.close()
+      MainScreen.ItemSelected = 1 -- Main Menu
+      MainScreen.init()
+end
+
+function DefaultProcessor.event(key)
+  if key == KEY_RTN_BREAK then
+      DefaultProcessor.close()
+      return true
+      --lcd.invalidate()
+  end
+
+  return false
+end
+
+local function formHeader(form, title)
+  local w, h = lcd.getWindowSize()
+  local line = form.addLine(title)
+  form.addTextButton(line, {x=w-80,y=5,w=75,h=LCD_LINE_H*1.2}, "Back", function() DefaultProcessor.close() end)
+end
+
+local function showNumberBoxed(x,y, w, h, value, suffix)
+    value = formatNilValue(value)
+
+    if (suffix) then
+      value = value .. " " .. suffix  
+    end
+
+    lcd.color(LCD_TEXT_BGCOLOR)
+    lcd.drawFilledRectangle(x,y, w, h)
+
+    local tw,th  = lcd.getTextSize(value)
+    local p = (h - th) // 2
+
+    lcd.color(LCD_TEXT_COLOR)
+    lcd.drawText (x + w - 3, y+p, value, RIGHT)
+end
+
+
+-----------------------------------------------------------------------------------
+function FlightLog.init(param)
+  local this = FlightLog
+  form.clear()
+  formHeader(form,"Flight Log")
+end  
 
 function FlightLog.wakeup()
   local this = FlightLog
@@ -357,17 +386,17 @@ function FlightLog.wakeup()
 end
 
 function FlightLog.paint()  
+  --if true then return end
+
   -- draw labels and params on screen
   local this = FlightLog
-  
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, LCD_ROW_HEADER, "Flight Log")
 
   local activeParam = (this.QOS_Value[5] or 0) - 1 -- H 
 
-  local y = LCD_LINE_HEIGHT+LCD_ROW_DATA
+  local topY = form.height() + LCD_LINE_H
 
+
+  local y = topY
   for iParam=0,3 do   -- A,B,L,R 
     lcd.color(LCD_TEXT_COLOR)
     
@@ -384,140 +413,159 @@ function FlightLog.paint()
     local val = this.QOS_Value[iParam] 
     if (val==0x4000) then  -- Active value
         lcd.color(LCD_FOCUS_COLOR)
-        lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, "  ", RIGHT)
+        lcd.drawText (LCD_COL1_DATA + LCD_NUMBER_W, y, "  ", RIGHT)
     else
         lcd.font(FONT_STD)
-        lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, formatNilValue(val), RIGHT)
+        showNumberBoxed(LCD_COL1_DATA, y, LCD_NUMBER_W, LCD_LINE_H, val)
     end
 
-    y = y + LCD_LINE_HEIGHT
+    y = y + LCD_LINE_H + 4
   end
 
-  y = LCD_LINE_HEIGHT+LCD_ROW_DATA
+  y = topY
   for iParam=4,5 do  -- F, H
-    lcd.font(FONT_L)
+    lcd.font(FONT_XXL)
     lcd.drawText (LCD_COL2_HEADER, y, this.QOS_Title[iParam])
-    lcd.drawText (LCD_COL2_DATA + LCD_DATA_LEN, y, formatNilValue(this.QOS_Value[iParam]), RIGHT)
-    y = y + LCD_LINE_HEIGHT*2
+
+    showNumberBoxed(LCD_COL2_DATA, y, LCD_NUMBER_W, LCD_LINE_H * 2, this.QOS_Value[iParam])
+    y = y + (LCD_LINE_H + 4) * 2
   end
 
   -- Bat 
   local bat = this.QOS_Value[6]
   if (bat ~= nil) then bat = string.format("%0.2f", bat/100) else bat = "--" end
-  y = y + LCD_LINE_HEIGHT
+  y = y + LCD_LINE_H
 
   lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL2_HEADER, y, "Bat:")
-  lcd.drawText (LCD_COL2_DATA + LCD_DATA_LEN, y, bat, RIGHT)
-  lcd.drawText (LCD_COL2_DATA + LCD_DATA_LEN + LCD_DATA_SPACE, y, " v")
+  lcd.drawText (LCD_COL1_HEADER, y, this.QOS_Title[6])
+  lcd.font(FONT_STD)
+  showNumberBoxed(LCD_COL1_DATA, y, LCD_NUMBER_W, LCD_LINE_H, bat, "v")
 end
 
 FlightLog.event = DefaultProcessor.event
 
 -----------------------------------------------------------------------------------
+function AS3XSettings.init(page)
+  form.clear()
+  local title = ""
+  if (page==1) then
+    title = "AS3X Settings"
+  else
+    title = "SAFE Limits"
+  end
+  formHeader(form,title)
+end
+
 
 function AS3XSettings.paint(page)
   local this =  AS3XSettings
   
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-  if (page==1) then
-    lcd.drawText (1,0, "AS3X Settings")
-  else
-    lcd.drawText (1,0, "SAFE Limits")
-  end
+  local y = form.height() + LCD_LINE_H
 
-  local y = LCD_ROW_DATA
+  local LCD_SMALL_NUMBER_W = lcd.getTextSize("999")
+  local LCD_LINE_PADDING = 2
+
+  local x = 0
+
+
   -- Flight Mode
   lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_HEADER,y, "FM: "..this.AS3X_FmMsg)
-  lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN*0.4,y, "Flags: "..formatNilValue(this.AS3X_Flags))
-  lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN*0.7,y, "State: "..formatNilValue(this.AS3X_State))
+  x = LCD_COL1_HEADER
+  lcd.drawText (x,y, "FM")
+  x = x + lcd.getTextSize("FM ")
+  showNumberBoxed(x,y,LCD_SMALL_NUMBER_W,LCD_LINE_H,this.AS3X_FmMsg)
 
-  y = y + LCD_LINE_HEIGHT
+  x = x + LCD_NUMBER_W 
+  lcd.drawText (x,y, "Flags")
+  x = x + lcd.getTextSize("Flags ")
+  showNumberBoxed(x,y,LCD_SMALL_NUMBER_W,LCD_LINE_H,this.AS3X_Flags)
+
+  x = x + LCD_NUMBER_W 
+  lcd.drawText (x,y, "State")
+  x = x + lcd.getTextSize("State ")
+  showNumberBoxed(x,y,LCD_SMALL_NUMBER_W,LCD_LINE_H,this.AS3X_State)
+
+  y = y + LCD_LINE_H + 2
   lcd.drawText (LCD_COL1_HEADER,y, this.AS3X_FlagsMsg)
 
-  y = y + LCD_LINE_HEIGHT
+  y = y + LCD_LINE_H*2
 
   if (fm == 0xE) then
     return
   end
 
+  local x_head1 = LCD_COL1_HEADER 
+  local x_head2 = LCD_COL2_HEADER
+  local x_data1 = LCD_COL1_DATA
+  local x_data2 = LCD_COL2_DATA
+
   if (page==1) then
     lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER+LCD_DATA_LEN*0.3,y, "AS3X Gains")
-    lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN*0.3,y, "AS3X Headings")
+    lcd.drawText (x_data1 + LCD_NUMBER_W, y, "AS3X Gains", RIGHT)
+    lcd.drawText (x_data2 + LCD_NUMBER_W, y, "AS3X Headings", RIGHT)
     
-    y = y + LCD_LINE_HEIGHT
-    lcd.drawText (LCD_COL1_HEADER,y, "Roll:")
+    y = y + LCD_LINE_H + LCD_LINE_PADDING
+    lcd.drawText (LCD_COL1_HEADER,y, "Roll")
     lcd.font(FONT_STD)
-    lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[0]), RIGHT) -- Roll G 
-    lcd.drawText (LCD_COL2_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[3]), RIGHT) -- Roll H 
+    showNumberBoxed(x_data1,y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[0]) -- Roll G
+    showNumberBoxed(x_data2,y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[3]) -- Roll H 
 
-    y = y + LCD_LINE_HEIGHT
+    y = y + LCD_LINE_H + LCD_LINE_PADDING
     lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER,y, "Pitch:")
+    lcd.drawText (LCD_COL1_HEADER,y, "Pitch")
     lcd.font(FONT_STD)
-    lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[1]), RIGHT)  -- Pitch G
-    lcd.drawText (LCD_COL2_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[4]), RIGHT) -- Pitch H 
+    showNumberBoxed(x_data1,y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[1]) -- Pitch G
+    showNumberBoxed(x_data2,y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[4]) -- Ritch H 
 
-    y = y + LCD_LINE_HEIGHT
+    y = y + LCD_LINE_H + LCD_LINE_PADDING
     lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER,y, "Yaw:", TEXT_SIZE)
+    lcd.drawText (LCD_COL1_HEADER,y, "Yaw", TEXT_SIZE)
     lcd.font(FONT_STD)
-    lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[2]), RIGHT) -- Yaw G
-    lcd.drawText (LCD_COL2_DATA+LCD_DATA_LEN,y, formatNilValue(this.AS3X_Data[5]), RIGHT) -- Yaw H
-  end
-
-
-  if (page==2) then
-    local x_data1 = LCD_COL1_DATA+LCD_DATA_LEN
-    local x_data2 = LCD_COL2_HEADER+LCD_DATA_LEN*1.6
-
+    showNumberBoxed(x_data1,y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[2]) -- Yaw G
+    showNumberBoxed(x_data2,y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[5]) -- Yaw H 
+  elseif (page==2) then
     lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER+LCD_DATA_LEN*0.3,y, "SAFE Gains")
-    lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN*0.1,y, "Angle Limits")
+    lcd.drawText (x_data1 + LCD_NUMBER_W, y, "SAFE Gains", RIGHT)
+    lcd.drawText (x_data2 + LCD_NUMBER_W, y, "Angle Limits", RIGHT)
   
-    y = y + LCD_LINE_HEIGHT
+    y = y + LCD_LINE_H + LCD_LINE_PADDING
     lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER,y, "Roll:")
+    lcd.drawText (x_head1,y, "Roll")
     lcd.font(FONT_STD)
-    lcd.drawText (x_data1,y, formatNilValue(this.AS3X_Data[6]), RIGHT)
-
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL2_HEADER,y, "Roll R:")
-    lcd.font(FONT_STD)
-    lcd.drawText (x_data2,y, formatNilValue(this.AS3X_Data[12]), RIGHT)
-
-
-    y = y + LCD_LINE_HEIGHT
-    lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER,y, "Pitch:")
-    lcd.font(FONT_STD)
-    lcd.drawText (x_data1,y,formatNilValue(this.AS3X_Data[7]), RIGHT)
+    showNumberBoxed(x_data1, y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[6]) 
 
     lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL2_HEADER,y, "Roll L:" )
+    lcd.drawText (x_head2,y, "Roll R")
     lcd.font(FONT_STD)
-    lcd.drawText (x_data2,y,formatNilValue(this.AS3X_Data[13]), RIGHT)
+    showNumberBoxed(x_data2, y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[12])
 
-
-    y = y + LCD_LINE_HEIGHT
+    y = y + LCD_LINE_H + LCD_LINE_PADDING
     lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL1_HEADER,y, "Yaw:")
+    lcd.drawText (x_head1,y, "Pitch")
     lcd.font(FONT_STD)
-    lcd.drawText (x_data1,y, formatNilValue(this.AS3X_Data[8]), RIGHT)
+    showNumberBoxed(x_data1, y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[7]) 
 
     lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL2_HEADER,y, "Pitch U:")
+    lcd.drawText (x_head2,y, "Roll L" )
     lcd.font(FONT_STD)
-    lcd.drawText (x_data2,y, formatNilValue(this.AS3X_Data[14]), RIGHT)
+    showNumberBoxed(x_data2, y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[13])
 
-    y = y + LCD_LINE_HEIGHT
+    y = y + LCD_LINE_H + LCD_LINE_PADDING
     lcd.font(FONT_BOLD)
-    lcd.drawText (LCD_COL2_HEADER,y, "Pitch D:")
+    lcd.drawText (x_head1,y, "Yaw")
     lcd.font(FONT_STD)
-    lcd.drawText (x_data2,y, formatNilValue(this.AS3X_Data[15]), RIGHT)
+    showNumberBoxed(x_data1, y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[8]) 
+  
+    lcd.font(FONT_BOLD)
+    lcd.drawText (x_head2,y, "Pitch U")
+    lcd.font(FONT_STD)
+    showNumberBoxed(x_data2, y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[14])
+
+    y = y + LCD_LINE_H + LCD_LINE_PADDING
+    lcd.font(FONT_BOLD)
+    lcd.drawText (x_head2,y, "Pitch D")
+    lcd.font(FONT_STD)
+    showNumberBoxed(x_data2, y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[15])
   end
 end
 
@@ -538,11 +586,12 @@ function AS3XSettings.wakeup()
       
       this.AS3X_FmMsg = ""..(fm+1)
       -- flags bits:  Safe Envelop, ?, Angle Demand, Stab 
-      if (this.AS3X_Flags & 0x1 ~= 0) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg.."AS3X Stab"; separator=", " end
+      if (this.AS3X_Flags & 0x1 ~= 0) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg.."AS3X "; separator=", " end
       -- This one, only one should show
-      if (this.AS3X_Flags & 0x2 ~=0) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Safe Level" 
+      if (this.AS3X_Flags & 0x2 ~=0) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Safe Level/Angle-Demand" 
       elseif (this.AS3X_Flags & 0x8 ~=0 ) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Safe Envelope" 
-      elseif (this.AS3X_Flags & 0x4 ~=0 ) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Heading" end
+      elseif (this.AS3X_Flags & 0x4 ~=0 ) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Heading Hold"
+      elseif (this.AS3X_Flags == 0) then this.AS3X_FlagsMsg=this.AS3X_FlagsMsg..separator.."Idle" end
   
       --axis: 0=Gains+Headings (RG,PG,YG,RH,PH,YH), 1=Safe Gains (R,P,Y),2=Angle Limits(L,R,U,D) 
       --Constantly changing from 0..2 to represent different data, thats why we have to store the values
@@ -564,24 +613,31 @@ end
 AS3XSettings.event = DefaultProcessor.event
 
 -----------------------------------------------------------------------------------
+function SmartESC.init(param)
+  form.clear()
+  formHeader(form,"ESC")
+end
+
 function SmartESC.paint()
   local this = SmartESC
 
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-  lcd.drawText (1,0, "ESC")
+  lcd.font(FONT_STD)
 
-  local y = 0
-  local x_data = LCD_COL1_DATA+LCD_DATA_LEN*1.5
-  local x_data2 = LCD_COL2_DATA+LCD_DATA_LEN*0.5
-  local x_data3 = x_data2 + LCD_DATA_LEN*0.8
+  local LCD_LINE_PADDING = 0
+
+  local y = form.height() -- + LCD_LINE_HEIGHT//2
+
+  local x_data = LCD_COL1_DATA
+  local x_data2 = x_data + LCD_NUMBER_W + LCD_NUMBER_W//2
+  local x_data3 = x_data2 + LCD_NUMBER_W + LCD_NUMBER_W//2
 
   lcd.font(FONT_BOLD)
-  lcd.drawText (x_data,y , "Status", RIGHT)
-  lcd.drawText (x_data2,y, "Min", RIGHT)
-  lcd.drawText (x_data3,y, "Max", RIGHT)
+  lcd.drawText (x_data  + LCD_NUMBER_W, y, "Status", RIGHT)
+  lcd.drawText (x_data2 + LCD_NUMBER_W, y, "Min  ", RIGHT)
+  lcd.drawText (x_data3 + LCD_NUMBER_W, y, "Max  ", RIGHT)
   
-  y = LCD_ROW_DATA
+  y = y + LCD_LINE_H + LCD_LINE_PADDING
+  
   for i=1,9 do
       lcd.font(FONT_BOLD)
       lcd.drawText (LCD_COL1_HEADER,y, this.ESC_Title[i])
@@ -596,11 +652,11 @@ function SmartESC.paint()
       end
 
       lcd.font(FONT_STD)
-      lcd.drawText (x_data,y, formatNilValue(val), RIGHT)
-      lcd.drawText (x_data,y, this.ESC_uom[i])
-      lcd.drawText (x_data2,y, formatNilValue(min), RIGHT)
-      lcd.drawText (x_data3,y, formatNilValue(max), RIGHT)
-      y = y + LCD_LINE_HEIGHT
+      showNumberBoxed(x_data, y, LCD_NUMBER_W, LCD_LINE_H, val, this.ESC_uom[i]) 
+      showNumberBoxed(x_data2, y, LCD_NUMBER_W, LCD_LINE_H, min, this.ESC_uom[i]) 
+      showNumberBoxed(x_data3, y, LCD_NUMBER_W, LCD_LINE_H, max, this.ESC_uom[i])
+
+      y = y + LCD_LINE_H + LCD_LINE_PADDING
   end
 end
 
@@ -644,35 +700,40 @@ end
 SmartESC.event = DefaultProcessor.event
 
 -----------------------------------------------------------------------------------
+function SmartBat.init(param)
+  form.clear()
+  formHeader(form,"Battery Stats")
+end
+
 function SmartBat.paint()
   local this = SmartBat
 
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-  lcd.drawText (1,0, "Battery Stats")
-  
-  local y = LCD_ROW_DATA
-  local x_data = LCD_COL1_DATA+LCD_DATA_LEN+LCD_DATA_SPACE*3
+  lcd.font(FONT_STD)
+  local LCD_LINE_PADDING = 4
+
+  local yOrig = form.height() + LCD_LINE_H
+
+  local y = yOrig
+  local x_data = LCD_COL1_DATA
   for i=1,6 do
       lcd.font(FONT_BOLD)
       lcd.drawText (LCD_COL1_HEADER, y, this.BAT_Title[i])
       lcd.font(FONT_STD)
-      lcd.drawText (x_data, y, formatNilValue(this.BAT_Values[i]), RIGHT)
-      lcd.drawText (x_data+LCD_DATA_SPACE, y, this.BAT_uom[i])
-      y = y + LCD_LINE_HEIGHT
+
+      showNumberBoxed(x_data, y, LCD_NUMBER_W, LCD_LINE_H, this.BAT_Values[i], this.BAT_uom[i]) 
+      y = y + LCD_LINE_H + LCD_LINE_PADDING
   end
 
-  y = LCD_ROW_DATA
-  x_data = LCD_COL2_DATA+LCD_DATA_LEN+LCD_DATA_SPACE*5
+  y = yOrig
+  x_data = LCD_COL2_DATA
   for i=0,8 do
       if ((this.BAT_Cells[i] or 0) > 0) then
         lcd.font(FONT_BOLD)
-        lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN/2,y, "Cel "..(i+1)..":")
+        lcd.drawText (LCD_COL2_HEADER,y, "Cel "..(i+1)..":")
         lcd.font(FONT_STD)
-        lcd.drawText (x_data,y, string.format("%2.2f",this.BAT_Cells[i]), RIGHT)
-        lcd.drawText (x_data+LCD_DATA_SPACE,y, "v")
+        showNumberBoxed(x_data, y, LCD_NUMBER_W, LCD_LINE_H, string.format("%2.2f",this.BAT_Cells[i]), "v") 
       end
-      y = y + LCD_LINE_HEIGHT
+      y = y + LCD_LINE_H + LCD_LINE_PADDING
   end
 end
 
@@ -690,7 +751,7 @@ function SmartBat.wakeup()
   if  getFrameData(I2C_SMART_BAT) then
     -- Big Endian
     local chType = FrameData[2]
-    local msgType = bit32.band(chType,0xF0)
+    local msgType = chType & 0xF0
   
     if (msgType==0x00) then -- Battery Real Time
       local temp   = getI8(3)   -- Temp C
@@ -704,9 +765,9 @@ function SmartBat.wakeup()
       this.BAT_Values[4] = formatWithComma(usage)
       this.BAT_Values[5] = nil
 
-      local RX_Volts = getValue("A2") -- RX
-      if (RX_Volts) then 
-        this.BAT_Values[6] = string.format("%0.2f",RX_Volts)
+      local sensor = system.getSource("RxBatt")
+      if (sensor) then 
+        this.BAT_Values[6] = string.format("%0.2f",sensor:value())
       end
     elseif (msgType==0x10) then -- Cell 1-6
       local temp   = getI8(3)   -- Temp C
@@ -741,39 +802,34 @@ end
 SmartBat.event = DefaultProcessor.event
 
 -----------------------------------------------------------------------------------
+function TextGen.init(param)
+  form.clear()
+  formHeader(form,"TextGen")
+end
 
 function TextGen.paint()
   local this = TextGen
 
   lcd.color(LCD_TEXT_COLOR)
 
-  local y = LCD_ROW_DATA
+  local y = 0
   local x = LCD_COL1_HEADER
-  local hAttr = 0
 
-  if (LCD_Y_MAX <= 64) then 
-    -- Need to be able to show 8 lines of data + heather
-    -- show header on the right hand side to gain 1 line
-    x = 128
-    y = 0
-    hAttr = hAttr + RIGHT
-  else
-    y = LCD_ROW_DATA + LCD_LINE_HEIGHT
-  end
+  y = LCD_LINE_H // 2
 
   lcd.font(FONT_BOLD)
-  lcd.drawText (x,0, "TextGen", hAttr)
   if (this.TG_Lines[0]) then   -- Header
-    lcd.drawText (x,LCD_LINE_HEIGHT, this.TG_Lines[0], hAttr)
+    lcd.drawText (LCD_W // 2, y, this.TG_Lines[0], TEXT_CENTERED)
   end
 
+  y = form.height() + LCD_LINE_H // 2
   -- Menu lines
   lcd.font(FONT_STD)
   for i=1,8 do
     if (this.TG_Lines[i]) then
-      lcd.drawText (LCD_COL1_HEADER,y,  this.TG_Lines[i])
+      lcd.drawText (LCD_COL1_DATA,y,  this.TG_Lines[i])
     end
-    y = y + LCD_LINE_HEIGHT
+    y = y + LCD_LINE_H + 1
   end
 end
 
@@ -811,25 +867,27 @@ function TextGen.event(key)
 end
 
 -----------------------------------------------------------------------------------
+function FlightPack.init(param)
+  form.clear()
+  formHeader(form,"Flight Pack + PowerBox")
+end
 
 function FlightPack.paint()
   local this = FlightPack
   -- draw labels and params on screen
-  local y = LCD_ROW_HEADER
 
-  lcd.color(LCD_TEXT_COLOR)
+  lcd.font(FONT_STD)
+  local LCD_LINE_PADDING = 4
+
+  local y = form.height() + LCD_LINE_H
+
   lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Flight Pack")
+  lcd.drawText (LCD_COL1_DATA + LCD_NUMBER_W, y, "Batt 1   ", RIGHT)
+  lcd.drawText (LCD_COL2_DATA + LCD_NUMBER_W, y, "Batt 2   ", RIGHT)
 
-  y = y + LCD_LINE_HEIGHT + LCD_LINE_HEIGHT
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_DATA+LCD_DATA_LEN, y, "Batt 1", RIGHT)
-  lcd.drawText (LCD_COL2_HEADER+LCD_DATA_LEN, y, "Batt 2", RIGHT)
+  y = y + LCD_LINE_H + LCD_LINE_PADDING
 
-  y = y + LCD_LINE_HEIGHT
-
-
-  for i=0,2 do
+  for i=0,3 do
     lcd.font(FONT_BOLD)
     lcd.drawText (LCD_COL1_HEADER, y, this.FP_Title[i])
 
@@ -837,47 +895,70 @@ function FlightPack.paint()
     if (i==1) then
       -- Curr Used mAh (integer)
       disp1 = formatNilValue(this.FP_Value[i])
-      disp2 = formatNilValue(this.FP_Value[i+3])
+      disp2 = formatNilValue(this.FP_Value[i+4])
+    elseif (i==3) then
+        -- Volts (Float 2)
+      disp1 = formatFloat2(this.FP_Value[i])
+      disp2 = formatFloat2(this.FP_Value[i+4])
     else
-      -- Instant Amp / Temp (Float)
+      -- Instant Amp / Temp (Float 1)
       disp1 = formatFloat1(this.FP_Value[i])
-      disp2 = formatFloat1(this.FP_Value[i+3])
+      disp2 = formatFloat1(this.FP_Value[i+4])
     end
     lcd.font(FONT_STD)
-    lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, disp1, RIGHT)
-    lcd.drawText (LCD_COL1_DATA + LCD_DATA_LEN, y, this.FP_uom[i])
-
-    lcd.drawText (LCD_COL2_HEADER + LCD_DATA_LEN, y, disp2, RIGHT)
-    lcd.drawText (LCD_COL2_HEADER + LCD_DATA_LEN, y, this.FP_uom[i])
-    y = y + LCD_LINE_HEIGHT
-  end
+    showNumberBoxed(LCD_COL1_DATA, y, LCD_NUMBER_W, LCD_LINE_H, disp1, this.FP_uom[i]) 
+    showNumberBoxed(LCD_COL2_DATA, y, LCD_NUMBER_W, LCD_LINE_H, disp2, this.FP_uom[i]) 
+    y = y + LCD_LINE_H + LCD_LINE_PADDING
+  end -- For
 end
 
+local flightPackStep = 0
 function FlightPack.wakeup()
   local this = FlightPack
 
-  if getFrameData(I2C_FP_BATT) then -- Specktrum Telemetry ID of data received
-    -- Little Endian
-    local c = getI16LE(2) --Curr 1
-    if (c == -10) then c = nil end  -- (-1.0 = -10)
-    this.FP_Value[0] =  c
-    this.FP_Value[1] =  getI16LE(4) --Used 1
-    this.FP_Value[2] =  getI16LE(6) --Temp 1
+  flightPackStep = (flightPackStep+1) % 2
 
-    local c = getI16LE(8) --Curr 2
-    if (c == -10) then c = nil end  -- (-1.0 = -10)
-    this.FP_Value[3] =  c 
-    this.FP_Value[4] =  getI16LE(10) -- Used 2
-    this.FP_Value[5] =  getI16LE(12) -- Temp 2
+  if (flightPackStep==0) then
+    if getFrameData(I2C_FP_BATT) then -- Specktrum Telemetry ID of data received
+      -- Little Endian
+      local c = getI16LE(2) --Curr 1
+      if (c == -10) then c = nil end  -- (-1.0 = -10)
+      this.FP_Value[0] =  c
+      this.FP_Value[1] =  getI16LE(4) --Used 1
+      this.FP_Value[2] =  getI16LE(6) --Temp 1
 
-    lcd.invalidate()
+      local c = getI16LE(8) --Curr 2
+      if (c == -10) then c = nil end  -- (-1.0 = -10)
+      this.FP_Value[4] =  c 
+      this.FP_Value[5] =  getI16LE(10) -- Used 2
+      this.FP_Value[6] =  getI16LE(12) -- Temp 2
+
+      lcd.invalidate()
+    end
+  else
+    if getFrameData(I2C_POWERBOX) then -- Specktrum Telemetry ID of data received
+      -- BIG Endian
+      local v1 = getI16(2) -- Volts1
+      local v2 = getI16(4) -- Volts2
+      this.FP_Value[3] =  ifThenElse(v1>0,v1,nil) -- Volts1
+      this.FP_Value[7] =  ifThenElse(v2>0,v2,nil) -- Volts 2
+
+      --this.FP_Value[1] =  ifThenElse(v1>0,getI16(6)) -- Used 1
+      --this.FP_Value[5] =  ifThenElse(v2>0,getI16(8)) -- Used 2
+      
+      lcd.invalidate()
+    end
+
   end
 end
 
 FlightPack.event = DefaultProcessor.event
 
 -----------------------------------------------------------------------------------
-
+function Gps.init(param)
+  form.clear()
+  formHeader(form,"GPS")
+end
 
 function Gps.parseGPS_Stats(pos)
   local this = Gps
@@ -965,73 +1046,54 @@ function Gps.paint()
   local this = Gps
 
   -- draw labels and params on screen
-  local y = LCD_ROW_HEADER
-
-
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "GPS")
-
-  y = y + LCD_LINE_HEIGHT + LCD_LINE_HEIGHT
+  local y = form.height() + LCD_LINE_H
 
   lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "LAT:")
+  lcd.drawText (LCD_COL1_HEADER, y, "LAT")
   lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*5, y, string.format("%f (%s)",this.GPS_Lat/1000000,this.GPS_Lat_Str), RIGHT)
-  y = y + LCD_LINE_HEIGHT
+  showNumberBoxed(LCD_COL1_DATA, y, LCD_NUMBER_W*3, LCD_LINE_H, string.format("%f (%s)",this.GPS_Lat/1000000,this.GPS_Lat_Str))
+  y = y + LCD_LINE_H
 
   lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "LON:")
-  lcd.drawText (LCD_COL1_DATA*5, y, string.format("%f (%s)",this.GPS_Lon/1000000,this.GPS_Lon_Str), RIGHT)
-  y = y + LCD_LINE_HEIGHT
-
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Speed:")
+  lcd.drawText (LCD_COL1_HEADER, y, "LON")
   lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*3, y, string.format("%3.1f knots",this.GPS_Speed), RIGHT)
-  y = y + LCD_LINE_HEIGHT
+  showNumberBoxed(LCD_COL1_DATA, y, LCD_NUMBER_W*3, LCD_LINE_H, string.format("%f (%s)",this.GPS_Lon/1000000,this.GPS_Lon_Str))
+  y = y + LCD_LINE_H
 
   lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Alt:")
+  lcd.drawText (LCD_COL1_HEADER, y, "Speed")
   lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*3, y, string.format("%3.1f feet",this.GPS_Alt + this.GPS_AltHigh*1000), RIGHT)
-  y = y + LCD_LINE_HEIGHT
+  showNumberBoxed(LCD_COL1_DATA, y, LCD_NUMBER_W, LCD_LINE_H, string.format("%3.1f",this.GPS_Speed), "kts")
+  
+  y = y + LCD_LINE_H
 
   lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Course:")
+  lcd.drawText (LCD_COL1_HEADER, y, "Alt")
   lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*3, y, string.format("%3.1f deg",this.GPS_Course), RIGHT)
-  y = y + LCD_LINE_HEIGHT
+  showNumberBoxed(LCD_COL1_DATA, y, LCD_NUMBER_W, LCD_LINE_H,string.format("%3.1f",this.GPS_Alt + this.GPS_AltHigh*1000), "f")
+  y = y + LCD_LINE_H
 
   lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Time (UTC):")
+  lcd.drawText (LCD_COL1_HEADER, y, "Course")
   lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*3, y, this.GPS_Time_UTC, RIGHT)
-  y = y + LCD_LINE_HEIGHT
+  showNumberBoxed(LCD_COL1_DATA, y, LCD_NUMBER_W, LCD_LINE_H, string.format("%3.1f",this.GPS_Course), "deg")
+  y = y + LCD_LINE_H
 
   lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "Sats:")
+  lcd.drawText (LCD_COL1_HEADER, y, "Time")
   lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*3, y, formatNilValue(this.GPS_Sats), RIGHT)
-  y = y + LCD_LINE_HEIGHT
+  showNumberBoxed(LCD_COL1_DATA, y, LCD_NUMBER_W*2, LCD_LINE_H, this.GPS_Time_UTC, "(UTC)")
+  y = y + LCD_LINE_H
+
+  lcd.font(FONT_BOLD)
+  lcd.drawText (LCD_COL1_HEADER, y, "Sats")
+  lcd.font(FONT_STD)
+  showNumberBoxed(LCD_COL1_DATA, y, LCD_NUMBER_W, LCD_LINE_H,this.GPS_Sats)
+  y = y + LCD_LINE_H
 end
 
 function Gps.wakeup()
   local this = Gps
-
-  if (SIMULATION) then
-    if (this.GPS_Step == 0) then
-      FrameData   = {[0]= 0x16, 0x00, 0x25,0x00,0x00,0x28,0x15,0x17,0x06,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00}
-      Gps.parseGPS_Stats(2)
-      this.GPS_Step = 1
-    else
-      FrameData   = {[0]= 0x17, 0x00, 0x97,0x00,0x54,0x71,0x12,0x28,0x40,0x80,0x09,0x82,0x85,0x14,0x13,0xB9,0xFF}
-      Gps.parseGPS_Loc(2)
-      this.GPS_Step = 0
-    end
-    lcd.invalidate()
-    return
-  end
 
   if (this.GPS_Step == 0) then
     if getFrameData(I2C_GPS_STATS) then -- Specktrum Telemetry ID of data received
@@ -1051,6 +1113,9 @@ end
 Gps.event = DefaultProcessor.event
 
 -----------------------------------------------------------------------------------
+function GpsBin.init(param)
+  Gps.init(param)
+end
 
 function GpsBin.paint()
   Gps.paint()
@@ -1059,11 +1124,7 @@ end
 function GpsBin.wakeup()
   local this = Gps
 
-  if (SIMULATION) then
-      FrameData   = {[0]=0x26,0x00,0x05,0x16,0x12,0x08,0xB6,0xB1,0xC5,0xA7,0xFF,0xFF,0x0C,0x2F,0x01}
-  end
-
-  if SIMULATION or getFrameData(I2C_GPS_BIN) then -- Specktrum Telemetry ID of data received
+  if getFrameData(I2C_GPS_BIN) then -- Specktrum Telemetry ID of data received
     this.GPS_Alt = (getU16(2) - 1000) * 105 / 32  -- conver m to feet
     this.GPS_Lat = getI32(4) / 10
     this.GPS_Lon = getI32(8) / 10
@@ -1084,6 +1145,9 @@ GpsBin.event = DefaultProcessor.event
 -----------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------
+function SkyGps.init(param)
+  Gps.init(param)
+end
 
 function SkyGps.paint()
   Gps.paint()
@@ -1091,21 +1155,6 @@ end
 
 function SkyGps.wakeup()
   local this = Gps
-
-  if (SIMULATION) then
-    if (this.GPS_Step == 0) then
-      FrameData   = {[0]= 0x27, 0x16, 0x36, 0x48, 0x28, 0x96, 0x09, 0x33, 0x72, 0x16, 0x35, 0x11, 0x00,0x00,0x28,0x3D,0x20}
-      this.GPS_Step = 1
-      Gps.parseGPS_Loc(2)
-    else
-      FrameData   = {[0]= 0x27, 0x17, 0x00, 0x00, 0x10, 0x17, 0x08, 0x01, 0x07, 0x00 }
-      Gps.parseGPS_Stats(2)
-      this.GPS_Step = 0
-    end
-    
-    lcd.invalidate()
-    return
-  end
 
   if getFrameData(I2C_REMOTE_ID) then -- Specktrum Telemetry ID of data received
       local packetType = getI8(1)
@@ -1122,6 +1171,10 @@ end
 SkyGps.event = DefaultProcessor.event
 
 -----------------------------------------------------------------------------------
+function SkyRemoteId.init(param)
+  form.clear()
+  formHeader(form,"RemoteID")
+end
 
 function SkyRemoteId.paint()
   local this = SkyRemoteId
@@ -1130,41 +1183,36 @@ function SkyRemoteId.paint()
   local DEV_SERIAL = string.sub(SkyRemoteId.RID_OwnerInfo,0,18)
 
   -- draw labels and params on screen
-  local y = LCD_ROW_HEADER
+  local y = form.height() + LCD_LINE_H
 
-  lcd.color(LCD_TEXT_COLOR)
   lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "RemoteID")
-
-  y = y + LCD_LINE_HEIGHT + LCD_LINE_HEIGHT
-  lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "OWNER_INFO:")
+  lcd.drawText (LCD_COL1_HEADER, y, "OWNER_INFO")
   lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*2, y, SkyRemoteId.RID_OwnerInfo)
-  y = y + LCD_LINE_HEIGHT
+  lcd.drawText (LCD_COL1_DATA, y, SkyRemoteId.RID_OwnerInfo)
+  y = y + LCD_LINE_H
 
   lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "UAS_ID:")
+  lcd.drawText (LCD_COL1_HEADER, y, "UAS_ID")
   lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*2, y, this.RID_UAS_ID)
-  y = y + LCD_LINE_HEIGHT
+  lcd.drawText (LCD_COL1_DATA, y, this.RID_UAS_ID)
+  y = y + LCD_LINE_H
 
   lcd.font(FONT_BOLD)
-  lcd.drawText (LCD_COL1_HEADER, y, "DEV_INFO:")
+  lcd.drawText (LCD_COL1_HEADER, y, "DEV_INFO")
   lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*2, y, this.DEV_LA0_S)
-  y = y + LCD_LINE_HEIGHT
+  lcd.drawText (LCD_COL1_DATA, y, this.DEV_LA0_S)
+  y = y + LCD_LINE_H
   
   lcd.font(FONT_STD)
-  lcd.drawText (LCD_COL1_DATA*2, y, "Hex:"..this.DEV_LA0_H)
-  y = y + LCD_LINE_HEIGHT
+  lcd.drawText (LCD_COL1_DATA, y, "Debug Hex:"..this.DEV_LA0_H)
+  y = y + LCD_LINE_H
 
-  lcd.drawText (LCD_COL1_HEADER, y, "Flight Status :"..this.RID_Status)
-  y = y + LCD_LINE_HEIGHT
+  lcd.drawText (LCD_COL1_HEADER, y, "Flight Status : "..this.RID_Status)
+  y = y + LCD_LINE_H
   lcd.drawText (LCD_COL1_HEADER, y, "Dev Model : "..this.DEV_MODEL)
-  y = y + LCD_LINE_HEIGHT
+  y = y + LCD_LINE_H
   lcd.drawText (LCD_COL1_HEADER, y, "Dev Serial : "..DEV_SERIAL)
-  y = y + LCD_LINE_HEIGHT
+  y = y + LCD_LINE_H
   lcd.drawText (LCD_COL1_HEADER, y, "Owner ID : "..RID_OWNER_ID)
 end
 
@@ -1206,116 +1254,86 @@ function MainScreen.init()
   this.ItemHighlight = 2
   this.ItemSelected  = 1
   this.Offset        = 0
+
+  -- Dynamically Resize Buttons
+  local buttonHeight = LCD_LINE_H * 2
+  local buttonWidth = LCD_W / 4
+  local buttonHeightPadding = LCD_LINE_H // 4
+  local buttonWidthPadding = buttonWidth // 4
+
+  form.clear()
+  local line = form.addLine("Main Telemetry")
+
+  local sectionHeight = form.height() + 10
+
+  for iParam=2, #this.menu do    
+    -- Convert X,Y 3x7 matrix
+     local menuPos = iParam-2
+     local menuCol =  menuPos % 3 
+     local menuRow =  menuPos // 3 
+
+     local xOffset = 10 + menuCol * (buttonWidth +buttonWidthPadding)
+     local vOffset = sectionHeight + menuRow * (buttonHeight + buttonHeightPadding)
+     
+     local button  = form.addButton(nil, {x = xOffset , y = vOffset , w = buttonWidth, h = buttonHeight}, 
+     {
+      text = this.menu[iParam][1],
+      icon = nil, -- you can load a mask and put an image into the button
+      options = nil, -- FONT_S,
+      press = function()
+          form.clear()
+          this.ItemSelected = iParam -- Activate current page
+          local Proc   = this.menu[iParam][2]
+          local params = this.menu[iParam][3]
+          Proc.init(params) -- Init of Processor 
+      end
+    })
+
+  end
 end
 
 function MainScreen.paint()
-  local this    =  MainScreen
-
-  lcd.color(LCD_TEXT_COLOR)
-  lcd.font(FONT_BOLD)
-
-  lcd.drawText (LCD_COL1_HEADER, LCD_ROW_HEADER, "Main Tel (Smart RXs) v1.4")
-
-  local x = LCD_COL1_DATA * 0.5
-
-  for iParam=2 + this.Offset, #this.menu do    
-    lcd.color(LCD_TEXT_COLOR)
-    lcd.font(FONT_STD)
-
-    -- highlight selected parameter
-    if (this.ItemHighlight==iParam) then
-      lcd.color(LCD_FOCUS_COLOR)
-      lcd.font(FONT_BOLD)
-    end
-
-    -- set y draw coord
-    local y = (iParam-this.Offset)*LCD_LINE_HEIGHT+LCD_ROW_DATA 
-    
-    -- Title
-    local title = this.menu[iParam][1] -- Title
-    lcd.drawText (x, y, title)
-
-    -- Draw UP/DOWN Arrows
-    if ((iParam == this.Offset +  MENU_MAX_PER_PAGE) and (iParam < #this.menu)) then 
-      lcd.drawText (LCD_COL1_HEADER, y, C_DOWN)
-      break 
-    elseif (iParam == this.Offset+2 and this.Offset > 0) then
-      lcd.drawText (LCD_COL1_HEADER, y, C_UP)
-    end
-  end
 end
 
 function  MainScreen.event(key)
   local this    =  MainScreen
 
-  --print("MainScreenProcessor.event() called")
+  print("MainScreenProcessor.event() called")
 
-  if key == KEY_ROTARY_LEFT then
-    if (this.ItemHighlight>2) then 
-      this.ItemHighlight = this.ItemHighlight - 1 
-
-      if (this.ItemHighlight <= this.Offset+1) then
-        this.Offset = this.Offset - 1
-      end
-    end
-  elseif key == KEY_ROTARY_RIGHT then
-    if (this.ItemHighlight<#this.menu) then 
-      this.ItemHighlight = this.ItemHighlight + 1 
-
-      if (this.ItemHighlight > this.Offset + MENU_MAX_PER_PAGE) then
-        this.Offset = this.Offset + 1
-      end
-    end
-  elseif key == KEY_ENTER_BREAK then
-    this.ItemSelected = this.ItemHighlight
-  end
-
-  lcd.invalidate()
+  --lcd.invalidate()
+  return false
 end
 
 ---------------------------------------------------------------------------------------------
 
-local function name(widget)
-  local locale = system.getLocale()
-  return translations[locale] or translations["en"]
-end
-
 local function create()
-  print("create() called")
+  print("tel.create() called")
 
-  LCD_X_MAX, LCD_Y_MAX = lcd.getWindowSize()
-  
-  -- Recompute line positions
-  if (LCD_X_MAX <= 128 or LCD_Y_MAX <=64) then -- Smaller Screens 
-    TEXT_SIZE             = SMLSIZE 
-    TEXT_SIZE_BIG         = DBLSIZE
-    LCD_COL1_HEADER         = 1
-    LCD_COL1_DATA           = 20
-
-    LCD_COL2_HEADER         = 60
-    LCD_COL2_DATA           = 90
-
-    LCD_DATA_LEN            = 28 
-    LCD_DATA_SPACE          = 1
-
-
-    --Y_LINE_HEIGHT         = 8
+  LCD_W, LCD_H = lcd.getWindowSize()
     
-    C_UP                 = "^"
-    C_DOWN               = "v"
-
-    MENU_MAX_PER_PAGE    = 5
-  else
-    MENU_MAX_PER_PAGE     = 7
-  end
-
   lcd.font(FONT_STD)
-  local tw, th = lcd.getTextSize("")
-  LCD_LINE_HEIGHT  = th + 1
-  LCD_ROW_DATA       = LCD_ROW_HEADER + LCD_LINE_HEIGHT*2
+  local tw, th = lcd.getTextSize("9")
+  LCD_LINE_H  = th + 5
+
+  local cuadrant = LCD_W // 4 -- Divide the screen in 4 columns
+
+  LCD_NUMBER_W    = lcd.getTextSize("99999 XYZ")
+
+  LCD_COL1_HEADER = 5
+  LCD_COL2_HEADER = cuadrant*2
+
+  LCD_COL1_DATA = LCD_COL1_HEADER + LCD_NUMBER_W
+  LCD_COL2_DATA = LCD_COL2_HEADER + LCD_NUMBER_W
+
   openTelemetryRaw() 
+  MainScreen.init()
 
   return {}
+end
+
+local function close()
+  print("tel.close()")
+  closeTelemetryRaw()
 end
 
 local function wakeup(widget)
@@ -1346,30 +1364,17 @@ local function event(widget, category, value, x, y)
     local param = m.menu[m.ItemSelected][3] -- Prameter
     local Proc   = m.menu[m.ItemSelected][2] -- Processor
 
-    if (value == KEY_RTN_LONG) then  -- Exit??
-      closeTelemetryRaw()
-      system.exit()
-    elseif (value == KEY_RTN_BREAK) then
-      if (m.ItemSelected==1) then -- on Main?? Exit Script
-        closeTelemetryRaw()
-        system.exit()  
-      end
-    end
-
-  
+    --if (value == KEY_RTN_LONG) then  -- Exit??
+    --  system.exit()
+    --  return true
+    --end
 
     if (Proc.event) then
-      Proc.event(value)
+      return Proc.event(value)
     end
+
   end
-  return true
+  return false
 end
 
-local icon = lcd.loadMask("icon.png")
-
-local function init()
-  --print("init() called")
-  system.registerSystemTool({name=name, icon=icon, create=create, wakeup=wakeup, event=event, paint=paint})
-end
-
-return {init=init}
+return {create=create, close=close, wakeup=wakeup, event=event, paint=paint}
