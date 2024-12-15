@@ -22,7 +22,7 @@ Once you navigate to the ".zip" file that you need, use the download button on t
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/2448e43d-94b8-4d24-b055-f91ac0f9dfdf)
 
 
-## DSM Tools Suite
+## DSM Tools Suite (Ethos Version)
 All the tools combined into one app. For Ethos, and EdgeTX color (in dev)..  For smaller EdgeTX back & white radios, use the individual scripts (they don't have much memory).
 
 Ethos Screensot:
