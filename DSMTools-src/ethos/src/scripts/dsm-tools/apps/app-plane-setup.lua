@@ -420,7 +420,7 @@ local function ST_LoadMenu(menuId)
         end
         lastGoodMenu = menuId
     elseif (menuId==0x1001) then -- MODEL SETUP
-        local backId = 0 --0xFFF9 -- No changes, just exit
+        local backId = 0xFFF9 -- No changes, just exit
         local title  =  "Setup  ("..MODEL.modelName..")"
         if (menuDataChanged) then
             backId = 0x1000  -- Go to Save menu
@@ -1004,6 +1004,8 @@ local function create()
   local w,h = ui.getWindowSize()
   form.clear()
   form.addTextButton(nil, {x=w-2,y=h-2,w=2,h=2}, "XXX", function()  end)
+
+  lcd.setWindowTitle("Setup")
   return {}
 end
 

@@ -27,8 +27,7 @@ local LCD_W                 = 0
 local LCD_H                 = 0
 local LCD_LINE_H            = 0
 
-local LOG_DIR  = "logs/"
-local LOG_FILE = LOG_DIR .. "dsm_raw_tel.txt"
+local LOG_FILE = config.logPath .. "dsm_raw_tel.txt"
 local logFile = nil 
 
 local multiSensor = nil 
@@ -86,7 +85,7 @@ local function openTelemetryRaw()
     --Init telemetry Queue
     if (SIMULATION and sim==nil) then
       print("Loading Simulator")
-      sim = assert(loadfile(config.appsPath.."sim-telemetry-data.lua"))()
+      sim = assert(loadfile(config.libPath.."lib-sim-telemetry-data.lua"))()
     elseif (multiSensor==nil) then
        multiSensor = multimodule.getSensor()
     end
@@ -107,7 +106,7 @@ local function getTelemetryFrame(I2C_ID)
     if (SIMULATION) then
       data = sim.getFrameData(I2C_ID)
     else
-      data =  multiSensor:popFrame({i2cAddress=I2C_ID})
+      data = multiSensor:popFrame({i2cAddress=I2C_ID})
     end
 
   return data
@@ -223,6 +222,7 @@ function MainScreenProcessor.init()
 
   form.clear()
   local line = form.addLine("Telemetry Raw Capture")
+  form.addTextButton(line, {x=LCD_W-80,y=5,w=75,h=LCD_LINE_H*1.2}, "Back", function() config.exit() end)
 
   local sectionHeight = form.height() + 10
 
@@ -270,6 +270,7 @@ local function create()
   
   lcd.font(FONT_STD)
 
+  lcd.setWindowTitle("Telemery Capture")
   LCD_W, LCD_H  = lcd.getWindowSize()
   local tw,th = lcd.getTextSize("")
 

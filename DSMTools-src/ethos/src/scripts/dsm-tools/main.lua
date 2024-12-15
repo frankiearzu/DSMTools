@@ -4,12 +4,14 @@ local config = {
   imagePath  = "img/",
   dataPath   = "data/",
   logPath    = "logs/",
-  appsPath   = "apps/"
+  appsPath   = "apps/",
+  libPath    = "lib/",
+  msgPath    = "i18n/"
 }
 
 local translations = {en="DSM Tools"}
 
-local ui  = assert(loadfile("ui.lua")) (config)
+local ui  = assert(loadfile(config.libPath.."lib-ui.lua")) (config)
 
 local function gc()
   collectgarbage("collect")
@@ -47,7 +49,7 @@ end
 local Setup = {}
 
 function Setup.load()
-    loadScript(Setup,"plane-setup.lua")
+    loadScript(Setup,"app-plane-setup.lua")
 end
 
 function Setup.unload()
@@ -57,7 +59,7 @@ end
 local ForwardProg = {}
 
 function ForwardProg.load()
-    loadScript(ForwardProg,"fwd-prog.lua")
+    loadScript(ForwardProg,"app-fwd-prog.lua")
 end
 
 function ForwardProg.unload()
@@ -67,7 +69,7 @@ end
 local Telemetry = {}
 
 function Telemetry.load()
-    loadScript(Telemetry,"dsm-telemetry.lua")
+    loadScript(Telemetry,"app-telemetry.lua")
 end
 
 function Telemetry.unload()
@@ -77,7 +79,7 @@ end
 local Capture = {}
 
 function Capture.load()
-    loadScript(Capture,"dsm-capture.lua")
+    loadScript(Capture,"app-capture.lua")
 end
 
 function Capture.unload()
@@ -100,6 +102,7 @@ MainScreen.menu = {
 
 function MainScreen.create()
     ui.init()  
+    lcd.setWindowTitle("DSM Tools")
     local maxW, maxH = ui.getWindowSize()
 
     local this = MainScreen
@@ -229,6 +232,9 @@ local function name()
 
   function config.exit()
     print("config.exit()")
+
+    system.killEvents(KEY_ENTER_BREAK)
+
     local m  =  MainScreen
     local Proc   = m.menu[m.ItemSelected].proc
 

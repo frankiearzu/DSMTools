@@ -171,7 +171,7 @@ local function openTelemetryRaw(i2cId)
   --Init telemetry Queue
   if (SIMULATION and sim == nil) then
     print("Loading Simulator")
-    sim = assert(loadfile(config.appsPath.."sim-telemetry-data.lua"))()
+    sim = assert(loadfile(config.libPath.."lib-sim-telemetry-data.lua"))()
   elseif (multiSensor==nil) then
     multiSensor = multimodule.getSensor()
   end
@@ -1261,8 +1261,10 @@ function MainScreen.init()
   local buttonHeightPadding = LCD_LINE_H // 4
   local buttonWidthPadding = buttonWidth // 4
 
+  lcd.setWindowTitle("Telemery")
   form.clear()
   local line = form.addLine("Main Telemetry")
+  form.addTextButton(line, {x=LCD_W-80,y=5,w=75,h=LCD_LINE_H*1.2}, "Back", function() config.exit() end)
 
   local sectionHeight = form.height() + 10
 
@@ -1309,6 +1311,7 @@ end
 local function create()
   print("tel.create() called")
 
+  
   LCD_W, LCD_H = lcd.getWindowSize()
     
   lcd.font(FONT_STD)
