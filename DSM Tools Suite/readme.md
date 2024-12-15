@@ -11,6 +11,8 @@ Tested it on X10, X18rs and X20s.
 
 Starting with version 2.0 to get in synch with the new EdgeTX versions.
 
+AS3X and AS3X+ Receiver firmware are supported.
+
 ## Installation
 
 There are two ways to install the tools:
