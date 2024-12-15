@@ -34,7 +34,7 @@ local supportedRadios = {
             textWidthPad        = 5,
             textHeightPad       = 5,
             
-            touchYOffeset       = 68    
+            touchYOffeset       = 68
         },
         menu = {
             buttonWidth     = 240,
@@ -55,7 +55,7 @@ local supportedRadios = {
             textWidthPad        = 5,
             textHeightPad       = 5,
 
-            touchYOffeset       = 68   
+            touchYOffeset       = 30   
         },
         menu = {
             buttonWidth     = 140,
@@ -76,7 +76,7 @@ local supportedRadios = {
             textWidthPad        = 5,
             textHeightPad       = 4,
 
-            touchYOffeset       = 0,
+            touchYOffeset       = 0, -- no touch screen
         },
         menu = {
             buttonWidth     = 140,
