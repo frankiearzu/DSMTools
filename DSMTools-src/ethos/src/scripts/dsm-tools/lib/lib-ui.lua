@@ -97,11 +97,11 @@ local supportedRadios = {
             textWidthPad        = 5,
             textHeightPad       = 5,
 
-            touchYOffeset       = 68   
+            touchYOffeset       = 30   
         },
         menu = {
-            buttonWidth     = 140,
-            buttonHeight    = 80,
+            buttonWidth     = 200,
+            buttonHeight    = 110,
             buttonWidthPad  = 30,
             buttonHeightPad = 10,
             buttonPerRow    = 2,
@@ -117,10 +117,16 @@ local supportedRadios = {
 function ui.init()
     LCD_W, LCD_H = lcd.getWindowSize()
     local resolution = LCD_W .. "x" .. LCD_H
+
+    print("UI Resolution:", resolution)
     local radio = supportedRadios[resolution]
     if not radio then
-        -- default to the lower resolution if not found 
-        radio = supportedRadios["472x240"]
+        if (resolution=="632x335") then
+            radio = supportedRadios["632x314"]
+        else
+            -- default to the lower resolution if not found 
+            radio = supportedRadios["472x240"]
+        end
     end
 
     ui.ms = radio.ms

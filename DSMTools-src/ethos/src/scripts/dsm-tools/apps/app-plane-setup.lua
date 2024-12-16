@@ -941,8 +941,8 @@ local function ReadTxModelData()
   MODEL.modelPath = path:gsub(".bin", ".txt") -- change ".bin" for ".txt"
 
   -- Get the SubDirectory if any, and create it inside our data. 
-  local pos =  path:find("/", 1, true) 
-  if (pos > 1) then
+  local pos =  path:find("/", 1, true)
+  if (pos) then
     local folder = path:sub(1,pos-1)
     os.mkdir(config.dataPath..folder)
   end
