@@ -117,7 +117,12 @@ local supportedRadios = {
 function ui.init()
     LCD_W, LCD_H = lcd.getWindowSize()
     local resolution = LCD_W .. "x" .. LCD_H
-    local radio = assert(supportedRadios[resolution], resolution .. " not supported")
+    local radio = supportedRadios[resolution]
+    if not radio then
+        -- default to the lower resolution if not found 
+        radio = supportedRadios["472x240"]
+    end
+
     ui.ms = radio.ms
     ui.menu = radio.menu
     ui.fp   = radio.fp

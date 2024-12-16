@@ -143,7 +143,7 @@ local startTime = os.clock()
 
 local MODEL = {
   modelName = "",            -- The name of the model comming from OTX/ETX
-  hashName = nil,
+  modelPath = "",
   modelOutputChannel = {},   -- Output information from OTX/ETX
 
   TX_CH_TEXT= { }, 
@@ -173,12 +173,21 @@ local function LOG_close()
   if (logFile ~= nil) then io.close(logFile); logFile = nil end
 end
 
+local function ST_CreateSubFolders(fname)
+  print("Creating sub folders:",fname)
+
+
+
+end
+
 -- Saves MENU_DATA to a file
 local function ST_SaveFileData() 
-  local fname = MODEL.modelPath .. ".txt"
+  local fname = MODEL.modelPath
+
+  ST_CreateSubFolders(fname)
 
   print("Saving Data:",fname)
-  local file = assert(io.open(config.dataPath .. fname, "w"),"Please create "..config.dataPath .." folder")  -- write File 
+  local file = assert(io.open(config.dataPath .. fname, "w"),"Cannot create "..config.dataPath .. fname)  -- write File 
   
   -- Foreach MENU_DATA with a value write Var_Id:Value into file
   for i = 0, MV_DATA_END do
@@ -191,7 +200,7 @@ local function ST_SaveFileData()
 end
 
 local function ST_LoadFileData() 
-   local fname = MODEL.modelPath .. ".txt"
+   local fname = MODEL.modelPath 
   
     -- Clear Menu Data
     for i = 0, MV_DATA_END do
@@ -440,7 +449,7 @@ local function ST_LoadMenu(menuId)
         menuDataChanged = false
 
         local msg1 = "Data saved to" 
-        local msg2 = config.dataPath..MODEL.modelPath..".txt"
+        local msg2 = config.dataPath..MODEL.modelPath
 
         Menu = { MenuId = 0x1005, Text = "Config Saved", PrevId = 0, NextId = 0, BackId = 0, TextId=0 }
         MenuLines[2] = { Type = LT_MENU, Text=msg1, TextId = 0, ValId = 0x1005 }
@@ -936,8 +945,16 @@ local function ReadTxModelData()
   end
 
   MODEL.modelName = model.name()
-  MODEL.modelPath = model.path():gsub(".bin", "") -- remove ".bin"
 
+  local path = model.path()
+  MODEL.modelPath = path:gsub(".bin", ".txt") -- change ".bin" for ".txt"
+
+  -- Get the SubDirectory if any, and create it inside our data. 
+  local pos =  path:find("/", 1, true) 
+  if (pos > 1) then
+    local folder = path:sub(1,pos-1)
+    os.mkdir(config.dataPath..folder)
+  end
 
   print("Name ="..MODEL.modelName)
   print("Path ="..MODEL.modelPath)

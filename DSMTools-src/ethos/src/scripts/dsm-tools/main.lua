@@ -1,5 +1,5 @@
 local config = {
-  version = "v2.0-RC1",
+  version = "v2.0-RC2",
   simulation = (system.getVersion().simulation == true),
   imagePath  = "img/",
   dataPath   = "data/",
