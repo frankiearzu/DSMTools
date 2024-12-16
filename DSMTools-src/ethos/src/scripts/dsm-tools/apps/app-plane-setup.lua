@@ -173,18 +173,9 @@ local function LOG_close()
   if (logFile ~= nil) then io.close(logFile); logFile = nil end
 end
 
-local function ST_CreateSubFolders(fname)
-  print("Creating sub folders:",fname)
-
-
-
-end
-
 -- Saves MENU_DATA to a file
 local function ST_SaveFileData() 
   local fname = MODEL.modelPath
-
-  ST_CreateSubFolders(fname)
 
   print("Saving Data:",fname)
   local file = assert(io.open(config.dataPath .. fname, "w"),"Cannot create "..config.dataPath .. fname)  -- write File 
