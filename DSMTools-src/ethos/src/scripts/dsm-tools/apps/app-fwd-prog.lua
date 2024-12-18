@@ -77,7 +77,8 @@ local RX_Version          = ""
 
 local logFile             = nil
 local refreshDisplay      = false
-local loadDataFileFailed = false
+local reportErrorDiag     = false
+local reportErrorMsg      = ""
 
 --Channel Types --
 local CT_NONE    <const> = 0x00
@@ -681,8 +682,12 @@ local function DSM_SendRequest()
   elseif Phase == PH_TITLE then     -- request menu title
     DSM_Send(0x16, 0x06, menuMSB, menuLSB, 0x00, ctx_SelLine)
     if (menuId == 0x0001) then -- Executed Save&Reset menu
+      LOG_write("RX Restart....\n")
       Phase = PH_RX_VER
       ctx_isReset = true
+    elseif (menuId == 0x0003) then -- Hard Reset, just exit
+      LOG_write("Factory Reset....\n")
+      Phase = PH_EXIT_DONE
     end
     LOG_write("TX:GetMenu(M=0x%04X,L=%d)\n", menuId, ctx_SelLine)
 
@@ -916,8 +921,10 @@ local function DSM_Send_Receive()
   else
     -- Check if enouth time has passed from last Received activity
     if (getTime() > RXInactivityTime and Phase==PH_WAIT_CMD) then
-        DSM_Release()
-        error("RX Disconnected")
+        LOG_write("RX Disconnected!!!\n")
+        reportErrorMsg = "RX Disconnected!!!"
+        reportErrorDiag = true
+        Phase = PH_EXIT_DONE
     end
   end
 
@@ -1112,45 +1119,6 @@ local function load_msg_from_file(fileName, offset, FileState)
   return 0
 end
 
-
--- Load Menu Data from a file 
-local function ST_LoadFileData() 
-  local MV_DATA_END        = 1040
-
-  MODEL.hashName = "Fake-Plane"
-
-  -- Clear Menu Data
-  for i = 0, MV_DATA_END do
-      M_DB[i]=nil
-  end
-
-  print("Loading Plane Info for:"..MODEL.hashName)
-
-  -- TODO: Read the model aircraft info from Ethos, or create a UI similar to the one in EdgeTX
-
-  -- Wing and Tail Type
-  M_DB[MV_WING_TYPE] = WT_A1   -- One Aileron
-  M_DB[MV_TAIL_TYPE] = TT_R1_E1 -- Normal 1 Rud, 1 Ele
-
-  -- channels for Thr, Ail, Elv, Rud
-  M_DB[MV_CH_THR] = 3  -- CH3
-  
-  M_DB[MV_CH_L_AIL] = 1  -- CH1
-  M_DB[MV_CH_R_AIL] = nil
-
-  M_DB[MV_CH_L_ELE] = 2 -- CH2
-  M_DB[MV_CH_R_ELE] = nil
-
-  M_DB[MV_CH_L_RUD] = 4 -- CH4
-  M_DB[MV_CH_R_RUD] = nil
-
-  for i=0, TX_CHANNELS-1 do
-    M_DB[MV_PORT_BASE+i]=MT_NORMAL
-  end
-
-
-  return 1
-end
 
 local function ReadTxModelData()
   local chNameDef = {[0]="Ail","Ele","Thr","Rud"}
@@ -1473,6 +1441,7 @@ local function DSM_Init()
   Phase = PH_INIT
   initStep=0
   FileState = { lineNo=0 }
+  reportErrorDiag = false
 
   ReadTxModelData()
 
@@ -1480,10 +1449,10 @@ local function DSM_Init()
   if (r == 1) then
     LOG_write("Creating DSMPort Info\n")
     CreateDSMPortChannelInfo()
-    loadDataFileFailed = false
+    reportErrorDiag = false
   else
-    --assert("Cannot load config file")
-    loadDataFileFailed = true
+    reportErrorMsg = "Cannot load config file. Configure Plane first"
+    reportErrorDiag = true
   end
 
   --M_DATA = nil
@@ -1563,12 +1532,17 @@ local function close()
   LOG_close()
 end
 
-local errorReported = false
+local errorReported = 0
 local function wakeup(widget)
-  if (loadDataFileFailed and not errorReported) then
-    lcd.invalidate()
-    errorReported = true
-    Phase = PH_EXIT_DONE
+  if (reportErrorDiag) then
+    if (errorReported < 60) then
+      lcd.invalidate()
+      errorReported=errorReported + 1
+    else
+      errorReported = 0
+      reportErrorDiag = false
+      Phase = PH_EXIT_DONE
+    end
     return    
   end
 
@@ -1592,8 +1566,8 @@ end
 
 local function paint(widget)
   --print("paint() called")
-  if (loadDataFileFailed) then
-    ui.drawFPSubHeader(0,"Please Setup Plane First")
+  if (reportErrorDiag) then
+    ui.drawFPSubHeader(0,reportErrorMsg)
   elseif (Phase == PH_INIT) then 
     Inc_Init_paint()-- Incremental initialization
   else
