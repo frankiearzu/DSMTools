@@ -82,7 +82,7 @@ What information is needed by AS3X:
 ![image](https://github.com/user-attachments/assets/f6fb3f22-6e82-40eb-aae0-5004d5a67ec9)
 
 ## Forward Prog
-Forward Programming is a way to configure the Spektrum RX from your transmitter. The menu actually comes from the RX. The TX only renders the menu on the TX display. The menus should look very close to how a Spektrum TX will show it.  We are not intending to tech you how to do the Gyro AS3X/SAFE configuration here.. for that any Spektrum Forward Programming video will give you the idea.
+Forward Programming is a way to configure the Spektrum RX from your transmitter. Think of it as how a Web-Browser works; The menu actually comes from the RX. The TX only renders the menu on the TX display. The menus should look very close to how a Spektrum TX will show it.  We are not intending to tech you how to do the Gyro AS3X/SAFE configuration here.. for that any Spektrum Forward Programming video will give you the idea.
 
 When you are editting a field that is to select a channel, you can also just move the switch/dial to select it.. thats why you want to get your switches done before.
 
