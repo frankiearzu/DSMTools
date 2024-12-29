@@ -6,7 +6,7 @@ All the tools combined in a single app.
 # DSM Tools Suite (Ethos Version)
 
 **NOTE:  Requires Ethos 1.6.0 or newer**
-A release candidate one (v 2.0 RC1) is posted here, should work on Simulators (with mocked RX data), as well as the real radios.
+A release candidate one (v 2.0 RC3) is posted here, should work on Simulators (with mocked RX data), as well as the real radios.
 Tested it on X10, X18rs and X20s.  
 
 Starting with version 2.0 to get in synch with the new EdgeTX versions.
@@ -33,7 +33,7 @@ After the instalation, the directory folder should look like this:
 
 This needs to be done before plane setup or Forward Programming
 1. **RF system/External (MultiModule)**:
-    - Bind your plane using Spektrum DSMX, and select a model ID number that you have not used.
+    - Bind your plane using Spektrum DSMX-2F, and select a model ID number that you have not used.
     - Make sure that **Enable Max Throws** is **OFF** (Default), Otherwise it will messed up some servo range reported by Forward Prog.
     - **Disable Channel Map** should be **OFF** (Default) is your channel order is AETR (Default). **ON** only if you are using TAER channel order.
     - Make sure that the Channel range is from Ch1-Ch12. For the Flight Mode/Gain channels, you can use channels up to 12 even if your receiver is only 6 channels. 
