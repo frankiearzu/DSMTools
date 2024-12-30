@@ -1160,8 +1160,8 @@ local function ReadTxModelData()
   for i = 0, TX_CHANNELS-1 do 
       local ch = model.getChannel(i) 
       if (ch~=nil) then
-          local cht = { name=ch:name(), min=ch:min(), max=ch:max(), revert=ch:direction()==-1, 
-                       offset =ch:center(), ppmCenter=ch:pwmCenter(), symetrical=true }  
+          local cht = { name=ch:name(), min=ch:min()//1, max=ch:max()//1, revert=ch:direction()==-1, 
+                       offset =ch:center()//1, ppmCenter=ch:pwmCenter()//1, symetrical=true }  
 
           MODEL.modelOutputChannel[i] = cht   -- Table: name, min=-100, max=+100 subtrim=??
           if (string.len(cht.name)==0) then 
