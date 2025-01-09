@@ -17,14 +17,15 @@ Due to memory, it will not run on all radios. So far this is what we know.
 8. Radiomaster Pocket w 4-in-1: yes
 
 
-# Introduction  (v0.58 Black & White  Small Radios)
+# Introduction  (v0.59a Black & White  Small Radios)
 
+UPDATE: v0.59a support new Spektrum RX firmware version AS3X+ v3.2.7
 
 # How to Use it
 
 Step #1: Make sure that the /MODELS/DSMDATA folder exist.
 
-Step #2: Run the "DSM FwdPrg_58_STUP" first to setup the plane wing, tail and channels to use for each surface. At the end it will ask you to "save" the configuration. That saves a file in the /MODELS/DSMDATA folder.
+Step #2: Run the "DSM FwdPrg_59_STUP" first to setup the plane wing, tail and channels to use for each surface. At the end it will ask you to "save" the configuration. That saves a file in the /MODELS/DSMDATA folder.
 
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/be03ad40-3e2f-45e1-8f50-d231c3931169)
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/5010a361-1234-4c83-97b2-2eb6ae0d1061)
@@ -64,8 +65,8 @@ When upgrading from a previous version of this tool, delete your `/SCRIPTS/TOOLS
 For the MINimalistic version, Your TX SDCard should looks like this:
 
     /SCRIPTS/TOOLS
-        DSM FwdPrg_58_MIN.lua     -- Minimalistic version for radios with LOW memory (Can setup planes)
-        DSM FwdPrg_58_STUP.lua    -- `NEW!` Setup plane for minimalistic version (LOW Memory radios)
+        DSM FwdPrg_59_MIN.lua     -- Minimalistic version for radios with LOW memory (Can setup planes)
+        DSM FwdPrg_59_STUP.lua    -- `NEW!` Setup plane for minimalistic version (LOW Memory radios)
 
     /SCRIPTS/TOOLS/DSMLIB/       -- (ALL CAPITALS) Libraries ane extra files
         DsmFwPrgMIN_P1.lua            -- Part1 of extra files for Min
@@ -120,6 +121,9 @@ The multi-module is already adjusting the TX/FrSky servo range internally to mat
 
 
 # Changes and fixes 
+v0.59a:
+Support for new Spektrum Firmware AS3X+ v3.2.7 
+
 v0.58:
 Support for new Spektrum Firmware 3.x that introduce AS3X+ to many common receivers.
 
