@@ -6,6 +6,7 @@ All the tools combined in a single app.
 # DSM Tools Suite (Ethos Version)
 
 **NOTE:  Requires Ethos 1.6.0 or newer**
+
 **UPDATE: Supports AS3X+ Version 3.2.7 firmware   (Jan 7, 2025)**
 
 A tested release is posted here (2.0-Final), should work on Simulators (with mocked RX data), as well as the real radios.
