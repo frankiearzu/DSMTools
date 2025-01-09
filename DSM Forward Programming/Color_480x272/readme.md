@@ -4,7 +4,9 @@ Rewrite/Enhancements by: Francisco Arzu
 
 Thanks to all the people volunteered to test it.
 
-# Introduction  (v0.58)
+# Introduction  (v0.59a)
+
+v0.59a support for Spektrum Firmware AS3X+ 3.2.7.
 
 v0.58 adds support for Spektrum Firmware 3.x with many common receivers adding AS3X+ functionality.
 
@@ -44,7 +46,7 @@ In another window, open your TX SDCard.
 Your TX SDCard should looks like this:
 
     /SCRIPTS/TOOLS/     -- you only need one of the 3 to save some space in your TOOLS screen
-        DSM FwdPrg_58_Color.lua   -- Color and touch radios
+        DSM FwdPrg_59_Color.lua   -- Color and touch radios
 
         
     /SCRIPTS/TOOLS/DSMLIB/        -- (ALL CAPITALS) Libraries ane extra files
@@ -103,6 +105,9 @@ The multi-module is already adjusting the TX/FrSky servo range internally to mat
 ---
 
 # Changes and fixes 
+V0.59a:
+Supports new Spektrum RX firmare AS3X v3.2.7  (Jan 8, 2025)
+
 v0.58:
 Adds support for Spektrum Firmware 3.x. It adds AS3X+ functionality to many common receivers.
 
