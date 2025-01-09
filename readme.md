@@ -1,6 +1,6 @@
 
-# DSM Tools for EdgeTX and OpenTx 
-This repository has a collection of EdgeTx Tools to use Spektrum Receivers
+# DSM Tools for EdgeTX, OpenTx and Ethos 
+This repository has a collection of EdgeTx/OpenTX/ETHOS Tools to use Spektrum Receivers
 
 **UPDATE for new Spektrum firmware AS3X+ v3.2.7 added on Jan 8, 2025**
 
