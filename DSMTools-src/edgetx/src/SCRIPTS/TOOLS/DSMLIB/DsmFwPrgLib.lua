@@ -172,7 +172,7 @@ end
 
 local function DSM_sendHeartbeat()
     -- keep connection open
-    Log.LOG_write("SEND DSM_sendHeartbeat()\n")
+    --Log.LOG_write("SEND DSM_sendHeartbeat()\n")
     DSM_send(0x00, 0x04, 0x00, 0x00)
 end
 
@@ -231,7 +231,7 @@ end
 local function DSM_sendTxChInfo_20(portNo)
     local b1,b2 =  MODEL.DSM_ChannelInfo[portNo][0] or 0, MODEL.DSM_ChannelInfo[portNo][1] or 0
 
-    Log.LOG_write("CALL DSM_TxChInfo(#%d DATA= %02X %02X %02X %02X) %s\n", portNo,
+    Log.LOG_write("SEND DSM_TxChInfo(#%d DATA= %02X %02X %02X %02X) %s\n", portNo,
         portNo, portNo, b1, b2, modelLib.channelType2String(b1,b2)) -- DATA part
     DSM_send(0x20, 0x06, portNo, portNo, b1, b2) 
 end
@@ -259,7 +259,7 @@ local function DSM_sendTxSubtrim_21(portNo)
 
     local b1,b2,b3,b4 = int16_MSB(left), int16_LSB(left), int16_MSB(right), int16_LSB(right) 
 
-    Log.LOG_write("CALL DSM_TxSubtrim(#%d DATA=%02X %02X %02X %02X) Range(%d - %d) ER L/R:(%d - %d)x8  ST:(%d)x2\n", portNo,
+    Log.LOG_write("SEND DSM_TxSubtrim(#%d DATA=%02X %02X %02X %02X) Range(%d - %d) ER L/R:(%d - %d)x8  ST:(%d)x2\n", portNo,
         b1,b2,b3,b4, left, right, leftTravel-100, rightTravel-100, subTrim) -- DATA part
    
     DSM_send(0x21, 0x06, b1,b2,b3,b4) -- Port is not send anywhere, since the previous 0x20 type message have it.
@@ -270,7 +270,7 @@ local function DSM_sendTxServoTravel_23(portNo)
     local rightTravel =  math.abs(math.floor(MODEL.modelOutputChannel[portNo].max/10))
     local debugInfo   = string.format("Travel L/R (%d - %d)",leftTravel,rightTravel)
 
-    Log.LOG_write("CALL DSM_TxServoTravel(#%d DATA= %02X %02X %02X %02X) %s\n", portNo,
+    Log.LOG_write("SEND DSM_TxServoTravel(#%d DATA= %02X %02X %02X %02X) %s\n", portNo,
         0x00, leftTravel, 0x00, rightTravel, debugInfo) -- DATA part
     DSM_send(0x23, 0x06, 0x00, leftTravel, 0x00, rightTravel)
 end
@@ -303,14 +303,14 @@ local function DSM_sentTxInfo(menuId,portNo)
             end
         elseif (TxInfo_Step == 3) then
             -- 24,6: 0 83 5A B5 
-            Log.LOG_write("CALL DSM_TxInfo24(#%d DATA=0x24 0x06 %02X %02X %02X %02X)\n", portNo,
+            Log.LOG_write("SEND DSM_TxInfo24(#%d DATA=0x24 0x06 %02X %02X %02X %02X)\n", portNo,
                 0x00, 0x83, 0x5A, 0xB5) -- DATA part
             DSM_send(0x24, 0x06, 0x00, 0x83, 0x5A, 0xB5) -- Still Uknown
             TxInfo_Step = 4
           
         elseif (TxInfo_Step == 4) then
             -- 24,6: 6 80 25 4B 
-            Log.LOG_write("CALL DSM_TxInfo24(#%d DATA=0x24 0x06 %02X %02X %02X %02X)\n", portNo,
+            Log.LOG_write("SEND DSM_TxInfo24(#%d DATA=0x24 0x06 %02X %02X %02X %02X)\n", portNo,
                 0x06, 0x80, 0x25, 0x4B) -- DATA part
             DSM_send(0x24, 0x06, 0x06, 0x80, 0x25, 0x4B)  -- Still Uknown
             TxInfo_Step = 5
@@ -395,7 +395,7 @@ local function DSM_sendRequest()
             ctx.Phase = PHASE.WAIT_CMD
         end
     elseif ctx.Phase == PHASE.EXIT then
-        Log.LOG_write("CALL DSM_TX_Exit()\n")
+        Log.LOG_write("SEND DSM_TX_Exit()\n")
         DSM_send(0x1F, 0x02, 0xFF, 0xFF) -- 0xAA
         ctx.Phase = PHASE.EXIT_DONE
     end
@@ -594,12 +594,12 @@ local function DSM_processResponse()
         DSM_ReleaseConnection()
         error("RX Connection Drop, Press RTN to exit")
 
-    elseif cmd == 0x00 then -- NULL response (or RX heartbeat)
+    elseif cmd == 0x00 then -- RX heartbeat
         -- 09 00 01 00 00 00 00 00 00 00 00 00 00 00 00
         -- 09 00 7E 00 20 9E 28 00 20 9E 28 00 20 8D 7E : After TX Heartbeat one of this (FC6250)
         -- 09 00 18 00 20 08 00 00 00 08 00 00 00 98 AE  AR8360T
-        Log.LOG_write("%3.3f %s: RESPONSE RX Heartbeat  --Context: 0x%02X\n", 
-                    menuLib.getElapsedTime(), menuLib.phase2String(ctx.Phase), multiBuffer(12))
+        --Log.LOG_write("%3.3f %s: RESPONSE RX Heartbeat  --Context: 0x%02X\n", 
+        --            menuLib.getElapsedTime(), menuLib.phase2String(ctx.Phase), multiBuffer(12))
     else
         Log.LOG_write("RESPONSE Unknown Command (0x%X)  DATA=%s\n", cmd, multiBuffer2String())
     end
@@ -635,6 +635,7 @@ local function DSM_Send_Receive()
     if ctx.SendDataToRX == 1 then   -- Need to send a request
         ctx.SendDataToRX = 0
         DSM_sendRequest() 
+        TXInactivityTime = getTime() + SEND_TIMEOUT  -- Reset TX Inactivity timeout 
     else
         -- Check if enouth time has passed from last transmit/receive activity
         if getTime() > TXInactivityTime then

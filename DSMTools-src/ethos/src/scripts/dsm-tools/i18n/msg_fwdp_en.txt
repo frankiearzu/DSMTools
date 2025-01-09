@@ -178,9 +178,9 @@ T |0x00C8|Sensor is Calibrating.. Wait
 T |0x00CA|SAFE & Panic Mode Setup
 --
 T |0x00CD|Level model & capt attitude/m -- SPECIAL MENU to itself who is not a comment
-T |0x00CE|Error TX Conf
-T |0x00CF|Invalid TX Ch Conf 1
-T |0x00D0|Invalid TX Ch Conf 2
+T |0x00CE|ATTENTION!
+T |0x00CF|Your transmitter requires
+T |0x00D0|newer LUA FP
 --
 -- RX Orientations for AR631/AR637, Optionally attach an Image + Alt Text to display
 LT|0x00CB|Pos 1
@@ -504,6 +504,7 @@ T |0x02A6|settings if nessesary.
 T |0x02A7|-- blank
 --
 T |0x02A9|Aux Output Wizard
+T |0x02AA|Gyro Filter Level
 T |0x02AB|Reset Output
 T |0x02AC|Gyro Response Test
 --
@@ -521,6 +522,16 @@ T |0x02B7|Threshold Throttle
 T |0x02B9|HLA Flight Mode
 T |0x02BA|Duration(s)
 T |0x02BB|Pitch Offset
+T |0x02BD|Dynamic Response
+T |0x02BE|AS3X Throttle Arm
+--
+T |0x02BF|Skip Gyro Cal
+T |0x02C0|Warning: Disabling the gyro
+T |0x02C1|calibration will disable the
+T |0x02C2|following:
+T |0x02C3|SAFE, Heading Hold,
+T |0x02C4|ASS3X Throttle Arm
+T |0x02C5|
 --
 T |0x0300|No compatible DSM RX...
 T |0x0301|Waiting for RX to Restart

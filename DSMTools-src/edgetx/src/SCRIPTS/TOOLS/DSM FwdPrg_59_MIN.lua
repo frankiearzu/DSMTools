@@ -1,4 +1,4 @@
-local toolName = "TNS|DSM Frwd Prog v0.59 (MIN)|TNE"
+local toolName = "TNS|DSM Frwd Prog v0.59a (MIN)|TNE"
 
 ---- #########################################################################
 ---- #                                                                       #
@@ -18,7 +18,7 @@ local toolName = "TNS|DSM Frwd Prog v0.59 (MIN)|TNE"
 ---- #########################################################################
 
 
-local VERSION             = "v0.59"
+local VERSION             = "v0.59a"
 local LANGUAGE            = "en"
 local DSMLIB_PATH         = "/SCRIPTS/TOOLS/DSMLIB/"
 local DEBUG_ON            = 1
@@ -624,6 +624,7 @@ local function DSM_SendRequest()
       LOG_write("TX:EditValueEnd(L=%d)\n", ctx_SelLine)
       DSM_Send(0x1B, 0x04, 0x00, ctx_SelLine)
       Change_Step=0
+      Phase = PH_WAIT_CMD
     end
 
   elseif Phase == PH_EXIT_REQ then -- EXIT Request 
@@ -802,6 +803,7 @@ local function DSM_Send_Receive()
   if SendDataToRX == 1 then
     SendDataToRX = 0
     DSM_SendRequest()
+    TXInactivityTime = getTime() + 200
   else
     -- Check if enouth time has passed from last transmit activity
     if getTime() > TXInactivityTime then
@@ -893,7 +895,9 @@ local function DSM_Display()
     if line.Text ~= nil then
       local heading = line.Text
 
-      if (line.TextId >= 0x8000) then     -- Flight mode
+      if (line.TextId >= 0x5000) then     -- Render Image
+        -- Render Image# TextID-0x5000
+      elseif (line.TextId >= 0x8000) then     -- Flight mode
         heading = GetFlightModeValue(line)
       else
         local text = nil

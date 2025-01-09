@@ -1,8 +1,6 @@
-local toolName = "TNS|DSM Frwd Prog v0.59 (MIN-SETUP)|TNE"
-
 ---- #########################################################################
 ---- #                                                                       #
----- # Copyright (C) OpenTX                                                  #
+---- # Copyright (C) Frankie Arzu                                            #
 -----#                                                                       #
 ---- # License GPLv2: http://www.gnu.org/licenses/gpl-2.0.html               #
 ---- #                                                                       #
@@ -17,22 +15,21 @@ local toolName = "TNS|DSM Frwd Prog v0.59 (MIN-SETUP)|TNE"
 ---- #                                                                       #
 ---- #########################################################################
 
+local arg = {...}
 
-local VERSION             = "v0.59"
-local DSMLIB_PATH         = "/SCRIPTS/TOOLS/DSMLIB/"
-local DATA_PATH           = "/MODELS/DSMDATA"
+local config = arg[1]
+local ui     = arg[2]
 
-local LOG_FILE            = "/LOGS/dsm_min_log.txt"
-local DEBUG_ON            = 0
+local LOG_FILE_NAME  <const>   = "setup_log.txt"
 
 -- Phase
-local PH_INIT = 0
-local PH_RX_VER, PH_GET_MENU  = 1, 2
-local PH_VAL_EDITING, PH_VAL_EDIT_END     =  7, 8
-local PH_WAIT_CMD, PH_EXIT_REQ, PH_EXIT_DONE  = 9, 10, 11
+local PH_INIT <const> = 0
+local PH_RX_VER <const>, PH_GET_MENU <const> = 1, 2
+local PH_VAL_EDITING <const>, PH_VAL_EDIT_END <const> =  7, 8
+local PH_WAIT_CMD <const>, PH_EXIT_REQ <const>, PH_EXIT_DONE <const> = 9, 10, 11
 
 -- Line Types
-local LT_MENU, LT_LIST_NC = 0x1C, 0x6C
+local LT_MENU <const>, LT_LIST_NC <const> = 0x1C, 0x6C
 
 local Phase               = PH_INIT
 
@@ -47,98 +44,90 @@ local  ctx_EditLine = nil   -- Current Editing Line
 
 local Menu                = { MenuId = 0, Text = "", TextId = 0, PrevId = 0, NextId = 0, BackId = 0 }
 local MenuLines           = {}
+local refreshDisplay      = false
 
 local logFile             = nil
 
-local LCD_W_BUTTONS       = 19
-local LCD_H_BUTTONS       = 10
+local TX_CHANNELS <const> = 12
 
-local LCD_X_MAX           = 128
-local LCD_X_RIGHT_BUTTONS = LCD_X_MAX - LCD_W_BUTTONS - 1
+local AT_PLANE <const>  = 0
 
-local LCD_Y_LINE_HEIGHT   = 7
-local LCD_Y_LOWER_BUTTONS = (8 * LCD_Y_LINE_HEIGHT) + 2
+local aircraft_type_text <const> = {
+    [0]="Plane","Heli","Glider","Drone"}
 
-local TEXT_ATTR           = SMLSIZE
+local WT_A1       <const> = 0
+local WT_A2       <const> = 1
+local WT_FLPR     <const> = 2
+local WT_A1_F1    <const> = 3
+local WT_A2_F1    <const> = 4
+local WT_A2_F2    <const> = 5
+local WT_ELEVON_A <const> = 6
+local WT_ELEVON_B <const> = 7
 
-local TX_CHANNELS         = 12
+local wing_type_text <const> = {
+  [0]="Normal","Dual Ail","Flapperon", "Ail + Flp","Dual Ail + Flp","Dual Ail/Flp","Elevon A","Elevon B"}
 
-local AT_PLANE   = 0
-
-local aircraft_type_text = {[0]="Plane","Heli","Glider","Drone"}
-
-local WT_A1       = 0
-local WT_A2       = 1
-local WT_FLPR     = 2
-local WT_A1_F1    = 3
-local WT_A2_F1    = 4
-local WT_A2_F2    = 5
-local WT_ELEVON_A = 6
-local WT_ELEVON_B = 7
-
-local wing_type_text = {[0]="Normal","Dual Ail","Flapperon", "Ail + Flp","Dual Ail + Flp","Dual Ail/Flp","Elevon A","Elevon B"}
-
-local TT_R1    = 0
-local TT_R1_E1 = 1
-local TT_R1_E2 = 2
-local TT_R2_E1 = 3
-local TT_R2_E2 = 4
-local TT_VT_A  = 5
-local TT_VT_B  = 6
-local TT_TLRN_A = 7
-local TT_TLRN_B = 8
-local TT_TLRN_A_R2 = 9
-local TT_TLRN_B_R2 = 10
+local TT_R1     <const> = 0
+local TT_R1_E1  <const> = 1
+local TT_R1_E2  <const> = 2
+local TT_R2_E1  <const> = 3
+local TT_R2_E2  <const> = 4
+local TT_VT_A   <const> = 5
+local TT_VT_B   <const> = 6
+local TT_TLRN_A <const> = 7
+local TT_TLRN_B <const> = 8
+local TT_TLRN_A_R2 <const> = 9
+local TT_TLRN_B_R2 <const> = 10
 
 local tail_type_text = {[0]="Rud Only","Normal","Rud + Dual Ele","Dual Rud + Elv","Dual Rud/Ele",
                          "VTail A","VTail B","Taileron A","Taileron B", 
                          "Taileron A + Dual Rud","Taileron B + Dual Rud"
                         }
 
-local MT_NORMAL      = 0
-local MT_REVERSE     = 1
+local MT_NORMAL   <const> = 0
+local MT_REVERSE  <const> = 1
 
-local P1 = 0
-local P2 = 1
-local P3 = 2
-local P4 = 3
-local P5 = 4
-local P6 = 5
-local P7 = 6
-local P8 = 7
+local P1 <const> = 0
+local P2 <const> = 1
+local P3 <const> = 2
+local P4 <const> = 3
+local P5 <const> = 4
+local P6 <const> = 5
+local P7 <const> = 6
+local P8 <const> = 7
 --local P9 = 8
 --local P10 = 9
 
-local MV_AIRCRAFT_TYPE = 1001
-local MV_WING_TYPE     = 1002
-local MV_TAIL_TYPE     = 1003
+local MV_AIRCRAFT_TYPE <const> = 1001
+local MV_WING_TYPE     <const> = 1002
+local MV_TAIL_TYPE     <const> = 1003
         
-local MV_CH_BASE       = 1010
-local MV_CH_THR        = 1010
+local MV_CH_BASE       <const> = 1010
+local MV_CH_THR        <const> = 1010
 
-local MV_CH_L_AIL      = 1011
-local MV_CH_R_AIL      = 1012
-local MV_CH_L_FLP      = 1013
-local MV_CH_R_FLP      = 1014
+local MV_CH_L_AIL      <const> = 1011
+local MV_CH_R_AIL      <const> = 1012
+local MV_CH_L_FLP      <const> = 1013
+local MV_CH_R_FLP      <const> = 1014
 
-local MV_CH_L_RUD      = 1015
-local MV_CH_R_RUD      = 1016
-local MV_CH_L_ELE      = 1017
-local MV_CH_R_ELE      = 1018
+local MV_CH_L_RUD      <const> = 1015
+local MV_CH_R_RUD      <const> = 1016
+local MV_CH_L_ELE      <const> = 1017
+local MV_CH_R_ELE      <const> = 1018
 
-local MV_PORT_BASE       = 1020
-local MV_P1_MODE      = 1020
+local MV_PORT_BASE     <const> = 1020
+local MV_P1_MODE       <const> = 1020
 --local MV_P2_MODE      = 1021
 --local MV_P3_MODE      = 1022
 --local MV_P4_MODE      = 1023
 --local MV_P5_MODE      = 1024
-local MV_P6_MODE      = 1025
+local MV_P6_MODE       <const> = 1025
 --local MV_P7_MODE      = 1026
 --local MV_P8_MODE      = 1027
 --local MV_P9_MODE      = 1028
 --local MV_P10_MODE     = 1029
 
-local MV_DATA_END        = 1040
+local MV_DATA_END      <const> = 1040
 
 -- MENU DATA Management
 local M_DB = {}            -- Store the variables used in the Menus.
@@ -150,6 +139,7 @@ local currTTyp = -1
 local currWTyp = -1
 
 local menuDataChanged = false
+local startTime = os.clock()
 
 local MODEL = {
   modelName = "",            -- The name of the model comming from OTX/ETX
@@ -162,55 +152,74 @@ local MODEL = {
   DSM_ChannelInfo = {}       -- Data Created by DSM Configuration Script
 }
 
+---------------------------------------------------------------------------------------------------
+
 local function gc()
   collectgarbage("collect")
 end
 
---[[
-local function gcTable(t)
-  if type(t)=="table" then
-    for i,v in pairs(t) do
-      if type(v) == "table" then
-        gcTable(v)
-      end
-      t[i] = nil
-    end
-  end
-  gc()
-  return t 
-end
---]]
-
 local function LOG_open()
-  if (DEBUG_ON == 0) then return end
-  logFile = io.open(LOG_FILE, "w")   -- Truncate Log File
+  logFile = assert(io.open(config.logPath..LOG_FILE_NAME, "w"))   -- Truncate Log File
 end
 
 local function LOG_write(...)
-  if (DEBUG_ON == 0) then return end
   if (logFile == nil) then LOG_open() end
-  local str = string.format(...)
+  local str = string.format("%s :",(os.clock()-startTime)) .. string.format(...)
   io.write(logFile, str)
+  print(str)
 end
 
 local function LOG_close()
-  if (logFile ~= nil) then io.close(logFile); logFile=nil end
+  if (logFile ~= nil) then io.close(logFile); logFile = nil end
 end
 
 -- Saves MENU_DATA to a file
 local function ST_SaveFileData() 
-  local fname = MODEL.hashName
+  local fname = MODEL.modelPath .. ".txt"
 
-  print("Saving File:"..fname)
-  local dataFile = assert(io.open(DATA_PATH .. "/" .. fname, "w"),"Please create "..DATA_PATH.." folder")  -- write File 
+  print("Saving Data:",fname)
+  local file = assert(io.open(config.dataPath .. fname, "w"),"Please create "..config.dataPath .." folder")  -- write File 
   
   -- Foreach MENU_DATA with a value write Var_Id:Value into file
   for i = 0, MV_DATA_END do
       if (M_DB[i]~=nil) then
-          io.write(dataFile,string.format("%s:%s\n",i,M_DB[i]))
+          local s = string.format("%s:%s\n",i,M_DB[i])
+          file:write(s)
       end
   end
-  io.close(dataFile)
+  file:close()
+end
+
+local function ST_LoadFileData() 
+   local fname = MODEL.modelPath .. ".txt"
+  
+    -- Clear Menu Data
+    for i = 0, MV_DATA_END do
+        M_DB[i]=nil
+    end
+  
+    print("Loading File:"..fname)
+  
+    local file = io.open(config.dataPath .. fname, "r")  -- read File 
+    -- cannot read file???
+    if (file==nil) then return 0 end
+  
+    local line = file:read(2000)
+    file:close()
+  
+    if line==nil or #line == 0 then return 0 end -- No data??
+  
+    -- Process the input, each line is "Var_Id : Value" format 
+    -- Store it into MANU_DATA
+    local i=0
+    for k, v in string.gmatch(line, "(%d+):(%d+)") do
+        --print("Read ",k," = ", v)
+        M_DB[k+0]=v+0 -- do aritmentic to convert string to number
+        i=i+1
+    end
+  
+    -- Return 0 if no lines processed, 1 otherwise
+    if (i > 0) then return 1 else return 0 end
 end
 
 local function tailTypeCompatible(a,b)
@@ -411,7 +420,7 @@ local function ST_LoadMenu(menuId)
         end
         lastGoodMenu = menuId
     elseif (menuId==0x1001) then -- MODEL SETUP
-        local backId = 0xFFF9 -- No changes, just exit
+        local backId = 0 --0xFFF9 -- No changes, just exit
         local title  =  "Setup  ("..MODEL.modelName..")"
         if (menuDataChanged) then
             backId = 0x1000  -- Go to Save menu
@@ -430,8 +439,8 @@ local function ST_LoadMenu(menuId)
         ST_SaveFileData()
         menuDataChanged = false
 
-        local msg1 = "Data saved to: " 
-        local msg2 = " ../DSMLIB/"..MODEL.hashName
+        local msg1 = "Data saved to" 
+        local msg2 = config.dataPath..MODEL.modelPath..".txt"
 
         Menu = { MenuId = 0x1005, Text = "Config Saved", PrevId = 0, NextId = 0, BackId = 0, TextId=0 }
         MenuLines[2] = { Type = LT_MENU, Text=msg1, TextId = 0, ValId = 0x1005 }
@@ -536,7 +545,7 @@ local function ST_LoadMenu(menuId)
         generateGyroReverse(menuId,P6,MV_P6_MODE)
         lastGoodMenu = menuId
     elseif (menuId==0xFFF9) then
-        ChangePhase(PH_EXIT_DONE)
+        Phase  = PH_EXIT_DONE
         return
     else
         Menu = { MenuId = 0x0002, Text = "NOT IMPLEMENTED", TextId = 0, PrevId = 0, NextId = 0, BackId = lastGoodMenu }
@@ -548,6 +557,7 @@ local function ST_LoadMenu(menuId)
             MenuLinePostProcessing(MenuLines[i])
         end
     end
+    refreshDisplay = true
     gc()
 end
 
@@ -563,27 +573,27 @@ local function ST_Init_Text(rxId)
     List_Text[15+AT_PLANE]  = "Airplane"; 
 
     -- Wing Types
-    p = 20+WT_A1;    List_Text[p] = "Single Ail";  --List_Text_Img[p]  = "x.png|Single Aileron" 
-    p = 20+WT_A2;    List_Text[p] = "Dual Ail";  --List_Text_Img[p]  = "x.png|Dual Aileron" 
-    p = 20+WT_FLPR;  List_Text[p] = "Flaperon";  --List_Text_Img[p]  = "x.png|Flaperon" 
-    p = 20+WT_A1_F1; List_Text[p] = "Ail + Flap";  --List_Text_Img[p]  = "x.png|Aileron + Flap" 
-    p = 20+WT_A2_F1; List_Text[p] = "Dual Ail + Flap";  --List_Text_Img[p]  = "x.png|Dual Aileron + Flap" 
-    p = 20+WT_A2_F2; List_Text[p] = "Dual Ail + Dual Flap";  --List_Text_Img[p]  = "x.png|Dual Aileron + Dual Flap" 
-    p = 20+WT_ELEVON_A; List_Text[p] = "Delta A";  --List_Text_Img[p]  = "x.png|Delta/Elevon A" 
-    p = 20+WT_ELEVON_B; List_Text[p] = "Delta B";  --List_Text_Img[p]  = "x.png|Delta/Elevon B" 
+    p = 20+WT_A1;    List_Text[p] = "Single Ail";  List_Text_Img[p]  = "wt_1ail.png|Single Aileron" 
+    p = 20+WT_A2;    List_Text[p] = "Dual Ail";  List_Text_Img[p]  = "wt_2ail.png|Dual Aileron" 
+    p = 20+WT_FLPR;  List_Text[p] = "Flaperon";  List_Text_Img[p]  = "wt_flaperon.png|Flaperon" 
+    p = 20+WT_A1_F1; List_Text[p] = "Ail + Flap";  List_Text_Img[p]  = "wt_1ail_1flp.png|Aileron + Flap" 
+    p = 20+WT_A2_F1; List_Text[p] = "Dual Ail + Flap";  List_Text_Img[p]  = "wt_2ail_1flp.png|Dual Aileron + Flap" 
+    p = 20+WT_A2_F2; List_Text[p] = "Dual Ail + Dual Flap";  List_Text_Img[p]  = "wt_2ail_2flp.png|Dual Aileron + Dual Flap" 
+    p = 20+WT_ELEVON_A; List_Text[p] = "Delta A";  List_Text_Img[p]  = "wt_elevon.png|Delta/Elevon A" 
+    p = 20+WT_ELEVON_B; List_Text[p] = "Delta B";  List_Text_Img[p]  = "wt_elevon.png|Delta/Elevon B" 
 
     -- Tail Types
-    p = 30+TT_R1;    List_Text[p] = "Rudder Only";  --List_Text_Img[p]  = "x.png|Rudder Only" 
-    p = 30+TT_R1_E1; List_Text[p] = "Rud + Ele";  --List_Text_Img[p]  = "x.png|Tail Normal" 
-    p = 30+TT_R1_E2; List_Text[p] = "Rud + Dual Ele";  --List_Text_Img[p]  = "x.png|Rud + Dual Ele" 
-    p = 30+TT_R2_E1; List_Text[p] = "Dual Rud + Ele";  --List_Text_Img[p]  = "x.png|Dual Rud + Ele" 
-    p = 30+TT_R2_E2; List_Text[p] = "Dual Rud + Dual Ele";  --List_Text_Img[p]  = "x.png|Dual Rud + Dual Elev" 
-    p = 30+TT_VT_A;  List_Text[p] = "V-Tail A";  --List_Text_Img[p]  = "x.png|V-Tail A" 
-    p = 30+TT_VT_B;  List_Text[p] = "V-Tail B";  --List_Text_Img[p]  = "x.png|V-Tail B" 
-    p = 30+TT_TLRN_A; List_Text[p] = "Taileron A";  --List_Text_Img[p]  = "x.png|Taileron A" 
-    p = 30+TT_TLRN_B; List_Text[p] = "Taileron B";  --List_Text_Img[p]  = "x.png|Taileron B" 
-    p = 30+TT_TLRN_A_R2; List_Text[p] = "Taileron A + 2x Rud";  --List_Text_Img[p]  = "x.png|Taileron A + Dual Rud" 
-    p = 30+TT_TLRN_B_R2; List_Text[p] = "Taileron B + 2x Rud";  --List_Text_Img[p]  = "x.png|Taileron B + Dual Rud" 
+    p = 30+TT_R1;    List_Text[p] = "Rudder Only";  List_Text_Img[p]  = "tt_1rud.png|Rudder Only" 
+    p = 30+TT_R1_E1; List_Text[p] = "Rud + Ele";  List_Text_Img[p]  = "tt_1rud_1ele.png|Tail Normal" 
+    p = 30+TT_R1_E2; List_Text[p] = "Rud + Dual Ele";  List_Text_Img[p]  = "tt_1rud_2ele.png|Rud + Dual Ele" 
+    p = 30+TT_R2_E1; List_Text[p] = "Dual Rud + Ele";  List_Text_Img[p]  = "tt_2rud_1ele.png|Dual Rud + Ele" 
+    p = 30+TT_R2_E2; List_Text[p] = "Dual Rud + Dual Ele";  List_Text_Img[p]  = "tt_2rud_2ele.png|Dual Rud + Dual Elev" 
+    p = 30+TT_VT_A;  List_Text[p] = "V-Tail A";  List_Text_Img[p]  = "tt_vtail.png|V-Tail A" 
+    p = 30+TT_VT_B;  List_Text[p] = "V-Tail B";  List_Text_Img[p]  = "tt_vtail.png|V-Tail B" 
+    p = 30+TT_TLRN_A; List_Text[p] = "Taileron A";  List_Text_Img[p]  = "tt_taileron.png|Taileron A" 
+    p = 30+TT_TLRN_B; List_Text[p] = "Taileron B";  List_Text_Img[p]  = "tt_taileron.png|Taileron B" 
+    p = 30+TT_TLRN_A_R2; List_Text[p] = "Taileron A + 2x Rud";  List_Text_Img[p]  = "tt_taileron2.png|Taileron A + Dual Rud" 
+    p = 30+TT_TLRN_B_R2; List_Text[p] = "Taileron B + 2x Rud";  List_Text_Img[p]  = "tt_taileron2.png|Taileron B + Dual Rud" 
 
     -- Servo Reverse
     List_Text[45+MT_NORMAL]  = "Normal"
@@ -637,7 +647,7 @@ local function Get_Text_Value(index)
   return out
 end
 
-function ChangePhase(newPhase)
+local function ChangePhase(newPhase)
   Phase = newPhase
 end
 
@@ -661,15 +671,17 @@ local function GotoMenu(menuId, lastSelectedLine)
   ChangePhase(PH_GET_MENU)
 end
 
-local function DSM_HandleEvent(event)
-  if event == EVT_VIRTUAL_EXIT then
+local function DSM_HandleEvent(event, rotarySpeed)
+  if (not rotarySpeed) then rotarySpeed=1 end
+
+  if event == KEY_RTN_BREAK then
     if isEditing() then   -- Editing a Line, need to  restore original value
       MenuLines[ctx_EditLine].Val = originalValue
-      event = EVT_VIRTUAL_ENTER
+      event = KEY_ENTER_FIRST
     else
       if (Menu.BackId > 0 ) then -- Back??
         ctx_SelLine = -1 --Back Button
-        event = EVT_VIRTUAL_ENTER
+        event = KEY_ENTER_FIRST
       else
         ChangePhase(PH_EXIT_REQ)
       end
@@ -678,9 +690,9 @@ local function DSM_HandleEvent(event)
 
   if Phase == PH_RX_VER then return end -- nothing else to do 
 
-  if event == EVT_VIRTUAL_NEXT then
+  if event == KEY_ROTARY_RIGHT then
     if isEditing() then -- Editting?
-      Value_Add(1)
+      Value_Add(1 * rotarySpeed)
     else
       if ctx_SelLine < 7 then -- On a regular line
         local num = ctx_SelLine -- Find the prev selectable 
@@ -705,9 +717,9 @@ local function DSM_HandleEvent(event)
     return
   end
   
-  if event == EVT_VIRTUAL_PREV then
+  if event == KEY_ROTARY_LEFT then
     if isEditing() then -- In Edit Mode
-      Value_Add(-1)
+      Value_Add(-1 * rotarySpeed)
     else
       if ctx_SelLine == 8 and Menu.NextId ~= 0 then
         ctx_SelLine = 7 -- Next 
@@ -736,7 +748,7 @@ local function DSM_HandleEvent(event)
   end
   
 
-  if event == EVT_VIRTUAL_ENTER then
+  if event == KEY_ENTER_FIRST then
     if ctx_SelLine == -1 then    -- Back
       GotoMenu(Menu.BackId, 0x80)
     elseif ctx_SelLine == 7 then -- Next
@@ -764,7 +776,7 @@ local function DSM_Send_Receive()
     if Phase == PH_RX_VER then -- request RX version
         Phase = PH_GET_MENU
         Menu.MenuId = 0x01001
-        Refresh_Display = true
+        refreshDisplay = true
     elseif Phase == PH_WAIT_CMD then 
         
     elseif Phase == PH_GET_MENU then -- request menu title
@@ -772,7 +784,7 @@ local function DSM_Send_Receive()
         if (Phase~=PH_EXIT_DONE) then
           Phase = PH_WAIT_CMD
         end
-        Refresh_Display = true
+        refreshDisplay = true
     elseif Phase == PH_VAL_EDIT_END then -- send value
         local line = MenuLines[ctx_SelLine] -- Updated Value of SELECTED line
         
@@ -812,139 +824,240 @@ end
 
 -----
 
-local function showBitmap(x, y, imgDesc)
-  local f = string.gmatch(imgDesc, '([^%|]+)')   -- Iterator over values split by '|'
-  local imgName, imgMsg = f(), f()
-
-  f = string.gmatch(imgMsg or "", '([^%:]+)')   -- Iterator over values split by ':'
-  local p1, p2 = f(), f()
-
-  lcd.drawText(x, y, p1 or "", TEXT_ATTR)                     -- Alternate Image MSG
-  lcd.drawText(x, y + LCD_Y_LINE_HEIGHT, p2 or "", TEXT_ATTR) -- Alternate Image MSG
-  gc()
-end
-
-
-local function drawButton(x, y, text, active)
-  local attr = TEXT_ATTR
-  if (active) then attr = attr + INVERS end
-  lcd.drawText(x, y, text, attr)
-end
-
 local function DSM_Display()
-  lcd.clear()
+  -- For Headers
+  ui.clearTouchRegistry()
+
   --Draw RX Menu
   if Phase == PH_RX_VER then
     return
   end
 
-    -- display Program version or RX version
-  local msg =  "FProg "..VERSION
-  lcd.drawText(40, LCD_Y_LOWER_BUTTONS, msg, TEXT_ATTR) 
-
   if Menu.MenuId == 0 then return end; -- No Title yet
 
-  -- Got a Menu
-  lcd.drawText(1, 0, Menu.Text, TEXT_ATTR + INVERS)
+  -- Header Text 
+  ui.drawFPHeader(0, Menu.Text)
 
-  local y = LCD_Y_LINE_HEIGHT + 2
+  local y = ui.getFPLinesY()
+
   for i = 0, 6 do
-    local attrib = TEXT_ATTR
-    if (i == ctx_SelLine) then attrib = attrib + INVERS end     -- Selected Line
-
     local line = MenuLines[i]
 
-    if line ~= nil and line.Type ~= 0 then
-      local heading = line.Text 
+    if line and line.Text ~= nil then
+      local heading = line.Text
 
-        local text = nil
-        if line.Type ~= LT_MENU then       -- list/value
-          if line.Val ~= nil then
-            if isListLine(line) then
-              local textId = line.Val + line.TextStart
-              text = Get_Text_Value(textId)
-
-              --local imgDesc = List_Text_Img[textId]
-             
-              --if (imgDesc and i == ctx_SelLine) then             -- Optional Image and Msg for selected value
-              --  showBitmap(1, 20, imgDesc)
-              --end
-            else
-              text = line.Val
-            end
-          end -- if is Value
-
-          if (ctx_EditLine == i) then  -- Editing a Line
-            attrib = BLINK + INVERS + TEXT_ATTR
-          end
-          lcd.drawText(LCD_X_MAX, y, text or "--", attrib + RIGHT) -- display value
-          --lcd.drawText(LCD_X_MAX, y, line.Format or "", TEXT_ATTR + RIGHT) -- display Format
-          attrib = TEXT_ATTR
+      if (line.TextId >= 0x8000) then     -- Flight mode
+        heading = GetFlightModeValue(line)
+        ui.drawFPFlightMode(y, heading) -- display text
+      elseif (line.TextId >= 0x5000) then     -- Render Image
+        -- Render Image# TextID
+        local imageName = string.format("IMG%X.jpg",line.TextId)
+        ui.drawBitmap(1,y, imageName)
+      elseif (line.Type == LT_MENU) then -- Menu or Sub-Headeer
+        if (isSelectable(line)) then
+          -- Menu to another page
+          ui.drawFPMenuLine(y, heading, i, ctx_SelLine) -- display text
+        else
+          -- Menu lines with no navigation.. Just Sub-Header 
+          ui.drawFPSubHeader(y, heading)
         end
+      else
+        -- Line with Value
+        local text = nil
+        if line.Val ~= nil then -- Value to display??
+          text = line.Val
 
-      lcd.drawText(1, y, heading, attrib) -- display text
+          if isListLine(line) then
+            local textId = line.Val + line.TextStart
+            text = Get_Text_Value(textId)
+            
+            -- image??
+            local offset = 0
+            --if (line.Type==LT_LIST_ORI) then offset = offset + 0x100 end --FH6250 hack
+            local imgDesc = List_Text_Img[textId+offset]
+            
+            if (imgDesc and i == ctx_SelLine) then        -- Optional Image and Msg for selected value
+              ui.drawBitmap(5, ui.getFPLinesY() + 1, imgDesc) -- 2nd line
+            end
+          end -- ListLine
+        end -- Line with value/list
+
+        ui.drawFPValueLine(y, heading, text or "--", i, ctx_SelLine, ctx_EditLine)
+      end  -- not Flight mode
     end
-    y = y + LCD_Y_LINE_HEIGHT
+    y = y + ui.getFPLineHeight() + ui.getFPLinesHeightPad()
   end     -- for
 
   if Menu.BackId~=0 then
-    drawButton(LCD_X_RIGHT_BUTTONS, 0, "Back", ctx_SelLine == -1)
+    ui.drawButton(ui.fp.rightButtonXpos, 0, "Back", -1, ctx_SelLine)
   end
 
-  if Menu.NextId~=0 then
-    drawButton(LCD_X_RIGHT_BUTTONS, LCD_Y_LOWER_BUTTONS, "Next", ctx_SelLine == 7)
+  if (not ctx_EditLine) then
+    if Menu.NextId~=0 then
+      ui.drawButton(ui.fp.rightButtonXpos, ui.getFPBottomLineY(), "Next", 7, ctx_SelLine)
+    end
+
+    if Menu.PrevId~=0 then
+      ui.drawButton(1, ui.getFPBottomLineY(), "Prev", 8, ctx_SelLine)
+    end
   end
 
-  if Menu.PrevId~=0 then
-    drawButton(1, LCD_Y_LOWER_BUTTONS, "Prev", ctx_SelLine == 8)
+  if (ctx_EditLine) then
+    ui.drawEditButtons()
   end
 end
 
 ------------------------------------------------------------------------------------------------------------
--- Init
-local function DSM_Init()
-  --LOG_open()
-  ST_Init()
-  gc()
 
-  if (LCD_W > 128 and  LCD_H > 64) then
-    TEXT_ATTR = 0
-    LCD_Y_LINE_HEIGHT = 25
-    LCD_X_MAX         = 300
-    LCD_X_RIGHT_BUTTONS = LCD_X_MAX - 30
+local function ReadTxModelData()
+  local TRANSLATE_AETR_TO_TAER=false
 
-    LCD_Y_LOWER_BUTTONS = (8 * LCD_Y_LINE_HEIGHT) + 2
+  -- Find the multimodule 
+  module = model.getModule(0) -- Internal
+  if (module and module:enable() and module:type()==15) then
+      print("Module(0) is multi-module")
+  else
+    module = model.getModule(1) -- External 
+    if (module and module:enable() and module:type()==15) then
+      print("Module(1) is multi-module")
+    else
+      print("No-MultiModule")
+      module = nil
+    end
   end
 
-  Phase = PH_RX_VER
+  -- Find the DSM "Disable channel mapping" option 
+  if (module) then
+    local value = module:option("Disable channel mapping")
+    if (value) then
+        print("Disable Ch Map  = ",value)
+        TRANSLATE_AETR_TO_TAER = (value==0)
+    end
+  end
+
+  MODEL.modelName = model.name()
+  MODEL.modelPath = model.path():gsub(".bin", "") -- remove ".bin"
+
+
+  print("Name ="..MODEL.modelName)
+  print("Path ="..MODEL.modelPath)
+
+  -- Read Info for Ch1 to Ch12
+  local i= 0
+  for i = 0, TX_CHANNELS-1 do 
+      local ch = model.getChannel(i) 
+      if (ch~=nil) then
+          local cht = { name=ch:name(), min=ch:min(), max=ch:max(), revert=(ch:direction()==-1) and 1 or 0, 
+                       offset =ch:center(), ppmCenter=ch:pwmCenter(), symetrical=true }  
+
+          MODEL.modelOutputChannel[i] = cht   -- Table: name, min=-100, max=+100 subtrim=??
+          if (string.len(cht.name)==0) then 
+              cht.formatCh = string.format("TX:Ch%i",i+1)
+          else
+              cht.formatCh = string.format("TX:Ch%i/%s",i+1,cht.name or "--")
+          end
+      end
+  end
+
+  -- Translate AETR to TAER
+
+  if (TRANSLATE_AETR_TO_TAER) then 
+    LOG_write("Applying  AETR -> TAER translation\n") 
+    local ail = MODEL.modelOutputChannel[0]
+    local elv = MODEL.modelOutputChannel[1]
+    local thr = MODEL.modelOutputChannel[2]
+
+    MODEL.modelOutputChannel[0] = thr
+    MODEL.modelOutputChannel[1] = ail
+    MODEL.modelOutputChannel[2] = elv
+  end
+
+  -- Create the Port Text to be used 
+  LOG_write("Ports/Channels:\n") 
+  for i = 0, TX_CHANNELS-1 do 
+      local ch =  MODEL.modelOutputChannel[i]
+      if (ch~=nil) then
+          MODEL.TX_CH_TEXT[i] = ch.formatCh
+          MODEL.PORT_TEXT[i] = string.format("P%i (%s) ",i+1,MODEL.TX_CH_TEXT[i])  
+          LOG_write("Port%d %s [%d,%d] Rev=%s, Off=%d, ppmC=%d, syn=%s\n",i+1,MODEL.TX_CH_TEXT[i],ch.min,ch.max, ch.revert, ch.offset, ch.ppmCenter, ch.symetrical)
+      end
+  end
+end
+
+
+-- Init
+local function DSM_Init()
+  LOG_open()
+  ReadTxModelData()
+  ST_LoadFileData()
+  ST_Init()
+  gc()
 end
 
 -- Main
 
-local function DSM_Run(event)
-  if event == nil then
-    error("Cannot be run as a model script!")
-    return 2
-  end
+local function create()
+  print("PlaneSetup.create() called")
+  DSM_Init()
 
-  DSM_Display()
-  DSM_HandleEvent(event)
-  DSM_Send_Receive()
-  gc()
+    -- REMOVE when bug is fixed 
+  local w,h = ui.getWindowSize()
+  form.clear()
+  form.addTextButton(nil, {x=w-2,y=h-2,w=2,h=2}, "XXX", function()  end)
+  return {}
+end
 
-  if Phase == PH_EXIT_DONE then
-    LOG_close()
-    return 2
+local function close()
+  print("PlanseSetup.close()")
+  LOG_close()
+end
+
+local function wakeup(widget)
+  --print("PlanseSetup.wakeup()")
+
+  if (Phase == PH_INIT) then 
+
+  elseif Phase == PH_EXIT_DONE then
+      close()
+      config.exit()
   else
-    return 0
+      DSM_Send_Receive()
+      if (refreshDisplay) then
+        lcd.invalidate()
+        refreshDisplay=false
+      end
   end
 end
 
----
--- Load Model Config 
-gc()
-local r = assert(loadScript(DSMLIB_PATH.."DsmMIN_P1.lua"), "Not-Found: DSMLIB/DsmMIN_P1.lua")
-        (MODEL,M_DB, LOG_write)
-gc()
-----
-return { init = DSM_Init, run = DSM_Run }
+local function paint(widget)
+  --print("PlaneSetup.paint() called")
+  DSM_Display()
+end
+
+local function event(widget, category, value, x, y)
+  --print("ps.event(): Event received:", category, value, x, y)
+  if category == EVT_KEY then
+    DSM_HandleEvent(value, x)
+    refreshDisplay=true
+  elseif category == EVT_TOUCH and value==16641 then -- touch release
+    local line = ui.touchToButtonValue(x,y)
+    if (line) then
+      if (isEditing()) then
+          local keyValue, rotarySpeed = ui.editValueToKeyEvent(line)
+          if (keyValue) then
+            DSM_HandleEvent(keyValue, rotarySpeed)
+            refreshDisplay=true
+          end
+      else
+          ctx_SelLine = line
+          DSM_HandleEvent(KEY_ENTER_FIRST, 1)
+          refreshDisplay=true
+          return false
+      end -- if ctx_Editline
+    end -- if line
+  end -- Category
+  return true
+end
+
+return { create=create, close=close, wakeup=wakeup, event=event, paint=paint}
+
