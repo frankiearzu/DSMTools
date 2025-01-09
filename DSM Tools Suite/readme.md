@@ -6,12 +6,15 @@ All the tools combined in a single app.
 # DSM Tools Suite (Ethos Version)
 
 **NOTE:  Requires Ethos 1.6.0 or newer**
-A release candidate one (v 2.0 RC3) is posted here, should work on Simulators (with mocked RX data), as well as the real radios.
+**UPDATE: Supports AS3X+ Version 3.2.7 firmware   (Jan 7, 2025)**
+
+A tested release is posted here (2.0-Final), should work on Simulators (with mocked RX data), as well as the real radios.
 Tested it on X10, X18rs and X20s.  
 
 Starting with version 2.0 to get in synch with the new EdgeTX versions.
 
 AS3X and AS3X+ Receiver firmware are supported.
+
 
 ## Installation
 
@@ -33,10 +36,11 @@ After the instalation, the directory folder should look like this:
 
 This needs to be done before plane setup or Forward Programming
 1. **RF system/External (MultiModule)**:
+    - **NOTE: IF you have problems with the multi-module after updating to Ethos 1.6, make sure you have the latest multimodule lua from the Ethos Github!!**
     - Bind your plane using Spektrum DSMX-2F, and select a model ID number that you have not used.
     - Make sure that **Enable Max Throws** is **OFF** (Default), Otherwise it will messed up some servo range reported by Forward Prog.
     - **Disable Channel Map** should be **OFF** (Default) is your channel order is AETR (Default). **ON** only if you are using TAER channel order.
-    - Make sure that the Channel range is from Ch1-Ch12. For the Flight Mode/Gain channels, you can use channels up to 12 even if your receiver is only 6 channels. 
+    - Make sure that the Channel range is from Ch1-Ch12. For the Flight Mode/Gain channels, you can use channels up to 12 even if your receiver is only 6 channels.
 2. **Please setup your plane completely in Ethos first!!** This should control the plane.
 3. **Channel names:** Give names to a to all the channels.. that will make it easier to identify channels in Forward Prog 
 4. **Flight mode switch:** A 3-pos switch for **Flight mode** change
