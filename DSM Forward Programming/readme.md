@@ -5,8 +5,9 @@ Rewrite/Enhancements by: Francisco Arzu
 Thanks to all the people volunteered to test it.
 
 ## IMPORTANT: 
-v0.59a adds support for the new Spektrum Firmware v3.2.7 
-v0.58 It adds support for AS3X+ functionality to many common RX. 
+  -  v0.59a adds support for the new Spektrum Firmware v3.2.7 (Jan 7,2025)
+  -  v0.59 fixes some small bugs found on v0.58
+  -  v0.58 It adds support for AS3X+ functionality to many common RX. 
 
 Please use:
 - Color_480x272:  for Radiomaster TX16S or equivalent screen (480x272)
