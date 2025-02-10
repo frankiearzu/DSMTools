@@ -107,9 +107,9 @@ local supportedRadios = {
             buttonPerRow    = 2,
         },
         fp = {
-            textFont            = FONT_STD,
+            textFont            = FONT_S,
             textFontBold        = FONT_BOLD,
-            headerFont          = FONT_XL,
+            headerFont          = FONT_STD,
         },
     }
 }

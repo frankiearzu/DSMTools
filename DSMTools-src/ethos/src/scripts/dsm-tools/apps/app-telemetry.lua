@@ -192,13 +192,6 @@ local function getFrameData(I2C_ID)
   end
 
   if (data) then
-    local i2cId = data[4] or 0
-    if (I2C_ID > 0 and i2cId ~= I2C_ID) then   -- not the data we want?
-      data = nil
-    end
-  end
-
-  if (data) then
     for i=1,16 do  -- Copy from 1 based array into 0 base array
       FrameData[i-1] = data[i+3] or 0xFF
     end
