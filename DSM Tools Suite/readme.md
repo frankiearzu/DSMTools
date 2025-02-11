@@ -7,7 +7,8 @@ All the tools combined in a single app.
 
 **NOTE:  Requires Ethos 1.6.0 or newer**
 
-**UPDATE: Supports AS3X+ Version 3.2.7 firmware   (Jan 7, 2025)**
+**UPDATE v2.0.1: Screen changes for X14S (Feb 10, 2025)**
+**UPDATE v2.0: Supports AS3X+ Version 3.2.7 firmware   (Jan 7, 2025)**
 
 A tested release is posted here (2.0-Final), should work on Simulators (with mocked RX data), as well as the real radios.
 Tested it on X10, X18rs and X20s.  
