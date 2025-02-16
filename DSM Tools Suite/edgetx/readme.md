@@ -1,6 +1,9 @@
 
 # DSM Tools Suite
-All the tools combined in a single app.
+All the tools combined in a single app.   
+
+Is Backward compatible to the files created by the previous version in /MODELS/DSMDATA of Forward Programing, and can Co-Exist with them, even when this provides
+the combined functionality.
 
 
 # DSM Tools Suite (EdgeTX Version)
@@ -18,6 +21,7 @@ AS3X and AS3X+ Receiver firmware are supported.
 
 After the instalation, the directory folder should look like this:
 <code>
+  /MODELS/DSMDATA                -- Where the info about your plane is stored
   /SCRIPTS/TOOLS/DSM Tools.lua   -- Main program for the TOOLS page
   /SCRIPTS/TOOLS/dsm-tools/
                   apps        -- LUA Applications 
@@ -28,20 +32,17 @@ After the instalation, the directory folder should look like this:
 ## Setup your Plane in EdgeTX first
 
 This needs to be done before plane setup or Forward Programming
-1. **RF system/External (MultiModule)**:
-    - **NOTE: IF you have problems with the multi-module after updating to Ethos 1.6, make sure you have the latest multimodule lua from the Ethos Github!!**
-    - Bind your plane using Spektrum DSMX-2F, and select a model ID number that you have not used.
+1. **RF Internal/External (MultiModule)**:
+    - Bind your plane using Spektrum Auto or DSMX-2F, and select a model ID number that you have not used.
     - Make sure that **Enable Max Throws** is **OFF** (Default), Otherwise it will messed up some servo range reported by Forward Prog.
     - **Disable Channel Map** should be **OFF** (Default) is your channel order is AETR (Default). **ON** only if you are using TAER channel order.
     - Make sure that the Channel range is from Ch1-Ch12. For the Flight Mode/Gain channels, you can use channels up to 12 even if your receiver is only 6 channels.
-2. **Please setup your plane completely in Ethos first!!** This should control the plane.
+2. **Please setup your plane completely in EdgeTx first!!** This should control the plane.
 3. **Channel names:** Give names to a to all the channels.. that will make it easier to identify channels in Forward Prog 
 4. **Flight mode switch:** A 3-pos switch for **Flight mode** change
 5. **Adjustable Gains:** (Optional) a dial that will be used for adjustable gains.
 
-
-
-If your plane is configure in channel Order AETR and **Disable Channel Map=OFF**, the MultiModule and Forward Programming will do the mapping between AETR to TAER that is the Spektrum Standard of how to connect the servos on the RX. On Forward Programming it will show what Port/Ch on the RX, as well as the TX channel assigned.. so you will see something lile <code>Ch1 (TX:Ch3/Throttle)</code> because Ethos <code>Ch3/Throttle</code> is mapped to <code>Port1/Ch1</code> on the RX.
+If your plane is configure in channel Order AETR and **Disable Channel Map=OFF**, the MultiModule and Forward Programming will do the mapping between AETR to TAER that is the Spektrum Standard of how to connect the servos on the RX. On Forward Programming it will show what Port/Ch on the RX, as well as the TX channel assigned.. so you will see something lile <code>Ch1 (TX:Ch3/Throttle)</code> because EdgeTx <code>Ch3/Throttle</code> is mapped to <code>Port1/Ch1</code> on the RX.
 
 Thr channel on the Smart RX is special, and should be the 1st Port/Channel connection. This is to allow ESC telemetry from AVIAN ESCs.
 
@@ -57,7 +58,8 @@ Apps:
 3. **Telemetry:** Some screens showing telemetry data in a similar way a Spektrum radio shows them.
 4. **Capture:** This is a tool to capture the raw telemetry data, and write it to a log file. That data is very usefull to add new/unsoported Spektrum sensors to Ethos. 
 
-![image](https://github.com/user-attachments/assets/22a280e3-3f4b-4591-ac82-e8a2c4ec3193)
+![image](https://github.com/user-attachments/assets/27d8cb21-c784-4139-9e8f-cb4f085beee3)
+
 ![image](https://github.com/user-attachments/assets/0da5693b-025c-40a1-b465-81f8fd258fcd)
 
 ## Plane Setup
