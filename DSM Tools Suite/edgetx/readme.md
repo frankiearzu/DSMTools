@@ -18,8 +18,7 @@ AS3X and AS3X+ Receiver firmware are supported.
 
 After the instalation, the directory folder should look like this:
 <code>
-  /SCRIPTS/TOOLS/
-                  DSM Tools.lua
+  /SCRIPTS/TOOLS/DSM Tools.lua   -- Main program for the TOOLS page
   /SCRIPTS/TOOLS/dsm-tools/
                   apps        -- LUA Applications 
                   i18n        -- Messages displayed on the screen... english only right now.
