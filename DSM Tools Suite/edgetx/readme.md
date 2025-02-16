@@ -78,16 +78,21 @@ What information is needed by AS3X:
   * Servo Travel range (%)
   * Sub-Trims
 
-![image](https://github.com/user-attachments/assets/a642302a-98fe-4755-a0ac-5ac63232ba95)
-![image](https://github.com/user-attachments/assets/f6fb3f22-6e82-40eb-aae0-5004d5a67ec9)
+![image](https://github.com/user-attachments/assets/81f1171e-8d51-46f5-9941-bee0c98611a8)
+
+![image](https://github.com/user-attachments/assets/989e21b9-60f1-4242-b381-ccb612b916b5)
+
 
 ## Forward Prog
 Forward Programming is a way to configure the Spektrum RX from your transmitter. Think of it as how a Web-Browser works; The menu actually comes from the RX. The TX only renders the menu on the TX display. The menus should look very close to how a Spektrum TX will show it.  We are not intending to tech you how to do the Gyro AS3X/SAFE configuration here.. for that any Spektrum Forward Programming video will give you the idea.
 
 When you are editting a field that is to select a channel, you can also just move the switch/dial to select it.. thats why you want to get your switches done before.
 
-![image](https://github.com/user-attachments/assets/686fae9b-68a3-4273-81d6-569f18252e20)
-![image](https://github.com/user-attachments/assets/b7290f69-fc74-4483-8980-003f83666fe3)
+![image](https://github.com/user-attachments/assets/40a1d411-c5f2-473b-80f6-3d075bfa1623)
+
+![image](https://github.com/user-attachments/assets/5d66e565-0ac3-4461-920a-7964e49ef8fb)
+
+
 
 
 ## Telemetry 
@@ -99,10 +104,13 @@ Some basic ones:
 * **TextGen:**  This is a tool that is used to configure Spektrum AVIAN ESCs as well as new Gen2 LemonRX receivers.
 
 
-![image](https://github.com/user-attachments/assets/e723c10f-1093-4fed-ac40-d1ca23381248)
-![image](https://github.com/user-attachments/assets/1de92ca8-ea0d-41ea-aeb1-4690022170f4)
-![image](https://github.com/user-attachments/assets/ab2bcc3b-1fbd-4629-8d96-2c5fe11d024b)
-![image](https://github.com/user-attachments/assets/c8d9d45e-86d3-486c-acf0-bbe7e1b149c7)
+![image](https://github.com/user-attachments/assets/0f404215-1d43-4872-9f40-f2969ac5f29a)
+
+![image](https://github.com/user-attachments/assets/b05efbf3-43f6-4305-a3af-85545b8ba40c)
+
+![image](https://github.com/user-attachments/assets/0cea8799-06c6-4993-8ed1-dcd2527a5e39)
+
+![image](https://github.com/user-attachments/assets/3d9acae1-0f25-4e8e-a630-5cc44867adc8)
 
 
 ## Video/Tutorials
