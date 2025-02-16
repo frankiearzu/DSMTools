@@ -1,6 +1,9 @@
 
 # DSM Tools Suite
-All the tools combined in a single app.
+All the tools combined in a single app.   
+
+Is Backward compatible to the files created by the previous version in /MODELS/DSMDATA of Forward Programing, and can Co-Exist with them, even when this provides
+the combined functionality.
 
 
 # DSM Tools Suite (EdgeTX Version)
@@ -18,6 +21,7 @@ AS3X and AS3X+ Receiver firmware are supported.
 
 After the instalation, the directory folder should look like this:
 <code>
+  /MODELS/DSMDATA                -- Where the info about your plane is stored
   /SCRIPTS/TOOLS/DSM Tools.lua   -- Main program for the TOOLS page
   /SCRIPTS/TOOLS/dsm-tools/
                   apps        -- LUA Applications 
@@ -28,20 +32,17 @@ After the instalation, the directory folder should look like this:
 ## Setup your Plane in EdgeTX first
 
 This needs to be done before plane setup or Forward Programming
-1. **RF system/External (MultiModule)**:
-    - **NOTE: IF you have problems with the multi-module after updating to Ethos 1.6, make sure you have the latest multimodule lua from the Ethos Github!!**
-    - Bind your plane using Spektrum DSMX-2F, and select a model ID number that you have not used.
+1. **RF Internal/External (MultiModule)**:
+    - Bind your plane using Spektrum Auto or DSMX-2F, and select a model ID number that you have not used.
     - Make sure that **Enable Max Throws** is **OFF** (Default), Otherwise it will messed up some servo range reported by Forward Prog.
     - **Disable Channel Map** should be **OFF** (Default) is your channel order is AETR (Default). **ON** only if you are using TAER channel order.
     - Make sure that the Channel range is from Ch1-Ch12. For the Flight Mode/Gain channels, you can use channels up to 12 even if your receiver is only 6 channels.
-2. **Please setup your plane completely in Ethos first!!** This should control the plane.
+2. **Please setup your plane completely in EdgeTx first!!** This should control the plane.
 3. **Channel names:** Give names to a to all the channels.. that will make it easier to identify channels in Forward Prog 
 4. **Flight mode switch:** A 3-pos switch for **Flight mode** change
 5. **Adjustable Gains:** (Optional) a dial that will be used for adjustable gains.
 
-
-
-If your plane is configure in channel Order AETR and **Disable Channel Map=OFF**, the MultiModule and Forward Programming will do the mapping between AETR to TAER that is the Spektrum Standard of how to connect the servos on the RX. On Forward Programming it will show what Port/Ch on the RX, as well as the TX channel assigned.. so you will see something lile <code>Ch1 (TX:Ch3/Throttle)</code> because Ethos <code>Ch3/Throttle</code> is mapped to <code>Port1/Ch1</code> on the RX.
+If your plane is configure in channel Order AETR and **Disable Channel Map=OFF**, the MultiModule and Forward Programming will do the mapping between AETR to TAER that is the Spektrum Standard of how to connect the servos on the RX. On Forward Programming it will show what Port/Ch on the RX, as well as the TX channel assigned.. so you will see something lile <code>Ch1 (TX:Ch3/Throttle)</code> because EdgeTx <code>Ch3/Throttle</code> is mapped to <code>Port1/Ch1</code> on the RX.
 
 Thr channel on the Smart RX is special, and should be the 1st Port/Channel connection. This is to allow ESC telemetry from AVIAN ESCs.
 
@@ -57,8 +58,10 @@ Apps:
 3. **Telemetry:** Some screens showing telemetry data in a similar way a Spektrum radio shows them.
 4. **Capture:** This is a tool to capture the raw telemetry data, and write it to a log file. That data is very usefull to add new/unsoported Spektrum sensors to Ethos. 
 
-![image](https://github.com/user-attachments/assets/22a280e3-3f4b-4591-ac82-e8a2c4ec3193)
-![image](https://github.com/user-attachments/assets/0da5693b-025c-40a1-b465-81f8fd258fcd)
+![image](https://github.com/user-attachments/assets/27d8cb21-c784-4139-9e8f-cb4f085beee3)
+
+![image](https://github.com/user-attachments/assets/4596809b-97d9-48e4-aa6b-ceb2e7769715)
+
 
 ## Plane Setup
 In this app, we need to capture some extra model information that is needed for the AS3X gyro to
@@ -75,16 +78,21 @@ What information is needed by AS3X:
   * Servo Travel range (%)
   * Sub-Trims
 
-![image](https://github.com/user-attachments/assets/a642302a-98fe-4755-a0ac-5ac63232ba95)
-![image](https://github.com/user-attachments/assets/f6fb3f22-6e82-40eb-aae0-5004d5a67ec9)
+![image](https://github.com/user-attachments/assets/81f1171e-8d51-46f5-9941-bee0c98611a8)
+
+![image](https://github.com/user-attachments/assets/989e21b9-60f1-4242-b381-ccb612b916b5)
+
 
 ## Forward Prog
 Forward Programming is a way to configure the Spektrum RX from your transmitter. Think of it as how a Web-Browser works; The menu actually comes from the RX. The TX only renders the menu on the TX display. The menus should look very close to how a Spektrum TX will show it.  We are not intending to tech you how to do the Gyro AS3X/SAFE configuration here.. for that any Spektrum Forward Programming video will give you the idea.
 
 When you are editting a field that is to select a channel, you can also just move the switch/dial to select it.. thats why you want to get your switches done before.
 
-![image](https://github.com/user-attachments/assets/686fae9b-68a3-4273-81d6-569f18252e20)
-![image](https://github.com/user-attachments/assets/b7290f69-fc74-4483-8980-003f83666fe3)
+![image](https://github.com/user-attachments/assets/40a1d411-c5f2-473b-80f6-3d075bfa1623)
+
+![image](https://github.com/user-attachments/assets/5d66e565-0ac3-4461-920a-7964e49ef8fb)
+
+
 
 
 ## Telemetry 
@@ -96,10 +104,13 @@ Some basic ones:
 * **TextGen:**  This is a tool that is used to configure Spektrum AVIAN ESCs as well as new Gen2 LemonRX receivers.
 
 
-![image](https://github.com/user-attachments/assets/e723c10f-1093-4fed-ac40-d1ca23381248)
-![image](https://github.com/user-attachments/assets/1de92ca8-ea0d-41ea-aeb1-4690022170f4)
-![image](https://github.com/user-attachments/assets/ab2bcc3b-1fbd-4629-8d96-2c5fe11d024b)
-![image](https://github.com/user-attachments/assets/c8d9d45e-86d3-486c-acf0-bbe7e1b149c7)
+![image](https://github.com/user-attachments/assets/0f404215-1d43-4872-9f40-f2969ac5f29a)
+
+![image](https://github.com/user-attachments/assets/b05efbf3-43f6-4305-a3af-85545b8ba40c)
+
+![image](https://github.com/user-attachments/assets/0cea8799-06c6-4993-8ed1-dcd2527a5e39)
+
+![image](https://github.com/user-attachments/assets/3d9acae1-0f25-4e8e-a630-5cc44867adc8)
 
 
 ## Video/Tutorials
