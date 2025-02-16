@@ -60,7 +60,8 @@ Apps:
 
 ![image](https://github.com/user-attachments/assets/27d8cb21-c784-4139-9e8f-cb4f085beee3)
 
-![image](https://github.com/user-attachments/assets/0da5693b-025c-40a1-b465-81f8fd258fcd)
+![image](https://github.com/user-attachments/assets/4596809b-97d9-48e4-aa6b-ceb2e7769715)
+
 
 ## Plane Setup
 In this app, we need to capture some extra model information that is needed for the AS3X gyro to
