@@ -3,11 +3,11 @@ local PATH = "/SCRIPTS/TOOLS/dsm-tools"
 chdir(PATH)
 
 local config = {
-  version = "v2.0-RC1",
+  version = "v2.0-RC2",
   simulation = string.sub(select(2,getVersion()), -4) == "simu",
   imagePath  = PATH.."/img/",
   dataPath   = "/MODELS/DSMDATA/", --"data/",
-  logPath    = "/logs/",
+  logPath    = "logs/",  -- OR could use the main "/LOGS/"
   appsPath   = "apps/",
   libPath    = "lib/",
   msgPath    = "i18n/"
