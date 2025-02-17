@@ -1,9 +1,11 @@
 
 # DSM Tools Suite
-All the tools combined in a single app.   
+All the tools combined in a single app.  Plane-Setup, Forward Prog and Telemetry. 
 
 Is Backward compatible to the files created by the previous version in /MODELS/DSMDATA of Forward Programing, and can Co-Exist with them, even when this provides
-the combined functionality.
+the combined functionality.   
+
+If you want to delete the older versions of the multiple individual tools, remove the /SCRIPTS/TOOLS/DSMLIB folder, and "DSM_*" on the main /SCRIPTS/TOOLS folder.. only keep "DSM_Tools.lua" that is the new version.   Your model info is still stored in /MODELS/DSMDATA and is backward compatible.
 
 
 # DSM Tools Suite (EdgeTX Version)
@@ -22,7 +24,7 @@ AS3X and AS3X+ Receiver firmware are supported.
 After the instalation, the directory folder should look like this:
 <code>
   /MODELS/DSMDATA                -- Where the info about your plane is stored
-  /SCRIPTS/TOOLS/DSM Tools.lua   -- Main program for the TOOLS page
+  /SCRIPTS/TOOLS/DSM_Tools.lua   -- Main program for the TOOLS page
   /SCRIPTS/TOOLS/dsm-tools/
                   apps        -- LUA Applications 
                   i18n        -- Messages displayed on the screen... english only right now.
