@@ -25,14 +25,16 @@ Once you navigate to the ".zip" file that you need, use the download button on t
 ![image](https://github.com/frankiearzu/DSMTools/assets/32604366/2448e43d-94b8-4d24-b055-f91ac0f9dfdf)
 
 
-## DSM Tools Suite (Ethos Version)
+## DSM Tools Suite (Ethos and EdgeTX-Color Version)
 All the tools combined into one app. For Ethos, and EdgeTX color (in dev)..  For smaller EdgeTX back & white radios, use the individual scripts (they don't have much memory).
 
 Ethos Screensot:
 
-![image](https://github.com/user-attachments/assets/22a280e3-3f4b-4591-ac82-e8a2c4ec3193)
-![image](https://github.com/user-attachments/assets/0da5693b-025c-40a1-b465-81f8fd258fcd)
+![image](https://github.com/user-attachments/assets/22a280e3-3f4b-4591-ac82-e8a2c4ec3193) ![image](https://github.com/user-attachments/assets/0da5693b-025c-40a1-b465-81f8fd258fcd)
 
+EdgeTX Screensot:
+
+![image](https://github.com/user-attachments/assets/27d8cb21-c784-4139-9e8f-cb4f085beee3) ![image](https://github.com/user-attachments/assets/4596809b-97d9-48e4-aa6b-ceb2e7769715)
 
 
 ## DSM Forward Programming
