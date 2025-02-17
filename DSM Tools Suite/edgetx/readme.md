@@ -56,7 +56,7 @@ Apps:
 1. **Plane Setup:** Capture Spektrum Specific data to Operate the Gyro.. How is your wing configured, what channel operated what surface, and if the surface gyro reaction needs to be reversed.
 2. **Forward Programming:** Configuration of the RX.
 3. **Telemetry:** Some screens showing telemetry data in a similar way a Spektrum radio shows them.
-4. **Capture:** This is a tool to capture the raw telemetry data, and write it to a log file. That data is very usefull to add new/unsoported Spektrum sensors to Ethos. 
+4. **Capture:** This is a tool to capture the raw telemetry data, and write it to a log file. That data is very usefull to add new/unsoported Spektrum sensors to DSMTools. 
 
 ![image](https://github.com/user-attachments/assets/27d8cb21-c784-4139-9e8f-cb4f085beee3)
 
@@ -74,7 +74,7 @@ What information is needed by AS3X:
 * **What Wing and Tail type:** Only the basic surfaces operated by the Gyro are needed (Thr,Ail,Elv,Rud).. Flaps are ignored. This also provides information of the type of mix that will be applied on special cases: V-Tail, Deltas, Tailerons
 * **What channel moves each surface**
 * **Gyro Reaction: Normal/Reverse:** If reaction is not right, here is where you reverse it!
-* **Servo Setting information:**   This comes from Ethos Output page, is shared with the RX, but no need to manually set it up.
+* **Servo Setting information:**   This comes from EdgeTX Output page, is shared with the RX, but no need to manually set it up.
   * Servo Travel range (%)
   * Sub-Trims
 
@@ -101,7 +101,7 @@ This is a set of screens showing telemetry information in a similar way that a S
 Some basic ones:
 
 * **Flight Log:** this screen shows how good your link quality is.. **F** for Frame losses, and "H" for Holds (total disconnect from TX).
-* **TextGen:**  This is a tool that is used to configure Spektrum AVIAN ESCs as well as new Gen2 LemonRX receivers.
+* **TextGen:**  This is a tool that is used to configure Spektrum AVIAN ESCs as well as new Gen 2.1 LemonRX "TexGen" receivers.
 
 
 ![image](https://github.com/user-attachments/assets/0f404215-1d43-4872-9f40-f2969ac5f29a)
