@@ -10,7 +10,7 @@ If you want to delete the older versions of the multiple individual tools, remov
 
 # DSM Tools Suite (EdgeTX Version)
 
-**NOTE: only for COLOR radios, for B&W, use the individual tools: Forward Prog, Telemetry**
+**NOTE: only for COLOR radios, for B&W, use the individual tools: Forward Prog, Telemetry  due to memory limitations**
 
 **UPDATE v2.0: Supports AS3X+ Version 3.2.7 firmware   (Jan 7, 2025)**
 
