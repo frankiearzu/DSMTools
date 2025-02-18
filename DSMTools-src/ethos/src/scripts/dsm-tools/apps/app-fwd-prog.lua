@@ -1066,6 +1066,70 @@ end
 
 -----------------------------------------------------------------------------------------
 
+local function LoadTextFromFile(fileName, mem)
+  local function rtrim(s)
+    local n = string.len(s)
+    while n > 0 and string.find(s, "^%s", n) do n = n - 1 end
+    return string.sub(s, 1, n)
+  end
+
+  print(string.format("Loading messages from [%s]",fileName))
+  local dataFile = io.open(fileName, "r")   -- read File
+  -- cannot read file???
+  assert(dataFile, "Cannot load Message file:" .. fileName)
+
+  local data, nr = io.read(dataFile, mem * 1024) -- read up to 10k characters (newline char also counts!)
+  io.close(dataFile)
+
+  collectgarbage("collect")
+
+  local lineNo = 0
+  for line in string.gmatch(data, "[^\r\n]+") do
+    lineNo = lineNo + 1
+    --print(string.format("Line [%d]: %s",lineNo,line))
+
+    -- Remove Comments
+    local s = string.find(line, "--", 1, true)
+    if (s ~= nil) then
+      line = string.sub(line, 1, s - 1)
+    end
+
+    line = rtrim(line)
+
+    if (string.len(line) > 0) then
+      local a, b, c = string.match(line, "%s*(%a*)%s*|%s*(%w*)%s*|(.*)%s*")
+      --print(string.format("[%s] [%s] [%s]",a,b,c))
+      if (a ~= nil) then
+        local index = tonumber(b)
+
+        if (index == nil) then
+          assert(false, string.format("%s:%d: Invalid Hex num [%s]", fileName, lineNo, b))
+        elseif (a == "T") then
+          Text[index] = c
+        elseif (a == "LT") then
+          List_Text[index] = c
+        elseif (a == "LI") then
+          List_Text_Img[index] = c
+        elseif (a == "FM") then
+          Flight_Mode[index-0x8000] = c
+        elseif (a == "RX") then
+          RxName[index] = c
+        else
+          assert(false, string.format("%s:%d: Invalid Line Type [%s]", fileName, lineNo, a))
+        end
+      end
+    end
+    if (lineNo % 50 == 0) then
+      collectgarbage("collect")
+    end
+  end -- For
+
+  print(string.format("Loaded [%d] messages",lineNo))
+  data = nil
+  collectgarbage("collect")
+end
+
+--[[
 local function load_msg_from_file(fileName, offset, FileState)
 
   if (FileState.state==nil) then -- Initial State
@@ -1118,7 +1182,7 @@ local function load_msg_from_file(fileName, offset, FileState)
 
   return 0
 end
-
+--]]
 
 local function ReadTxModelData()
   local chNameDef = {[0]="Ail","Ele","Thr","Rud"}
@@ -1387,10 +1451,13 @@ local function Inc_Init()
   
   lcd.invalidate()
   if (initStep == 0) then
-    if (load_msg_from_file(MSG_FILE, 0, FileState)==1) then
-      initStep=1
-      FileState = {}
-    end
+    LoadTextFromFile(MSG_FILE,14)
+    initStep=1
+
+    --if (load_msg_from_file(MSG_FILE, 0, FileState)==1) then
+    --  initStep=1
+    --  FileState = {}
+    --end
   else 
     Phase = PH_RX_VER -- Done Init
     DSM_Connect()
