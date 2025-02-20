@@ -1,4 +1,4 @@
-local toolName = "TNS|DSM Frwd Prog v0.59a (MIN-SETUP)|TNE"
+local toolName = "TNS|DSM Frwd Prog v0.59 (MIN-SETUP)|TNE"
 
 ---- #########################################################################
 ---- #                                                                       #
@@ -18,7 +18,7 @@ local toolName = "TNS|DSM Frwd Prog v0.59a (MIN-SETUP)|TNE"
 ---- #########################################################################
 
 
-local VERSION             = "v0.59a"
+local VERSION             = "v0.59b"
 local DSMLIB_PATH         = "/SCRIPTS/TOOLS/DSMLIB/"
 local DATA_PATH           = "/MODELS/DSMDATA"
 

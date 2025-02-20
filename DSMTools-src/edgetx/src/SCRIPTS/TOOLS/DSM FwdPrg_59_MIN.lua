@@ -1,4 +1,4 @@
-local toolName = "TNS|DSM Frwd Prog v0.59a (MIN)|TNE"
+local toolName = "TNS|DSM Frwd Prog v0.59b (MIN)|TNE"
 
 ---- #########################################################################
 ---- #                                                                       #
@@ -18,7 +18,7 @@ local toolName = "TNS|DSM Frwd Prog v0.59a (MIN)|TNE"
 ---- #########################################################################
 
 
-local VERSION             = "v0.59a"
+local VERSION             = "v0.59b"
 local LANGUAGE            = "en"
 local DSMLIB_PATH         = "/SCRIPTS/TOOLS/DSMLIB/"
 local DEBUG_ON            = 1
@@ -895,10 +895,10 @@ local function DSM_Display()
     if line.Text ~= nil then
       local heading = line.Text
 
-      if (line.TextId >= 0x5000) then     -- Render Image
+    if (line.TextId >= 0x8000) then     -- Flight mode
+      heading = GetFlightModeValue(line)
+    elseif (line.TextId >= 0x5000) then     -- Render Image
         -- Render Image# TextID-0x5000
-      elseif (line.TextId >= 0x8000) then     -- Flight mode
-        heading = GetFlightModeValue(line)
       else
         local text = nil
         if line.Type ~= LT_MENU then       -- list/value
