@@ -7,7 +7,7 @@ All the tools combined in a single app.
 
 **NOTE:  Requires Ethos 1.6.0 or newer**
 
-**UPDATE v2.0.1: ** 
+**UPDATE v2.0.1:** 
   -  Screen changes for X14S (Feb 10, 2025)
   -  Some X20s are giving an error related to "seek" function when trying to load the message files. Fixed on RC2.
 
