@@ -126,7 +126,10 @@ function CaptureProcessor.init(i2cID)
   local line = form.addLine(string.format("Capturing Data I2C=0x%02x",i2cID))
   form.addTextButton(line, nil, "RTN", function() CaptureProcessor.close() end)
 
-  local leftCoords = {x=1,y=1,w=w,h=23}
+  lcd.font(FONT_STD)
+  local tw, th = lcd.getTextSize("X")
+
+  local leftCoords = {x=1,y=1,w=w,h=th * 1.2}
 
   leftCoords.y = form.height()
   leftCoords.x =  (w - lcd.getTextSize("Line: ")) // 2 -- Centered
