@@ -7,9 +7,13 @@ All the tools combined in a single app.
 
 **NOTE:  Requires Ethos 1.6.0 or newer**
 
-**UPDATE v2.0.1:** 
-  -  Screen changes for X14S (Feb 10, 2025)
-  -  Some X20s are giving an error related to "seek" function when trying to load the message files. Fixed on RC2.
+**UPDATE v2.0.1: Mostly cosmetic, but some fixes for X20 (Mar 1, 2025)** 
+  -  **NOTE:** If you already have 2.0 working fine, don't update.. If you are having some of the problems below, please do
+  -  Significantly much faster message loading in forward programming
+  -  Fixed Telemetry -> FlightLog screen to properly show the Holds and Frame Losses
+  -  X14: Screen changes to properly align some text
+  -  X20: Some X20 are giving an error related to "seek" function when trying to load the message files.
+  -  X20: Telemetry Capture was truncating some lines on the screens
 
 **UPDATE v2.0: Supports AS3X+ Version 3.2.7 firmware   (Jan 7, 2025)**
 
@@ -22,6 +26,7 @@ AS3X and AS3X+ Receiver firmware are supported.
 
 
 ## Installation
+**Update from previous versions:** just copy or install on top of what you have.. no need to delete the prev version.
 
 There are two ways to install the tools:
 * Ethos Suite:  Just select the zip file, and select **dsm-tools** to install.
