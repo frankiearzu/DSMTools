@@ -1,3 +1,6 @@
+# NOTE: if you are using EdgeTX color radio, please use the new "DSMTools Suite".. All the tools in 1 menu!  
+https://github.com/frankiearzu/DSMTools/tree/main/DSM%20Tools%20Suite
+
 # Credits
 Code is based on the code/work by: Pascal Langer (Author of the Multi-Module) 
 Rewrite/Enhancements by: Francisco Arzu
