@@ -5,6 +5,8 @@ Rewrite/Enhancements by: Francisco Arzu
 Thanks to all the people volunteered to test it.
 # Note
 
+EdgeTX 2.11 seems to not like the long filenames.. so if you are using 2.11, rename the files and change the part "FwrdPrg" to "FP" in the filename to make them sorter.   I think this will be fixed on EdgeTX, but this is the temporary workaround.
+
 Due to memory, it will not run on all radios. So far this is what we know.
 
 1. FrSky Taranis X9D:  Not enouth memory
