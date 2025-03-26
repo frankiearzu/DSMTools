@@ -19,7 +19,7 @@ Due to memory, it will not run on all radios. So far this is what we know.
 8. Radiomaster Pocket w 4-in-1: yes
 
 
-# Introduction  (v0.59a Black & White  Small Radios)
+# Introduction  (v0.59 Black & White  Small Radios)
 
 UPDATE: v0.59a support new Spektrum RX firmware version AS3X+ v3.2.7
 
