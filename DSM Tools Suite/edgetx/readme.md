@@ -12,7 +12,9 @@ If you want to delete the older versions of the multiple individual tools, remov
 
 **NOTE: only for COLOR radios, for B&W, use the individual tools: Forward Prog, Telemetry  due to memory limitations**
 
-**UPDATE v2.0: Supports AS3X+ Version 3.2.7 firmware   (Jan 7, 2025)**
+**UPDATE v2.0-final: Fix SmartBat Telemetry   (Apr 9, 2025)**
+
+**UPDATE v2.0-RC1: Supports AS3X+ Version 3.2.7 firmware   (Jan 7, 2025)**
 
 AS3X and AS3X+ Receiver firmware are supported.
 
