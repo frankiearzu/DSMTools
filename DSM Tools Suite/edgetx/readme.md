@@ -11,6 +11,9 @@ If you want to delete the older versions of the multiple individual tools, remov
 # DSM Tools Suite (EdgeTX Version)
 
 **NOTE: two versions: BW is for smaller Black & white screen, and color is for color radios**
+**The B&W version needs more memory than the stand alone scripts, intended for newer radios like the Boxter, GX12, TX12 V2.**
+**If it give a memory/error the first time you try to run a sub-menu application, try a second time**
+**For older B&W radios, they don't have enouth memory for the suite. Keep using the stand alone scripts**
 
 **UPDATE v2.0-final: Fix SmartBat Telemetry   (Apr 9, 2025)**
 
