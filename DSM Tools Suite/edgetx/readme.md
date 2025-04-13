@@ -5,13 +5,15 @@ All the tools combined in a single app.  Plane-Setup, Forward Prog and Telemetry
 Is Backward compatible to the files created by the previous version in /MODELS/DSMDATA of Forward Programing, and can Co-Exist with them, even when this provides
 the combined functionality.   
 
+**UPDATIND OLDER DSMTools**
+
 If you want to delete the older versions of the multiple individual tools, remove the /SCRIPTS/TOOLS/DSMLIB folder, and "DSM_*" on the main /SCRIPTS/TOOLS folder.. only keep "DSM_Tools.lua" that is the new version.   Your model info is still stored in /MODELS/DSMDATA and is backward compatible.
 
 
 # DSM Tools Suite (EdgeTX Version)
 
 **NOTE: two versions: BW is for smaller Black & white screen, and color is for color radios**
-**The B&W version needs more memory than the stand alone scripts, intended for newer radios like the Boxter, GX12, TX12 V2.**
+**The B&W version needs more memory than the stand alone scripts, intended for newer radios like the Boxter, GX12, Zorro, TX12 V2.**
 **If it give a memory/error the first time you try to run a sub-menu application, try a second time**
 **For older B&W radios, they don't have enouth memory for the suite. Keep using the stand alone scripts**
 
