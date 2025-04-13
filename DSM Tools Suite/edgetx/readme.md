@@ -29,6 +29,7 @@ AS3X and AS3X+ Receiver firmware are supported.
 * Manual: Unzip and copy the content to your SDCard
 
 After the instalation, the directory folder should look like this:
+Color Radios:
 <code>
   /MODELS/DSMDATA                -- Where the info about your plane is stored
   /SCRIPTS/TOOLS/DSM_Tools.lua   -- Main program for the TOOLS page
@@ -37,6 +38,17 @@ After the instalation, the directory folder should look like this:
                   i18n        -- Messages displayed on the screen... english only right now.
                   main.lua    -- Main screen for the suit
 </code>
+
+The BW radios: will have "_min" at the end of some files:
+<code>
+  /MODELS/DSMDATA                -- Where the info about your plane is stored
+  /SCRIPTS/TOOLS/DSM_Tools_min.lua   -- Main program for the TOOLS page
+  /SCRIPTS/TOOLS/dsm-tools-min/
+                  apps        -- LUA Applications 
+                  i18n        -- Messages displayed on the screen... english only right now.
+                  main.lua    -- Main screen for the suit
+</code>
+
 
 ## Setup your Plane in EdgeTX first
 
