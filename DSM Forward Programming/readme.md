@@ -1,4 +1,4 @@
-# NOTE: if you are using EdgeTX color radio, please use the new "DSMTools Suite".. All the tools in 1 menu!  
+# NOTE: if you are using EdgeTX color radio, or newer BW radios (Boxter, GX12, Zorro) please use the new "DSMTools Suite".. All the tools in 1 menu!  
 https://github.com/frankiearzu/DSMTools/tree/main/DSM%20Tools%20Suite
 
 # Credits
