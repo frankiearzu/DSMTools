@@ -35,11 +35,11 @@ local config = arg[1]
 local ui     = arg[2]
 
 local LANGUAGE     = "en"
-local DEBUG_ON     = true
+local DEBUG_ON     = 1
 
 local I2C_FORWARD_PROG   = 0x09
 
-local LOG_FILE     = config.logPath .. "dsm_log.txt"
+local LOG_FILE     = "/LOGS/dsm_log.txt"
 local MSG_FILE     = config.msgPath .. "msg_fwdp_" .. LANGUAGE .. ".txt"
 
 -- Phase
@@ -1669,7 +1669,7 @@ local function wakeup(widget)
   if (Phase == PH_INIT) then 
     Inc_Init() -- Incremental initialization
   elseif Phase == PH_EXIT_DONE then
-    close()
+    -- close() -- not needed, will be called by config.exit()
     config.exit()
   else
     if (config.simulation) then

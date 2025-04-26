@@ -160,7 +160,7 @@ local function gc()
 end
 
 local function LOG_open()
-  logFile = assert(io.open(config.logPath..LOG_FILE_NAME, "w"))   -- Truncate Log File
+  logFile = assert(io.open("/LOGS/"..LOG_FILE_NAME, "w"))   -- Truncate Log File
 end
 
 local function LOG_write(...)

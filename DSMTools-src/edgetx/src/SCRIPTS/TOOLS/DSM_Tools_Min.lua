@@ -1,4 +1,4 @@
-local toolName = "TNS|DSMTools Suite|TNE"
+local toolName = "TNS|DSMTools 2.0 (min)|TNE"
 ---- #########################################################################                                                                  #
 ---- # License GPLv2: http://www.gnu.org/licenses/gpl-2.0.html               #
 ---- #                                                                       #

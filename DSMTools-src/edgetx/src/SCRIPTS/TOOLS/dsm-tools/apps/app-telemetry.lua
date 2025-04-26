@@ -752,9 +752,9 @@ function SmartBat.wakeup()
       this.BAT_Values[4] = formatWithComma(usage)
       this.BAT_Values[5] = nil
 
-      local sensor = system.getSource("RxBatt")
+      local sensor = getValue("A2") -- RX
       if (sensor) then 
-        this.BAT_Values[6] = string.format("%0.2f",sensor:value())
+        this.BAT_Values[6] = string.format("%0.2f",sensor)
       end
     elseif (msgType==0x10) then -- Cell 1-6
       local temp   = getI8(3)   -- Temp C

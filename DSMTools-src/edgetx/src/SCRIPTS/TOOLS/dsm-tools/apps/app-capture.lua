@@ -27,7 +27,7 @@ local sim                   = nil  -- lazy load the sim-lib when needed
 -- Computed at Create
 local LCD_LINE_H            = 0
 
-local LOG_FILE = config.logPath .. "dsm_raw_tel.txt"
+local LOG_FILE = "/LOGS/dsm_raw_tel.txt"
 local logFile = nil 
     
 local CaptureProcessor = {
