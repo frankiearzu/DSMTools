@@ -1,5 +1,5 @@
 
-# DSM Tools Suite
+# DSM Tools Suite for EDGETX
 All the tools combined in a single app.  Plane-Setup, Forward Prog and Telemetry. 
 
 Is Backward compatible to the files created by the previous version in /MODELS/DSMDATA of Forward Programing, and can Co-Exist with them, even when this provides
