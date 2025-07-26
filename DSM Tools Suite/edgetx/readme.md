@@ -1,11 +1,11 @@
 
-# DSM Tools Suite for EDGETX
+# DSM Tools Suite for EdgeTX
 All the tools combined in a single app.  Plane-Setup, Forward Prog and Telemetry. 
 
 Is Backward compatible to the files created by the previous version in /MODELS/DSMDATA of Forward Programing, and can Co-Exist with them, even when this provides
 the combined functionality.   
 
-**UPDATIND OLDER DSMTools**
+**UPGRADING FROM OLDER DSMTools**
 
 If you want to delete the older versions of the multiple individual tools, remove the /SCRIPTS/TOOLS/DSMLIB folder, and "DSM_*" on the main /SCRIPTS/TOOLS folder.. only keep "DSM_Tools.lua" that is the new version.   Your model info is still stored in /MODELS/DSMDATA and is backward compatible.
 
