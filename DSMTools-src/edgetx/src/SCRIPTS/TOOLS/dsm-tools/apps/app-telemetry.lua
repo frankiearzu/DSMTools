@@ -1352,7 +1352,7 @@ local function event(widget, evt, touchState)
     local param = m.menu[m.ItemSelected][3] -- Prameter
     local Proc   = m.menu[m.ItemSelected][2] -- Processor
 
-    if (Proc.event) then
+    if (Proc.event and evt > 0) then
       local ret = Proc.event(evt, touchState)
     end
   

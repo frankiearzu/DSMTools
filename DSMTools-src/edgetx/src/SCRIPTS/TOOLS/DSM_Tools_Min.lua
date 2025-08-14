@@ -1,4 +1,4 @@
-local toolName = "TNS|DSMTools 2.0 (min)|TNE"
+local toolName = "TNS|DSMTools 2.1 (min)|TNE"
 ---- #########################################################################                                                                  #
 ---- # License GPLv2: http://www.gnu.org/licenses/gpl-2.0.html               #
 ---- #                                                                       #
@@ -50,7 +50,7 @@ function MainScreen.paint()
  
       lcd.clear()
       lcd.drawText (LCD_COL1, LCD_Y_HEADER, "   DsmTools Suite", TEXT_SIZE +  BOLD) -- Title
-      lcd.drawText (LCD_COL1, LCD_H - LCD_Y_LINE_HEIGHT, "      v2.0  arzu/langer", TEXT_SIZE +  BOLD) -- Title
+      lcd.drawText (LCD_COL1, LCD_H - LCD_Y_LINE_HEIGHT, "      v2.1  arzu/langer", TEXT_SIZE +  BOLD) -- Title
 
       for iParam=1, #this.menu do    
         -- set y draw coord

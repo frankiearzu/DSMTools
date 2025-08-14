@@ -1,7 +1,6 @@
 -- FORMAT  <LineType>|<Msg#>|<Text>  
 -- Line Type: Text for Menus (T), List_Text Options (LT), List_Text_Image (LI), Flight Mode (FM), RX Name (RX)
 -- NO EMPTY LINES
--- Formatting at end of line: /c=Center, /r=Right, /b=Bold, /m=menu
 LT|0x0001|Off
 LT|0x0002|On
 -- Ihn/Act List Options
@@ -56,7 +55,7 @@ LT|0x0049|Ch20
 T |0x0040|Roll
 T |0x0041|Pitch
 T |0x0042|Yaw
-T |0x0043|Gain/c/b
+T |0x0043|Gain
 T |0x0045|Differential
 T |0x0046|Priority
 T |0x0049|Output Setup 
@@ -91,7 +90,7 @@ T |0x0074|Axis
 T |0x0078|FM Channel
 T |0x007E|Rate Gain
 T |0x007F|Attitude Gain
-T |0x007D|Reverse/c/b
+T |0x007D|Reverse
 --
 T |0x0080|Orientation
 T |0x0082|Heading
@@ -101,7 +100,7 @@ T |0x0086|System Setup
 T |0x0087|F-Mode Setup
 T |0x0088|Enabled F-Modes
 T |0x0089|Gain Channel
-T |0x008A|Gain Sensitivity/r  -- Right Align
+T |0x008A|Gain Sensitivity
 T |0x008B|Panic
 T |0x008E|Panic Delay
 --
@@ -177,7 +176,7 @@ T |0x00C7|Calibrate Sensor
 T |0x00C8|Sensor is Calibrating.. Wait 
 T |0x00CA|SAFE & Panic Mode Setup
 --
-T |0x00CD|Level model & capt attitude/m -- SPECIAL MENU to itself who is not a comment
+T |0x00CD|Level model & capt attitude -- SPECIAL MENU to itself who is not a comment
 T |0x00CE|ATTENTION!
 T |0x00CF|Your transmitter requires
 T |0x00D0|newer LUA FP
@@ -244,12 +243,12 @@ LI|0x01D0|h_rx_pos_6.png|Pilot View: RX Label Left, Pins Back
 LI|0x01D1|h_rx_pos_7.png|Pilot View: RX Label Down, Pins Back 
 LI|0x01D2|h_rx_pos_8.png|Pilot View: RX Label Right, Pins Back 
 --
-T |0x00D1|Receiver will Reboot/b
+T |0x00D1|Receiver will Reboot
 T |0x00D2|Panic Channel
 T |0x00D3|Swashplate
 T |0x00D5|Agility
 T |0x00D8|Stop
-T |0x00DA|SAFE/c/b  -- Center + Bold
+T |0x00DA|SAFE
 T |0x00DB|Stability
 T |0x00DC|@ per sec
 T |0x00DD|Tail rotor
@@ -284,7 +283,7 @@ LT|0x00F5|Nitro
 T |0x00F6|Direction
 T |0x00F8|Settings -- ?? validate on a Spektrum radio
 T |0x00F9|Gyro settings
-T |0x00FE|Stick Priority/c/b
+T |0x00FE|Stick Priority
 --
 LT|0x00F9|Normal Gain
 LT|0x00FA|Heading Gain
@@ -314,36 +313,36 @@ T |0x018F|Learn Travel
 T |0x0190|Relearn Servo Settings
 --
 T |0x0191|Maximize Rates for this Channel.
-T |0x0192|Move channel to both extreams,
-T |0x0193|then select APLY to record
+T |0x0192|Move channel to both extremes,
+T |0x0193|then select APPLY to record
 T |0x0194|the range of travel
 T |0x0195|
 --
 T |0x0196|Heading Window %
 T |0x0197|"Extended" Delay
 T |0x019C|Enter Receiver Bind Mode
-T |0x01A1|Axis Weight/c/b
+T |0x01A1|Axis Weight
 T |0x01AA|Offset
 T |0x01D7|SAFE Select Channel
-T |0x01DC|AS3X/c/b    -- Center + Bold
+T |0x01DC|AS3X
 T |0x01DD|AS3X Settings
 T |0x01DE|AS3X Gains
-T |0x01E0|Rate Gains/c/b
+T |0x01E0|Rate Gains
 T |0x01E2|SAFE Settings
 T |0x01E3|SAFE Gains
-T |0x01E6|Attitude Trim/c/b
+T |0x01E6|Attitude Trim
 T |0x01E7|Envelope
 T |0x01E9|Roll Right
 T |0x01EA|Roll Left
 T |0x01EB|Pitch Down
 T |0x01EC|Pitch Up
 T |0x01EE|Thr to Pitch
-T |0x01EF|Low Thr to Pitch/c/b
-T |0x01F0|High Thr to Pitch/c/b
+T |0x01EF|Low Thr to Pitch
+T |0x01F0|High Thr to Pitch
 T |0x01F1|Filter
 T |0x01F3|Threshold
 T |0x01F4|Angle
-T |0x01F6|Failsafe Angles/c/b
+T |0x01F6|Failsafe Angles
 T |0x01F8|Safe Mode
 T |0x01F9|SAFE Select
 T |0x01FC|Panic F-Mode
@@ -372,7 +371,7 @@ T |0x0222|screen is wrong go back
 T |0x0223|and try again.
 T |0x0224|Continue
 --
-T |0x0226|Angle Limits/c/b
+T |0x0226|Angle Limits
 T |0x0227|Other settings
 T |0x0229|Set Orientation Manually
 --
@@ -433,7 +432,7 @@ T |0x0254|Pos = Up, Neg = Down
 -- First time safe setup Page 1
 T |0x0255|Before setting up SAFE
 T |0x0256|a Flight Mode channel
-T |0x0257|most be configured.
+T |0x0257|must be configured.
 --
 --  First time safe setup Page 2
 T |0x025A|Select the desired f-mode
@@ -448,12 +447,12 @@ T |0x0260|WARNING: "Target"
 T |0x0261|F-Mode will be overwritten
 T |0x0262|by "Source"
 --
-T |0x0263|Fixed/Adjustable Gains/c/b
-T |0x0266|Heading Gain/c/b
+T |0x0263|Fixed/Adjustable Gains
+T |0x0266|Heading Gain
 T |0x0267|Pos = Nose Up/Roll Right
 T |0x0268|Neg = Nose Down/Roll Left
 T |0x0269|SAFE - Thr to Pitch
-T |0x026A|Use CAUTION for Yaw gain!/b
+T |0x026A|Use CAUTION for Yaw gain!
 --
 T |0x026B|Head Speed
 T |0x026C|Pinion
@@ -500,7 +499,7 @@ T |0x02A2|-- blank
 T |0x02A3|Review Resulting Config.
 T |0x02A4|Verify Gyro System works
 T |0x02A5|as expected and adjust
-T |0x02A6|settings if nessesary.
+T |0x02A6|settings if necessary.
 T |0x02A7|-- blank
 --
 T |0x02A9|Aux Output Wizard
@@ -508,11 +507,11 @@ T |0x02AA|Gyro Filter Level
 T |0x02AB|Reset Output
 T |0x02AC|Gyro Response Test
 --
-T |0x02AD|While in this page, heading
+T |0x02AD|While on this page, heading
 T |0x02AE|gains are maximized to help
 T |0x02AF|verify that servo reactions
 T |0x02B0|relative to aircraft
-T |0x02B1|movement are correct.
+T |0x02B1|movement is correct.
 T |0x02B2|
 T |0x02B3|
 --
@@ -532,10 +531,10 @@ T |0x02C2|following:
 T |0x02C3|SAFE, Heading Hold,
 T |0x02C4|ASS3X Throttle Arm
 T |0x02C5|
---
+-- Internal messages to LUA
 T |0x0300|No compatible DSM RX...
 T |0x0301|Waiting for RX to Restart
---
+-- FLIGHT MODES
 FM|0x8000|Flight Mode %s
 FM|0x8001|Flight Mode %s
 FM|0x8002|Gyro System %s / Flight Mode %s

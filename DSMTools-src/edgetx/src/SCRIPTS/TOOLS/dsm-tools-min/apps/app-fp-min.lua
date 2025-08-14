@@ -18,7 +18,7 @@ local toolName = "TNS|DSM Frwd Prog v0.59b (MIN)|TNE"
 ---- #########################################################################
 
 
-local VERSION             = "v2.0a"
+local VERSION             = "v2.1"
 local LANGUAGE            = "en"
 local DSMLIB_PATH         = "/SCRIPTS/TOOLS/dsm-tools-min/"
 local DEBUG_ON            = 1

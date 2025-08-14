@@ -7,6 +7,8 @@ All the tools combined in a single app.
 
 **NOTE:  Requires Ethos 1.6.0 or newer**
 
+**UPDATE v2.1: Added Biplane Wing Support  (Aug 13, 2025)**
+
 **UPDATE v2.0.1: Mostly cosmetic, but some fixes for X20 (Mar 1, 2025)** 
   -  **NOTE:** If you already have 2.0 working fine, don't update.. If you are having some of the problems below, please do
   -  Significantly much faster message loading in forward programming

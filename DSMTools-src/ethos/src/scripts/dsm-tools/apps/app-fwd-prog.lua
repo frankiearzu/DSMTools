@@ -148,7 +148,8 @@ local WT_A2_F1    <const> = 4
 local WT_A2_F2    <const> = 5
 local WT_ELEVON_A <const> = 6
 local WT_ELEVON_B <const> = 7
-
+local WT_BIPLANE_A1 <const> = 8
+local WT_BIPLANE_A2 <const> = 9
 
 local TT_R1       <const> = 0
 local TT_R1_E1    <const> = 1
@@ -1129,60 +1130,6 @@ local function LoadTextFromFile(fileName, mem)
   collectgarbage("collect")
 end
 
---[[
-local function load_msg_from_file(fileName, offset, FileState)
-
-  if (FileState.state==nil) then -- Initial State
-    FileState.state=1
-    FileState.lineNo=0
-    FileState.filePos=0
-  end
-
-  if FileState.state==1 then
-    for l=1,30 do -- do 30 lines at a time 
-      local type, sIndex, text
-      local lineStart = FileState.filePos
-
-      type, sIndex, text, FileState.filePos = GetTextInfoFromFile(FileState.filePos+offset)
-
-      --print(string.format("T=%s, I=%s, T=%s LS=%d, FP=%d",type,sIndex,text,lineStart, FileState.filePos))
-
-      if (lineStart==FileState.filePos) then -- EOF
-          FileState.state=2 --EOF State 
-          return 1
-      end
-      FileState.lineNo = FileState.lineNo + 1
-
-      type = rtrim(type)
-
-      if (string.len(type) > 0 and string.len(sIndex) > 0) then
-          local index = tonumber(sIndex)
-          local filePos =  lineStart + offset
-
-          if (index == nil) then
-            assert(false, string.format("%s:%d: Invalid Hex num [%s]", fileName, FileState.lineNo, sIndex))
-          elseif (type == "T") then
-            Text[index] =  text
-          elseif (type == "LT") then
-            List_Text[index] = text
-          elseif (type == "LI") then
-            List_Text_Img[index] = text
-          elseif (type == "FM") then
-            Flight_Mode[index-0x8000] = text
-          elseif (type == "RX") then
-            RxName[index] = text
-          else
-            assert(false, string.format("%s:%d: Invalid Line Type [%s]", fileName, FileState.lineNo, type))
-          end
-      end
-      --gc()
-    end -- for 
-    gc()
-  end -- if
-
-  return 0
-end
---]]
 
 local function ReadTxModelData()
   local chNameDef = {[0]="Ail","Ele","Thr","Rud"}
@@ -1346,8 +1293,12 @@ local function CreateDSMPortChannelInfo()
   local tailType = M_DB[MV_TAIL_TYPE]
 
   local thrCh  =  M_DB[MV_CH_THR]
+  
   local lAilCh =  M_DB[MV_CH_L_AIL]
   local rAilCh =  M_DB[MV_CH_R_AIL]
+
+  local lFlpCh =  M_DB[MV_CH_L_FLP]
+  local rFlpCh =  M_DB[MV_CH_R_FLP]
 
   local lElevCh = M_DB[MV_CH_L_ELE]
   local rElevCh = M_DB[MV_CH_R_ELE]
@@ -1369,6 +1320,12 @@ local function CreateDSMPortChannelInfo()
   -- RUD (Left and Right)
   if (lRudCh~=nil) then DSM_Ch[lRudCh][1] = CT_RUD end
   if (rRudCh~=nil) then DSM_Ch[rRudCh][1] = CT_RUD+CT_SLAVE end
+
+  -- Biplane  (Flap varialbes used as the 2nd wing ailerons)
+  if (wingType==WT_BIPLANE_A1 or wingType==WT_BIPLANE_A2) then
+    if (lFlpCh~=nil) then DSM_Ch[lFlpCh][1] = CT_AIL  end
+    if (rFlpCh~=nil) then DSM_Ch[rFlpCh][1] = CT_AIL+CT_SLAVE end
+  end
 
   -- VTAIL: RUD + ELE
   if (tailType==TT_VT_A) then 

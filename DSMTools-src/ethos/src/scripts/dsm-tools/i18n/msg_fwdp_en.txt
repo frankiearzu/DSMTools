@@ -176,7 +176,7 @@ T |0x00C7|Calibrate Sensor
 T |0x00C8|Sensor is Calibrating.. Wait 
 T |0x00CA|SAFE & Panic Mode Setup
 --
-T |0x00CD|Level model & capt attitude/m -- SPECIAL MENU to itself who is not a comment
+T |0x00CD|Level model & capt attitude -- SPECIAL MENU to itself who is not a comment
 T |0x00CE|ATTENTION!
 T |0x00CF|Your transmitter requires
 T |0x00D0|newer LUA FP
@@ -313,7 +313,7 @@ T |0x018F|Learn Travel
 T |0x0190|Relearn Servo Settings
 --
 T |0x0191|Maximize Rates for this Channel.
-T |0x0192|Move channel to both extreams,
+T |0x0192|Move channel to both extremes,
 T |0x0193|then select APPLY to record
 T |0x0194|the range of travel
 T |0x0195|
@@ -432,7 +432,7 @@ T |0x0254|Pos = Up, Neg = Down
 -- First time safe setup Page 1
 T |0x0255|Before setting up SAFE
 T |0x0256|a Flight Mode channel
-T |0x0257|most be configured.
+T |0x0257|must be configured.
 --
 --  First time safe setup Page 2
 T |0x025A|Select the desired f-mode
@@ -452,7 +452,7 @@ T |0x0266|Heading Gain
 T |0x0267|Pos = Nose Up/Roll Right
 T |0x0268|Neg = Nose Down/Roll Left
 T |0x0269|SAFE - Thr to Pitch
-T |0x026A|Use CAUTION for Yaw gain!/b
+T |0x026A|Use CAUTION for Yaw gain!
 --
 T |0x026B|Head Speed
 T |0x026C|Pinion
@@ -499,7 +499,7 @@ T |0x02A2|-- blank
 T |0x02A3|Review Resulting Config.
 T |0x02A4|Verify Gyro System works
 T |0x02A5|as expected and adjust
-T |0x02A6|settings if nessesary.
+T |0x02A6|settings if necessary.
 T |0x02A7|-- blank
 --
 T |0x02A9|Aux Output Wizard
@@ -507,11 +507,11 @@ T |0x02AA|Gyro Filter Level
 T |0x02AB|Reset Output
 T |0x02AC|Gyro Response Test
 --
-T |0x02AD|While in this page, heading
+T |0x02AD|While on this page, heading
 T |0x02AE|gains are maximized to help
 T |0x02AF|verify that servo reactions
 T |0x02B0|relative to aircraft
-T |0x02B1|movement are correct.
+T |0x02B1|movement is correct.
 T |0x02B2|
 T |0x02B3|
 --
@@ -531,10 +531,10 @@ T |0x02C2|following:
 T |0x02C3|SAFE, Heading Hold,
 T |0x02C4|ASS3X Throttle Arm
 T |0x02C5|
---
+-- Internal messages to LUA
 T |0x0300|No compatible DSM RX...
 T |0x0301|Waiting for RX to Restart
---
+-- FLIGHT MODES
 FM|0x8000|Flight Mode %s
 FM|0x8001|Flight Mode %s
 FM|0x8002|Gyro System %s / Flight Mode %s

@@ -34,8 +34,13 @@ local WT_A2_F2    = 5
 --]]
 local WT_ELEVON_A = 6
 local WT_ELEVON_B = 7
+local WT_BIPLANE_A1 = 8
+local WT_BIPLANE_A2 = 9
 
-local wing_type_text = {[0]="Normal","Dual Ail","Flapperon", "Ail + Flp","Dual Ail + Flp","Dual Ail/Flp","Elevon A","Elevon B"}
+local wing_type_text = {
+    [0]="Normal","Dual Ail","Flapperon", "Ail + Flp","Dual Ail + Flp","Dual Ail/Flp",
+        "Elevon A","Elevon B",
+        "Biplane 1-Ail/Wings","Biplane 2-Ail/Wings"}
 
 --[[
 local TT_R1    = 0
@@ -185,6 +190,9 @@ local function CreateDSMPortChannelInfo()
     local lAilCh =  M_DATA[MV_CH_L_AIL]
     local rAilCh =  M_DATA[MV_CH_R_AIL]
 
+    local lFlpCh =  M_DATA[MV_CH_L_FLP]
+    local rFlpCh =  M_DATA[MV_CH_R_FLP]
+
     local lElevCh = M_DATA[MV_CH_L_ELE]
     local rElevCh = M_DATA[MV_CH_R_ELE]
 
@@ -205,6 +213,12 @@ local function CreateDSMPortChannelInfo()
     -- RUD (Left and Right)
     if (lRudCh~=nil) then DSM_Ch[lRudCh][1] = CT_RUD end
     if (rRudCh~=nil) then DSM_Ch[rRudCh][1] = CT_RUD+CT_SLAVE end
+
+    -- Biplane  (Flap varialbes used as the 2nd wing ailerons)
+    if (wingType==WT_BIPLANE_A1 or wingType==WT_BIPLANE_A2) then
+        if (lFlpCh~=nil) then DSM_Ch[lFlpCh][1] = CT_AIL  end
+        if (rFlpCh~=nil) then DSM_Ch[rFlpCh][1] = CT_AIL+CT_SLAVE end
+    end
 
     -- VTAIL: RUD + ELE
     if (tailType==TT_VT_A) then 

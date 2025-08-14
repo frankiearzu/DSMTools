@@ -18,7 +18,7 @@ local toolName = "TNS|DSM Frwd Prog v0.59 (MIN-SETUP)|TNE"
 ---- #########################################################################
 
 
-local VERSION             = "v2.0"
+local VERSION             = "v2.1"
 local DSMLIB_PATH         = "/SCRIPTS/TOOLS/dsm-tools-min/"
 local DATA_PATH           = "/MODELS/DSMDATA"
 
@@ -75,8 +75,13 @@ local WT_A2_F1    = 4
 local WT_A2_F2    = 5
 local WT_ELEVON_A = 6
 local WT_ELEVON_B = 7
+local WT_BIPLANE_A1 = 8
+local WT_BIPLANE_A2 = 9
 
-local wing_type_text = {[0]="Normal","Dual Ail","Flapperon", "Ail + Flp","Dual Ail + Flp","Dual Ail/Flp","Elevon A","Elevon B"}
+local wing_type_text = {
+  [0]="Normal","Dual Ail","Flapperon", "Ail + Flp","Dual Ail + Flp","Dual Ail & Flp",
+      "Elevon A","Elevon B",
+      "Biplane 1-Ail/Wing","Biplane 2-Ail/Wing"}
 
 local TT_R1    = 0
 local TT_R1_E1 = 1
@@ -250,14 +255,14 @@ local function ST_PlaneWingInit(wingType)
     elseif (wingType==WT_A2 or wingType==WT_FLPR) then
         M_DB[MV_CH_L_AIL] = P6
         M_DB[MV_CH_R_AIL] = P2
-    elseif (wingType==WT_A1_F1) then
+    elseif (wingType==WT_A1_F1 or wingType==WT_BIPLANE_A1) then
         M_DB[MV_CH_L_AIL] = P2
         M_DB[MV_CH_L_FLP] = P6
     elseif (wingType==WT_A2_F1) then
         M_DB[MV_CH_L_AIL] = P6
         M_DB[MV_CH_R_AIL] = P2
         M_DB[MV_CH_L_FLP] = P5
-    elseif (wingType==WT_A2_F2) then
+    elseif (wingType==WT_A2_F2 or wingType==WT_BIPLANE_A2) then
         M_DB[MV_CH_L_AIL] = P6
         M_DB[MV_CH_R_AIL] = P2
         M_DB[MV_CH_R_FLP] = P5
@@ -357,20 +362,30 @@ end
 
 
 local function portUse(p)
+  local wt = M_DB[MV_WING_TYPE]
   local out = nil 
   if p==M_DB[MV_CH_THR] then out = "Thr"
   elseif p == M_DB[MV_CH_L_AIL] then 
-      out=(M_DB[MV_CH_R_AIL] and "Ail_L") or "Ail"
-  elseif p == M_DB[MV_CH_R_AIL] then out="Ail_R"
+      out=(M_DB[MV_CH_R_AIL] and "AilL") or "Ail"
+  elseif p == M_DB[MV_CH_R_AIL] then out="AilR"
   elseif p == M_DB[MV_CH_L_ELE] then 
-      out=(M_DB[MV_CH_R_ELE] and "Ele_L") or "Ele"
-  elseif p == M_DB[MV_CH_R_ELE] then out="Ele_R"
+      out=(M_DB[MV_CH_R_ELE] and "EleL") or "Ele"
+  elseif p == M_DB[MV_CH_R_ELE] then out="EleR"
   elseif p == M_DB[MV_CH_L_RUD] then 
-      out=(M_DB[MV_CH_R_RUD] and "Rud_L") or "Rud"
-  elseif p == M_DB[MV_CH_R_RUD] then out="Rud-R"
+      out=(M_DB[MV_CH_R_RUD] and "RudL") or "Rud"
+  elseif p == M_DB[MV_CH_R_RUD] then out="RudR"
   elseif p == M_DB[MV_CH_L_FLP] then 
-      out=(M_DB[MV_CH_R_FLP] and "Flp_L") or "Flp"
-  elseif p == M_DB[MV_CH_R_FLP] then out="Flp_R"
+    if (wt==WT_BIPLANE_A1 or wt==WT_BIPLANE_A2) then
+      out=(M_DB[MV_CH_R_FLP] and "W2 AilL") or "W2 Ail"
+    else
+      out=(M_DB[MV_CH_R_FLP] and "FlpL") or "Flp"
+    end
+  elseif p == M_DB[MV_CH_R_FLP] then 
+    if (wt==WT_BIPLANE_A1 or wt==WT_BIPLANE_A2) then
+      out="W2 AilR"
+    else
+      out="FlpR"
+    end
   else
     out = ""
   end
@@ -442,11 +457,11 @@ local function ST_LoadMenu(menuId)
     elseif (menuId==0x1010) then
         Menu = { MenuId = 0x1010, Text = "Aircraft", PrevId = 0, NextId = 0x1011, BackId = 0x1001, TextId=0 }
         MenuLines[5] = { Type = LT_LIST_NC, Text="Aircraft Type", TextId = 0, ValId = MV_AIRCRAFT_TYPE, Min=15, Max=15, Def=15, Val=M_DB[MV_AIRCRAFT_TYPE] }
-        ctx_SelLine = 5
+        ctx_SelLine = 7
         lastGoodMenu = menuId
     elseif (menuId==0x1011) then
         Menu = { MenuId = 0x1011, Text = "Model Type: "..aircraft_type_text[currATyp], PrevId = 0, NextId = 0x1020, BackId = 0x1010, TextId=0 }
-        MenuLines[5] = { Type = LT_LIST_NC, Text="Wing Type", TextId = 0, ValId = MV_WING_TYPE, Min=20, Max=27, Def=20, Val=M_DB[MV_WING_TYPE] }
+        MenuLines[5] = { Type = LT_LIST_NC, Text="Wing Type", TextId = 0, ValId = MV_WING_TYPE, Min=20, Max=29, Def=20, Val=M_DB[MV_WING_TYPE] }
         MenuLines[6] = { Type = LT_LIST_NC, Text="Tail Type", TextId = 0, ValId = MV_TAIL_TYPE, Min=30, Max=40, Def=30, Val=M_DB[MV_TAIL_TYPE] }
         ctx_SelLine = 5
         lastGoodMenu = menuId
@@ -466,6 +481,18 @@ local function ST_LoadMenu(menuId)
 
         if (rightAil==nil) then leftAilText = "Aileron" end
         if (rightFlap==nil) then leftFlapText = "Flap" end
+
+        if (currWTyp == WT_BIPLANE_A1) then
+          leftAilText = "W1 Ail"
+          leftFlapText = "W2 Ail"
+        end
+
+        if (currWTyp == WT_BIPLANE_A2) then
+          leftAilText = "W1 L Ail"
+          rightAilText = "W1 R Ail"
+          leftFlapText = "W2 L Ail"
+          rightFlapText = "W2 R Ail"
+        end
 
         local title = aircraft_type_text[currATyp].."   Wing:"..wing_type_text[currWTyp]
 
@@ -568,9 +595,11 @@ local function ST_Init_Text(rxId)
     p = 20+WT_FLPR;  List_Text[p] = "Flaperon";  --List_Text_Img[p]  = "x.png|Flaperon" 
     p = 20+WT_A1_F1; List_Text[p] = "Ail + Flap";  --List_Text_Img[p]  = "x.png|Aileron + Flap" 
     p = 20+WT_A2_F1; List_Text[p] = "Dual Ail + Flap";  --List_Text_Img[p]  = "x.png|Dual Aileron + Flap" 
-    p = 20+WT_A2_F2; List_Text[p] = "Dual Ail + Dual Flap";  --List_Text_Img[p]  = "x.png|Dual Aileron + Dual Flap" 
+    p = 20+WT_A2_F2; List_Text[p] = "Dual Ail & Flap";  --List_Text_Img[p]  = "x.png|Dual Aileron + Dual Flap" 
     p = 20+WT_ELEVON_A; List_Text[p] = "Delta A";  --List_Text_Img[p]  = "x.png|Delta/Elevon A" 
     p = 20+WT_ELEVON_B; List_Text[p] = "Delta B";  --List_Text_Img[p]  = "x.png|Delta/Elevon B" 
+    p = 20+WT_BIPLANE_A1; List_Text[p] = "Bipl 1-Ail/wing";  List_Text_Img[p]  = "x.png|Bipl 1-Ail/Wing" 
+    p = 20+WT_BIPLANE_A2; List_Text[p] = "Bipl 2-Ail/wing";  List_Text_Img[p]  = "x.png|Bipl 2-Ail/Wing"
 
     -- Tail Types
     p = 30+TT_R1;    List_Text[p] = "Rudder Only";  --List_Text_Img[p]  = "x.png|Rudder Only" 
@@ -586,8 +615,8 @@ local function ST_Init_Text(rxId)
     p = 30+TT_TLRN_B_R2; List_Text[p] = "Taileron B + 2x Rud";  --List_Text_Img[p]  = "x.png|Taileron B + Dual Rud" 
 
     -- Servo Reverse
-    List_Text[45+MT_NORMAL]  = "Normal"
-    List_Text[45+MT_REVERSE] = "Reverse"
+    List_Text[45+MT_NORMAL]  = "Nor"
+    List_Text[45+MT_REVERSE] = "Rev"
 end
 
 -- Initial Setup

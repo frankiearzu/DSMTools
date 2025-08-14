@@ -162,6 +162,8 @@ local WT_A2_F1     = 4
 local WT_A2_F2     = 5
 local WT_ELEVON_A  = 6
 local WT_ELEVON_B  = 7
+local WT_BIPLANE_A1 = 8
+local WT_BIPLANE_A2 = 9
 
 
 local TT_R1        = 0
@@ -275,68 +277,6 @@ local function sInt16ToDsm(value) -- Convent to SIGNED DSM Value
   end
   return value
 end
-
------------------------
---[[
-local function rtrim(s)
-  local n = string.len(s)
-  while n > 0 and string.find(s, "^%s", n) do n = n - 1 end
-  return string.sub(s, 1, n)
-end
-
-local function GetTextInfoFromFile(pos)
-  -- open and read File
-  local dataFile = assert(io.open(MSG_FILE, "r"))  
-  io.seek(dataFile,pos)
-  local buff = io.read(dataFile,200)
-  io.close(dataFile)
-
-  local line=""
-  local index=""
-  local type=""
-
-  -- EOF??
-  if (buff==nil) then return type, index, rtrim(line), pos end
-
-  local pipe=0
-  local comment=0
-  local specialCh=0
-  local newPos = pos
-
-  -- Parse the line: 
-  -- Format:  TT|0x999|Text -- Comment
-
-  for i=1,#buff do
-    newPos=newPos+1
-    local ch = string.sub(buff,i,i)
-
-    if (pipe < 2 and ch=="|") then pipe=pipe+1 -- Count pipes pos  (Type | Index | .....)
-    elseif (specialCh==1) then -- Skip special characters
-      specialCh=0
-      if (ch=="c" or ch=="b" or ch=="m" or ch=="r") then pipe=6 else line=line..'/'..ch end
-    elseif (pipe == 2 and ch=="/") then specialCh=1
-    elseif (ch=="\r") then -- Ignore CR
-    elseif (ch=="\n") then break -- LF, end of line
-    elseif (ch=="-") then  -- March comments
-      comment=comment+1
-      if (comment==2) then pipe=6 end -- Comment part of line
-    else
-      -- regular char
-      comment=0
-      if (pipe==0) then type=type..ch  -- in TT (Type)
-      elseif (pipe==1) then index=index..ch  -- in Index
-      elseif (pipe<6) then line=line..ch end -- in Text
-    end -- Regular char 
-  end -- Fpr
-  if (comment==1) then line=line.."-" end -- End with a -, not a comment
-
-  if (newPos > pos) then
-    --newPos = newPos + 1
-  end
-
-  return type, index, rtrim(line), newPos 
-end
-]]--
 
 local  function getTxChText(index)
   local ch = nil
@@ -1118,10 +1058,10 @@ local function LoadTextFromFile(fileName, mem)
           assert(false, string.format("%s:%d: Invalid Hex num [%s]", fileName, lineNo, b))
         elseif (a == "T") then
           -- Remove formatting chars if any 
-          local s = string.find(c, "/", 1, true)
-          if (s ~= nil) then
-            c = string.sub(c, 1, s - 1)
-          end
+          --local s = string.find(c, "/", 1, true)
+          --if (s ~= nil) then
+          --  c = string.sub(c, 1, s - 1)
+          --end
           Text[index] = c
         elseif (a == "LT") then
           List_Text[index] = c
@@ -1145,62 +1085,6 @@ local function LoadTextFromFile(fileName, mem)
   data = nil
   collectgarbage("collect")
 end
-
---[[
-local function load_msg_from_file(fileName, offset, FileState)
-
-  if (FileState.state==nil) then -- Initial State
-    FileState.state=1
-    FileState.lineNo=0
-    FileState.filePos=0
-  end
-
-  if FileState.state==1 then
-    for l=1,30 do -- do 30 lines at a time 
-      local type, sIndex, text
-      local lineStart = FileState.filePos
-
-      type, sIndex, text, FileState.filePos = GetTextInfoFromFile(FileState.filePos+offset)
-
-      print(string.format("Typ=%s, I=%s, Txt=%s LS=%d, FP=%d",type,sIndex,text,lineStart, FileState.filePos))
-
-      if (lineStart==FileState.filePos) then -- EOF
-          FileState.state=2 --EOF State 
-          return 1
-      end
-      FileState.lineNo = FileState.lineNo + 1
-
-      type = rtrim(type)
-
-      if (string.len(type) > 0 and string.len(sIndex) > 0) then
-          local index = tonumber(sIndex)
-          local filePos =  lineStart + offset
-
-          if (index == nil) then
-            assert(false, string.format("%s:%d: Invalid Hex num [%s]", fileName, FileState.lineNo, sIndex))
-          elseif (type == "T") then
-            Text[index] =  text
-          elseif (type == "LT") then
-            List_Text[index] = text
-          elseif (type == "LI") then
-            List_Text_Img[index] = text
-          elseif (type == "FM") then
-            Flight_Mode[index-0x8000] = text
-          elseif (type == "RX") then
-            RxName[index] = text
-          else
-            assert(false, string.format("%s:%d: Invalid Line Type [%s]", fileName, FileState.lineNo, type))
-          end
-      end
-      --gc()
-    end -- for 
-    gc()
-  end -- if
-
-  return 0
-end
-]]--
-
 
 local function getModuleChannelOrder(num) 
   --Determine fist 4 channels order
@@ -1402,6 +1286,9 @@ local function CreateDSMPortChannelInfo()
   local lAilCh =  M_DB[MV_CH_L_AIL]
   local rAilCh =  M_DB[MV_CH_R_AIL]
 
+  local lFlpCh =  M_DB[MV_CH_L_FLP]
+  local rFlpCh =  M_DB[MV_CH_R_FLP]
+
   local lElevCh = M_DB[MV_CH_L_ELE]
   local rElevCh = M_DB[MV_CH_R_ELE]
 
@@ -1422,6 +1309,12 @@ local function CreateDSMPortChannelInfo()
   -- RUD (Left and Right)
   if (lRudCh~=nil) then DSM_Ch[lRudCh][1] = CT_RUD end
   if (rRudCh~=nil) then DSM_Ch[rRudCh][1] = CT_RUD+CT_SLAVE end
+
+  -- Biplane  (Flap varialbes used as the 2nd wing ailerons)
+  if (wingType==WT_BIPLANE_A1 or wingType==WT_BIPLANE_A2) then
+    if (lFlpCh~=nil) then DSM_Ch[lFlpCh][1] = CT_AIL  end
+    if (rFlpCh~=nil) then DSM_Ch[rFlpCh][1] = CT_AIL+CT_SLAVE end
+  end
 
   -- VTAIL: RUD + ELE
   if (tailType==TT_VT_A) then 
@@ -1720,8 +1613,10 @@ local function event(widget, evt, touchState)
       end -- if ctx_Editline
     end -- if line
   else
-    DSM_HandleEvent(evt, 1)
-    refreshDisplay=true
+    if (evt > 0) then
+      DSM_HandleEvent(evt, 1)
+      refreshDisplay=true
+    end
   end -- touchState
   return 0
 end
