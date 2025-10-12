@@ -23,6 +23,11 @@ This firmware is from the branch 2.11, wich contains the latest is 2.11.3 + some
     - Probaly not as critical in normal use, since all channels will eventually get refreshed, but at one time, one of my channels froze for about 
       2s, that could be explained by loosing the message consistently for a bit. 1 message for ch1-6, and another 
       for ch7-12, at 2.2s, an extra status message is send, so it changes the order.. now ch7-12 first, then ch1-6;
+    - Critical for Forward programming. FP is a command/response protocol. if the command (TX->RX) is lost, no response. 
+      The FP data is sent in the Ch1-ch7 message. if that gets lost a lot, will not work. With the change to 22ms cycle in EdgeTX, FP is working 
+      as expected.
+    - Some FP responses are still getting lost, but the TX restransmit the command. This could be that the DSMP is only sending 1 telemetry package every 22ms, 
+      but some spetrum RX can send 2 messages on that 22ms cycle (one every 11ms in DSMX mode).  This for sure will need change in the DSMP firmware.
 
 2. Fix weird State after bind
     - Before was needed to restart TX to fix. Cause: Restarting the module twise at the same time..left it in weird state.
