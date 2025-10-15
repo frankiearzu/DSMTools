@@ -2,6 +2,15 @@
 
 This firmware is from the branch 2.11, wich contains the latest is 2.11.3 + some other fixes that will become 2.11.4.. still not official to fly.
 
+What i recomend is to do a backup of your edgetx SDCARD in case you need to go back.
+Usually EdgeTX works great going forward, but sometimes, going back can change some configs.
+
+1. Backup SDCARD
+2. Copy new firmware to /FIRMWARE folder
+3. Start in bootloader modes (Trims In + Power), select new firmware file.
+4. To go back, Install old firmware (bootload more).
+5. Restore SDCard from backup.
+
 
 <h2>Reported Bug on EdgeTX and RC Groups</h2>
 
@@ -16,7 +25,7 @@ This firmware is from the branch 2.11, wich contains the latest is 2.11.3 + some
 5. On some LemonRX receives, not getting telemetry with DSMP, but same RX works with MultiModule.
     -   Replicated with 1 old Gen2, but not with recent ones. 
 
-<h2>EdgeTX changes Oct 12, 2025 (Serial LemonDSMP interface)</h2>
+<h2>EdgeTX changes Oct 15, 2025 (Serial LemonDSMP interface)</h2>
 
 1. Change message/channels send cycle time from 11ms to 22ms..  DSMP is expecting to receive in 22ms cycles
     - This was causing 1 edgetx channel refresh message to be lost on every cycle
@@ -40,11 +49,12 @@ This firmware is from the branch 2.11, wich contains the latest is 2.11.3 + some
     - DSMP v1 firmware:  so far, no good results.  
     - DSMP v2 firmware:  FP works as expected
 
-5. TODO: Test PWM/PPM Interface
+5. Suport Ch order AETR -> TAER conversion.  
+    - DSMP: All done in the TX, option on the module to turn on 
+    AETR inputs, instead of the default TAER. The mode will show in 
+    the status of the module. 
 
-6. TODO: Suport Ch order AETR -> TAER conversion.  
-    - DSMP v1 firmware: can be done at the TX 
-    - DSMP v2 firmware: could be supported by the v2 firmware
+6. TODO: Test PWM/PPM Interface
 
 7. DSMP v2 firmware: Reseach option for bootloader, so that firmware can be updated from EdgeTX.
 
