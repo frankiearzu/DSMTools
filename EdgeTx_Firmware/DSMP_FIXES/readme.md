@@ -2,14 +2,16 @@
 
 This firmware is from the branch 2.11, wich contains the latest is 2.11.3 + some other fixes that will become 2.11.4.. still not official to fly.
 
+
 What i recomend is to do a backup of your edgetx SDCARD in case you need to go back.
 Usually EdgeTX works great going forward, but sometimes, going back can change some configs.
+If you have a Spare SDCARD, you can use that just for testing, by copying your content of your SDCARD.
 
-1. Backup SDCARD
+1. Backup SDCARD  (Or swich to a testing SDcard)
 2. Copy new firmware to /FIRMWARE folder
 3. Start in bootloader modes (Trims In + Power), select new firmware file.
 4. To go back, Install old firmware (bootload more).
-5. Restore SDCard from backup.
+5. Restore SDCard from backup (or put your "flying" SDCARD.. make sure you have the firmware updated before putting SDCARD update/replace).
 
 
 <h2>Reported Bug on EdgeTX and RC Groups</h2>
@@ -44,6 +46,7 @@ Usually EdgeTX works great going forward, but sometimes, going back can change s
 3. UI Fixes 
     - COLOR:  Show the Version of the DSMP module, as well as what protocol is currently using. Both Model->External, and System Info->Module
     - UI Fixes B&W.. Same as color
+<img width="479" height="273" alt="image" src="https://github.com/user-attachments/assets/33258953-bc05-4524-ac93-702f62e6ad3e" />
 
 4. Forward programming support.
     - DSMP v1 firmware:  so far, no good results.  
@@ -53,8 +56,6 @@ Usually EdgeTX works great going forward, but sometimes, going back can change s
     - DSMP: All done in the TX, option on the module to turn on 
     AETR inputs, instead of the default TAER. The mode will show in 
     the status of the module.
-<img width="479" height="273" alt="image" src="https://github.com/user-attachments/assets/33258953-bc05-4524-ac93-702f62e6ad3e" />
-
 
 6. TODO: Test PWM/PPM Interface
 
