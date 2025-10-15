@@ -52,7 +52,9 @@ Usually EdgeTX works great going forward, but sometimes, going back can change s
 5. Suport Ch order AETR -> TAER conversion.  
     - DSMP: All done in the TX, option on the module to turn on 
     AETR inputs, instead of the default TAER. The mode will show in 
-    the status of the module. 
+    the status of the module.
+<img width="479" height="273" alt="image" src="https://github.com/user-attachments/assets/33258953-bc05-4524-ac93-702f62e6ad3e" />
+
 
 6. TODO: Test PWM/PPM Interface
 
