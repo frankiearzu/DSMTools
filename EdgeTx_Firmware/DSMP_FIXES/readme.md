@@ -46,18 +46,17 @@ If you have a Spare SDCARD, you can use that just for testing, by copying your c
 3. UI Fixes 
     - COLOR:  Show the Version of the DSMP module, as well as what protocol is currently using. Both Model->External, and System Info->Module
     - UI Fixes B&W.. Same as color
+    - OLD firmware allowed you to change only the Initial channel and shift the end.. (Like Ch2-C13).. that did not make sense, 
+    you want to edit the end Channel, not the start.
+    - Suport Radio Ch order AETR (instead of default TAER). All done at the EdgeTX side. 
+
 <img width="479" height="273" alt="image" src="https://github.com/user-attachments/assets/33258953-bc05-4524-ac93-702f62e6ad3e" />
 
-4. Forward programming support.
+4. Forward programming support.  This is the only thing that currently need new v2 module firmware.
     - DSMP v1 firmware:  so far, no good results.  
     - DSMP v2 firmware:  FP works as expected
 
-5. Suport Ch order AETR -> TAER conversion.  
-    - DSMP: All done in the TX, option on the module to turn on 
-    AETR inputs, instead of the default TAER. The mode will show in 
-    the status of the module.
+5. TODO: Test PWM/PPM Interface
 
-6. TODO: Test PWM/PPM Interface
-
-7. DSMP v2 firmware: Reseach option for bootloader, so that firmware can be updated from EdgeTX.
+6. DSMP v2 firmware: Reseach option for bootloader, so that firmware can be updated from EdgeTX.
 
