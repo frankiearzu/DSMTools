@@ -250,7 +250,7 @@ local function isEditing()
 end
 
 local function isHeli(rxId)
-  if (rxId==0x18) then return 1 else return 0 end 
+  if (rxId==0x18) then return true else return false end 
 end
 
 
