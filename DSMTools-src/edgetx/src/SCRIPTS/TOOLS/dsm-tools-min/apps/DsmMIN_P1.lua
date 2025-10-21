@@ -72,29 +72,30 @@ local MV_DATA_END        = 1040
     if (i > 0) then return 1 else return 0 end
   end
 
-  local function getModuleChannelOrder(num) 
+  local function getModuleChannelOrder(type, num) 
     --Determine fist 4 channels order
-    local ch_n={}
-    local st_n = {[0]= "R", "E", "T", "A" }
-    local c_ord=num -- ch order
-    if (c_ord == -1) then
-      ch_n[0] = st_n[3]
-      ch_n[1] = st_n[1]
-      ch_n[2] = st_n[2]
-      ch_n[3] = st_n[0]
+    local channel_names={}
+    local stick_names = {[0]= "R", "E", "T", "A" }
+    local ch_order=num
+    if (ch_order == -1) then  -- AETR
+      if (type==4) then -- Multi
+        channel_names = {[0]= "A", "E", "T", "R" }
+      else -- DSMP
+        channel_names = {[0]= "T", "A", "E", "R" }
+      end
     else
-      ch_n[bit32.band(c_ord,3)] = st_n[3]
-      c_ord = math.floor(c_ord/4)
-      ch_n[bit32.band(c_ord,3)] = st_n[1]
-      c_ord = math.floor(c_ord/4)
-      ch_n[bit32.band(c_ord,3)] = st_n[2]
-      c_ord = math.floor(c_ord/4)
-      ch_n[bit32.band(c_ord,3)] = st_n[0]
+      channel_names[bit32.band(ch_order,3)] = stick_names[3]
+      ch_order = math.floor(ch_order/4)
+      channel_names[bit32.band(ch_order,3)] = stick_names[1]
+      ch_order = math.floor(ch_order/4)
+      channel_names[bit32.band(ch_order,3)] = stick_names[2]
+      ch_order = math.floor(ch_order/4)
+      channel_names[bit32.band(ch_order,3)] = stick_names[0]
     end
   
     local s = ""
     for i=0,3 do
-      s=s..ch_n[i]
+      s=s..channel_names[i]
     end
     return s
   end
@@ -104,19 +105,22 @@ local MV_DATA_END        = 1040
     local table = model.getInfo()   -- Get the model name 
     MODEL.modelName = table.name
   
-    local module = model.getModule(0) -- Internal
-    if (module==nil or module.Type~=6) then module = model.getModule(1) end -- External
-    if (module~=nil) then
-        if (module.Type==6 ) then -- MULTI-MODULE
-            local chOrder = module.channelsOrder
-            local s = getModuleChannelOrder(chOrder)
-            LOG_write("MultiChannel Ch Order: [%s]  %s\n",chOrder,s) 
-  
-            if (s=="AETR") then TRANSLATE_AETR_TO_TAER=true 
-            else TRANSLATE_AETR_TO_TAER=false 
-            end
-        end
-    end
+    -- Find the multimodule or LemonDSMP
+  local module = model.getModule(0) -- Internal
+  if (module==nil or -- External
+     not (module.Type==6 or module.Type==17)) then module = model.getModule(1)  end 
+  if (module~=nil) then
+      LOG_write("Module Type[%d] \n",module.Type) 
+      if (module.Type==6 or module.Type==17) then -- MULTI-MODULE/Lemon DSMP
+          local chOrder = module.channelsOrder or -1  -- Default TAER 
+          local s = getModuleChannelOrder(module.Type, chOrder)
+          LOG_write("MultiChannel Ch Order: [%s]  %s\n",chOrder,s) 
+
+          if (s=="AETR") then TRANSLATE_AETR_TO_TAER=true 
+          else TRANSLATE_AETR_TO_TAER=false 
+          end
+      end
+  end
   
     -- Read Ch1 to Ch10
     local i= 0

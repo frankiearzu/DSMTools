@@ -51,6 +51,7 @@ local List_Text           = {}
 local List_Text_Img       = {}
 local Flight_Mode         = {[0]="Fligh Mode %s", "Flight Mode %s", "Gyro System %s / Flight Mode %s"}
 local RxName              = {}
+local Heli_FMode          = {[0]="Hold", "Normal", "Stunt-1","Stunt-2","Panic"}
 
 local TXInactivityTime    = 0.0
 local RXInactivityTime    = 0.0
@@ -72,6 +73,7 @@ local  ctx_isReset = false   -- false when starting from scracts, true when star
 
 local Menu                = { MenuId = 0, Text = "", TextId = 0, PrevId = 0, NextId = 0, BackId = 0 }
 local MenuLines           = {}
+local RX_Id               = 0
 local RX_Name             = ""
 local RX_Version          = ""
 
@@ -245,6 +247,10 @@ end
 
 local function isEditing() 
   return  ctx_EditLine ~= nil
+end
+
+local function isHeli(rxId)
+  if (rxId==0x18) then return 1 else return 0 end 
 end
 
 
@@ -748,7 +754,8 @@ end
 local function DSM_ProcessResponse()
   local cmd = multiBuffer(11)
   if cmd == 0x01 then    -- read version
-    RX_Name = Get_RxName(multiBuffer(13))
+    RX_Id   = multiBuffer(13)
+    RX_Name = Get_RxName(RX_Id)
     RX_Version = multiBuffer(14) .. "." .. multiBuffer(15) .. "." .. multiBuffer(16)
 
     Menu.MenuId = 0
@@ -964,6 +971,9 @@ function GetFlightModeValue(line)
   if (gyroNum > 0) then
       return string.format(ret,(gyroNum+1).."", fmStr)
   else
+      if (isHeli(RX_Id)) then
+        fmStr = Heli_FMode[fmNum]
+      end
       return string.format(ret,fmStr,fmStr)
   end
 end

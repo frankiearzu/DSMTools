@@ -65,6 +65,7 @@ local List_Text           = {}
 local List_Text_Img       = {}
 local Flight_Mode         = {[0]="Fligh Mode %s", "Flight Mode %s", "Gyro System %s / Flight Mode %s"}
 local RxName              = {}
+local Heli_FMode          = {[0]="Hold", "Normal", "Stunt-1","Stunt-2","Panic"}
 
 local TXInactivityTime    = 0.0
 local RXInactivityTime    = 0.0
@@ -86,6 +87,7 @@ local  ctx_isReset = false   -- false when starting from scracts, true when star
 
 local Menu                = { MenuId = 0, Text = "", TextId = 0, PrevId = 0, NextId = 0, BackId = 0 }
 local MenuLines           = {}
+local RX_Id               = 0
 local RX_Name             = ""
 local RX_Version          = ""
 
@@ -245,6 +247,10 @@ end
 
 local function isEditing() 
   return  ctx_EditLine ~= nil
+end
+
+local function isHeli(rxId)
+  if (rxId==0x18) then return 1 else return 0 end 
 end
 
 
@@ -716,7 +722,8 @@ end
 local function DSM_ProcessResponse()
   local cmd = multiBuffer(11)
   if cmd == 0x01 then    -- read version
-    RX_Name = Get_RxName(multiBuffer(13))
+    RX_Id   = multiBuffer(13)
+    RX_Name = Get_RxName(RX_Id)
     RX_Version = multiBuffer(14) .. "." .. multiBuffer(15) .. "." .. multiBuffer(16)
 
     Menu.MenuId = 0
@@ -915,6 +922,9 @@ function GetFlightModeValue(line)
   if (gyroNum > 0) then
       return string.format(ret,(gyroNum+1).."", fmStr)
   else
+      if (isHeli(RX_Id)) then
+        fmStr = Heli_FMode[fmNum]
+      end
       return string.format(ret,fmStr,fmStr)
   end
 end
@@ -1086,16 +1096,17 @@ local function LoadTextFromFile(fileName, mem)
   collectgarbage("collect")
 end
 
-local function getModuleChannelOrder(num) 
+local function getModuleChannelOrder(type, num) 
   --Determine fist 4 channels order
   local channel_names={}
   local stick_names = {[0]= "R", "E", "T", "A" }
   local ch_order=num
-  if (ch_order == -1) then
-    channel_names[0] = stick_names[3]
-    channel_names[1] = stick_names[1]
-    channel_names[2] = stick_names[2]
-    channel_names[3] = stick_names[0]
+  if (ch_order == -1) then  -- AETR
+    if (type==4) then -- Multi
+      channel_names = {[0]= "A", "E", "T", "R" }
+    else -- DSMP
+      channel_names = {[0]= "T", "A", "E", "R" }
+    end
   else
     channel_names[bit32.band(ch_order,3)] = stick_names[3]
     ch_order = math.floor(ch_order/4)
@@ -1134,13 +1145,15 @@ local function ReadTxModelData()
 
   local TRANSLATE_AETR_TO_TAER=false
   
-  -- Find the multimodule 
+  -- Find the multimodule or LemonDSMP
   local module = model.getModule(0) -- Internal
-  if (module==nil or module.Type~=6) then module = model.getModule(1) end -- External
+  if (module==nil or -- External
+     not (module.Type==6 or module.Type==17)) then module = model.getModule(1)  end 
   if (module~=nil) then
-      if (module.Type==6 ) then -- MULTI-MODULE
-          local chOrder = module.channelsOrder
-          local s = getModuleChannelOrder(chOrder)
+      LOG_write("Module Type[%d] \n",module.Type) 
+      if (module.Type==6 or module.Type==17) then -- MULTI-MODULE/Lemon DSMP
+          local chOrder = module.channelsOrder or -1  -- Default TAER 
+          local s = getModuleChannelOrder(module.Type, chOrder)
           LOG_write("MultiChannel Ch Order: [%s]  %s\n",chOrder,s) 
 
           if (s=="AETR") then TRANSLATE_AETR_TO_TAER=true 

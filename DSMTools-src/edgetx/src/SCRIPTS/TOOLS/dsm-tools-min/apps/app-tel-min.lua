@@ -1,5 +1,5 @@
-local toolName = "TNS|DSM Smart RX Tel v1.3|TNE"
-local version  = "2.0"
+local toolName = "TNS|DSMTools Min 2.2|TNE"
+local version  = "2.2"
 ---- #########################################################################                                                                  #
 ---- # License GPLv2: http://www.gnu.org/licenses/gpl-2.0.html               #
 ---- #                                                                       #
