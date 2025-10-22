@@ -24,10 +24,13 @@ If you have a Spare SDCARD, you can use that just for testing, by copying your c
     -   Maybe the refresh problem, or something else.
 4. Weird movements after BIND, has to restart TX to correct it
     -   Was able to replicate. Fixed
-5. On some LemonRX receives, not getting telemetry with DSMP, but same RX works with MultiModule.
+5. Weird Movement after power cycle TX, while the RX is ON
+    -   Was able to reproduce the problem.. is due to not having a setup message received before sending channels.
+        FIXED in both EdgeTX and DSMP v2      
+6. On some LemonRX receives, not getting telemetry with DSMP, but same RX works with MultiModule.
     -   Replicated with 1 old Gen2, but not with recent ones. 
 
-<h2>EdgeTX changes Oct 15, 2025 (Serial LemonDSMP interface)</h2>
+<h2>EdgeTX changes as of Oct 21, 2025 (Serial LemonDSMP interface)</h2>
 
 1. Change message/channels send cycle time from 11ms to 22ms..  DSMP is expecting to receive in 22ms cycles
     - This was causing 1 edgetx channel refresh message to be lost on every cycle
@@ -43,7 +46,13 @@ If you have a Spare SDCARD, you can use that just for testing, by copying your c
 2. Fix weird State after bind
     - Before was needed to restart TX to fix. Cause: Restarting the module twise at the same time..left it in weird state.
 
-3. UI Fixes 
+3. Servos move unexpectedly and servo Jitter at Startup for about 2 seconds.
+    - If you have the RX ON before the TX, when the TX starts.. servo jumps.  Also this happen if you power cycle the TX while RX is on.
+    - Really dangerous on electric Motors.. unexpected start for about 1-2s.
+    - This is caused by the DSMP receiving channel data before the setup package.. The 1st setup package is lost during protocol discovery (PPM or Serial), so
+      it takes about 2.2s to refresh again.
+
+4. UI Fixes 
     - COLOR:  Show the Version of the DSMP module, as well as what protocol is currently using. Both Model->External, and System Info->Module
     - UI Fixes B&W.. Same as color
     - OLD firmware allowed you to change only the Initial channel and shift the end.. (Like Ch2-C13).. that did not make sense, 
@@ -52,11 +61,21 @@ If you have a Spare SDCARD, you can use that just for testing, by copying your c
 
 <img width="479" height="273" alt="image" src="https://github.com/user-attachments/assets/33258953-bc05-4524-ac93-702f62e6ad3e" />
 
-4. Forward programming support.  This is the only thing that currently need new v2 module firmware.
+5. Forward programming support.  This is the only thing that currently need new v2 module firmware.
     - DSMP v1 firmware:  so far, no good results.  
     - DSMP v2 firmware:  FP works as expected
 
-5. TODO: Test PWM/PPM Interface
+6. Test PWM/PPM Interface on DSMP v2.. Seems to be working fine.
 
-6. DSMP v2 firmware: Reseach option for bootloader, so that firmware can be updated from EdgeTX.
+7. DSMP v2 firmware: Reseach option for bootloader, so that firmware can be updated from EdgeTX.
 
+<h2>DSMP v2 changes/fixes</h2>
+
+1. Reorganize code to make it more legible and mantainable.
+
+2. Several code optimizations to remove duplicated code in a few places.
+
+3. Support for Spektrum Forward programming
+
+4. Servo Jitter or Jump positions if a Channel Data message is received before the Setup Package. 
+This was due that not all the global variables were properly initialized from EEPROM at statup. The setup package was correcting this.
