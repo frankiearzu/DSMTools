@@ -26,11 +26,12 @@ If you have a Spare SDCARD, you can use that just for testing, by copying your c
     -   Was able to replicate. Fixed
 5. Weird Movement after power cycle TX, while the RX is ON
     -   Was able to reproduce the problem.. is due to not having a setup message received before sending channels.
-        FIXED in both EdgeTX and DSMP v2      
-6. On some LemonRX receives, not getting telemetry with DSMP, but same RX works with MultiModule.
+        FIXED in both EdgeTX and DSMP v2
+6. DSMP Led Stays RED after binding. It does not go back to GREEN until you do a range test or TX restart.      
+7. On some LemonRX receives, not getting telemetry with DSMP, but same RX works with MultiModule.
     -   Replicated with 1 old Gen2, but not with recent ones. 
 
-<h2>EdgeTX changes as of Oct 21, 2025 (Serial LemonDSMP interface)</h2>
+<h2>EdgeTX changes as of Oct 25, 2025 (Serial LemonDSMP interface)</h2>
 
 1. Change message/channels send cycle time from 11ms to 22ms..  DSMP is expecting to receive in 22ms cycles
     - This was causing 1 edgetx channel refresh message to be lost on every cycle
@@ -51,6 +52,7 @@ If you have a Spare SDCARD, you can use that just for testing, by copying your c
     - Really dangerous on electric Motors.. unexpected start for about 1-2s.
     - This is caused by the DSMP receiving channel data before the setup package.. The 1st setup package is lost during protocol discovery (PPM or Serial), so
       it takes about 2.2s to refresh again.
+    - Partiall fixed.. during power on, is mostly solved, but when you change models, the servos still moves.. the only way to fix for all situations it is in the DSMP firmware code.
 
 4. UI Fixes 
     - COLOR:  Show the Version of the DSMP module, as well as what protocol is currently using. Both Model->External, and System Info->Module
@@ -77,5 +79,13 @@ If you have a Spare SDCARD, you can use that just for testing, by copying your c
 
 3. Support for Spektrum Forward programming
 
-4. Servo Jitter or Jump positions if a Channel Data message is received before the Setup Package. 
-This was due that not all the global variables were properly initialized from EEPROM at statup. The setup package was correcting this.
+4. No more servo Jumping at startup or changing models. The firware waits for a setup-message AND channel data before sending channels out to the RF module.. Before, if it received a setup message first, it was sending to the RF channels with value of 0 or garbage (to one side).
+
+5. Servo Jitter or Jump positions if a Channel Data message is received before the Setup Package. 
+This was due that not all the global variables were properly initialized from EEPROM at statup. The setup package was correcting this. This was caused by having not having a perfect 4/7/4/7 timing.
+
+6. Really good Frame transmission timing on the RF module. 4/7/4/7 (22ms cycle). The code originally is coded to depend on the TX to start the 22ms cycle, and it was not considering the processing time of building and sending the frames in the timing. So The frames was getting behind a bit incrementally, and thats the reason the last frame timing was off: 4.05/7.05/4.05/6.8.
+Now the timing is the main driver of the code, and do any work in between the frames: serve serial port and telemetry.
+
+8. DSMP LED will go back to GREEN after bind.
+   
