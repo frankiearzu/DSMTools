@@ -18,7 +18,7 @@ local M_DATA = {}            -- Store the variables used in the Menus.
 --]]
 
 local DATA_PATH           = "/MODELS/DSMDATA"
-local TX_CHANNELS         = 12
+local TX_CHANNELS         = 16
 
 local MV_DATA_END        = 1040
 

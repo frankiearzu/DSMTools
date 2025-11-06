@@ -61,7 +61,7 @@ local Change_Step         = 0
 local originalValue       = 0
 local multiSensor         = 0
 
-local TX_CHANNELS          <const> = 12
+local TX_CHANNELS          <const> = 16
 local TX_FORWARD_PROG_VER  <const> = 0x15
 
 --local ctx = {
@@ -117,6 +117,12 @@ local MODEL = {
       { min = -100, max = 100 },
       { min = -100, max = 100 },
       { min = -100, max = 100 },  -- Ch10
+      { min = -100, max = 100 },
+      { min = -100, max = 100 },
+      { min = -100, max = 100 },
+      { min = -100, max = 100 },
+      { min = -100, max = 100 },
+      { min = -100, max = 100 }  -- Ch16
   },  
 
   TX_CH_TEXT= { }, 
@@ -134,7 +140,11 @@ local MODEL = {
        {[0]= CMT_NORM, CT_NONE, "Ch9"},
        {[0]= CMT_NORM, CT_NONE, "Ch10"},
        {[0]= CMT_NORM, CT_NONE, "Ch11"},
-       {[0]= CMT_NORM, CT_NONE, "Ch12"}
+       {[0]= CMT_NORM, CT_NONE, "Ch12"},
+       {[0]= CMT_NORM, CT_NONE, "Ch13"},
+       {[0]= CMT_NORM, CT_NONE, "Ch14"},
+       {[0]= CMT_NORM, CT_NONE, "Ch15"},
+       {[0]= CMT_NORM, CT_NONE, "Ch16"}
   }
 }
 
@@ -349,7 +359,7 @@ local  function getTxChText(index)
   local out = nil
 
   if (index >= 0x000D and index <= 0x000D+7) then ch = index - 0x000D + 5 -- ch5
-  elseif (index >= 0x0036 and index <= 0x0036+11) then ch = index - 0x0036 end
+  elseif (index >= 0x0036 and index < 0x0036+TX_CHANNELS) then ch = index - 0x0036 end
 
   if (ch ~= nil) then
     out = "Ch"..(ch+1) .. " ("..(MODEL.TX_CH_TEXT[ch] or "--")..")"

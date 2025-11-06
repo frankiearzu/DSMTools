@@ -18,7 +18,7 @@ local M_DATA = {}            -- Store the variables used in the Menus.
 --]]
 
 
-local TX_CHANNELS         = 12
+local TX_CHANNELS         = 16
 
 local AT_PLANE   = 0
 

@@ -18,7 +18,7 @@ local toolName = "TNS|DSM Frwd Prog 2.2 (MIN)|TNE"
 ---- #########################################################################
 
 
-local VERSION             = "v2.2"
+local VERSION             = "v2.3"
 local LANGUAGE            = "en"
 local DSMLIB_PATH         = "/SCRIPTS/TOOLS/dsm-tools-min/"
 local DEBUG_ON            = 1
@@ -57,7 +57,7 @@ local TX_Info_Type        = 0
 local Change_Step         = 0
 local originalValue       = 0
 
-local TX_MAX_CH           = 12 - 6 -- Number of Channels after Ch6
+local TX_CHANNELS          = 16 
 local TX_FIRMWARE_VER     = 0x15
 
 --local ctx = {
@@ -246,7 +246,7 @@ local  function getTxChText(index)
   local out = nil
 
   if (index >= 0x000D and index <= 0x000D+7) then ch = index - 0x000D + 5 -- ch5
-  elseif (index >= 0x0036 and index <= 0x0036+11) then ch = index - 0x0036 end
+  elseif (index >= 0x0036 and index < 0x0036+TX_CHANNELS) then ch = index - 0x0036 end
 
   if (ch ~= nil) then
     out = "Ch"..(ch+1) .. " ("..(MODEL.TX_CH_TEXT[ch] or "--")..")"
@@ -572,8 +572,8 @@ local function DSM_SendRequest()
   local menuMSB = int16_MSB(menuId)
 
   if Phase == PH_RX_VER then   -- request RX version
-    DSM_Send(0x11, 0x06, TX_MAX_CH, TX_FIRMWARE_VER, 0x00, 0x00)
-    LOG_write("TX:GetVersion(TX_MAX_CH=%d, TX_FIRMWARE = 0x%02X)\n",TX_MAX_CH+6, TX_FIRMWARE_VER)
+    DSM_Send(0x11, 0x06, TX_CHANNELS-6, TX_FIRMWARE_VER, 0x00, 0x00)
+    LOG_write("TX:GetVersion(TX_MAX_CH=%d, TX_FIRMWARE = 0x%02X)\n",TX_CHANNELS, TX_FIRMWARE_VER)
 
   elseif Phase == PH_WAIT_CMD then     -- keep connection open
     DSM_Send(0x00, 0x04, 0x00, 0x00) -- HB
@@ -650,7 +650,7 @@ local function DSM_ProcessResponse()
     LOG_write("RX:Version: %s %s\n", RX_Name, RX_Version)
 
     -- ACK Version, this will trigger getting the first menu 
-    DSM_Send(0x12, 0x06, TX_MAX_CH, TX_FIRMWARE_VER, 0x00, 0x00)
+    DSM_Send(0x12, 0x06, TX_CHANNELS-6, TX_FIRMWARE_VER, 0x00, 0x00)
     LOG_write("TX:AckVersion()\n")
     Phase = PH_WAIT_CMD
 

@@ -7,6 +7,10 @@ All the tools combined in a single app.
 
 **NOTE:  Requires Ethos 1.6.0 or newer**
 
+**UPDATE v2.3: Support for up to 16ch  (Nov 06, 2025)**
+
+**UPDATE v2.2: Added Flight modes for helicopters  (Oct 15, 2025)**
+
 **UPDATE v2.1: Added Biplane Wing Support  (Aug 13, 2025)**
 
 **UPDATE v2.0.1: Mostly cosmetic, but some fixes for X20 (Mar 1, 2025)** 

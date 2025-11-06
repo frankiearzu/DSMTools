@@ -17,6 +17,10 @@ If you want to delete the older versions of the multiple individual tools, remov
 **If it give a memory/error the first time you try to run a sub-menu application, try a second time**
 **For older B&W radios, they don't have enouth memory for the suite. Keep using the stand alone scripts**
 
+**UPDATE v2.3: Support for up to 16ch  (Nov 06, 2025)**
+
+**UPDATE v2.2: Added Flight modes for helicopters  (Oct 15, 2025)**
+
 **UPDATE v2.1: Added Biplane Wing Support  (Aug 13, 2025)**
 
 **UPDATE v2.0a: Fix SmartBat Telemetry   (Apr 9, 2025)**
