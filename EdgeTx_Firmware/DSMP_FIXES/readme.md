@@ -88,4 +88,10 @@ This was due that not all the global variables were properly initialized from EE
 Now the timing is the main driver of the code, and do any work in between the frames: serve serial port and telemetry.
 
 8. DSMP LED will go back to GREEN after bind.
+
+9. Support for up to 20 channels (using the X-Plus multiplexing)
+
+10. GUID generated with a combination of STM32 GUID + some radomness to avoid having the same GUID in some cloned STM32s.
+
+11. Suppot for ModelID to modify the active GUID when binding and transmiting frames.
    
