@@ -942,7 +942,7 @@ function GetFlightModeValue(line)
       return string.format(ret,(gyroNum+1).."", fmStr)
   else
       if (isHeli(RX_Id)) then
-        LOG_write("IsHeli(0x%02x)=1\n",RX_Id)
+        --LOG_write("IsHeli(0x%02x)=1\n",RX_Id)
         fmStr = Heli_FMode[fmNum]
       end
       return string.format(ret,fmStr,fmStr)
