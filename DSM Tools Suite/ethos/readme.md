@@ -7,6 +7,24 @@ All the tools combined in a single app.
 
 **NOTE:  Requires Ethos 1.6.0 or newer**
 
+**UPDATE v2.4: Support for new Spektrum firmware 3.4.x  (Dec 16, 2025)**
+
+From Spektrum Site:
+
+New Features
+- Port Mapping. See https://wiki.spektrumrc.com for details guide/details.
+- Added FastBoot support. Telemetry alarm and receiver blinking will indicate a FastBoot state. Note - Behavior can vary depending on all electronics used in the system. See wiki.spektrumrc.com for platform specific details.
+- Added Channel Transition Point option for Nosewheel retract channel to specify where the transition between retracted/extended happens.
+
+Improvements
+- Re-organized Nosewheel menu structure
+
+Bug fixes
+- Some receivers not being able to save parameters properly
+- Outputs on additional gyro systems being affected by SAFE
+- Stick inputs being calculated incorrectly if a channel had one of the travel endpoints set to 0%.
+
+
 **UPDATE v2.3: Support for up to 16ch  (Nov 06, 2025)**
 
 **UPDATE v2.2: Added Flight modes for helicopters  (Oct 15, 2025)**
