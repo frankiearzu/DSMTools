@@ -58,7 +58,6 @@ local TX_Info_Type        = 0
 local Change_Step         = 0
 local originalValue       = 0
 
-local TX_CHANNELS          = 16 
 local TX_CHANNELS          = 16
 local TX_FIRMWARE_VER     = 0x15
 
