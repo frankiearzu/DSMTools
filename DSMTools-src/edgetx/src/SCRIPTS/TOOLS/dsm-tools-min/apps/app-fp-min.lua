@@ -18,7 +18,7 @@ local toolName = "TNS|DSM Frwd Prog 2.2 (MIN)|TNE"
 ---- #########################################################################
 
 
-local VERSION             = "v2.3"
+local VERSION             = "v2.4"
 local LANGUAGE            = "en"
 local DSMLIB_PATH         = "/SCRIPTS/TOOLS/dsm-tools-min/"
 local DEBUG_ON            = 1
@@ -36,6 +36,7 @@ local PH_WAIT_CMD, PH_EXIT_REQ, PH_EXIT_DONE               = 9, 10, 11
 
 -- Line Types
 local LT_MENU             = 0x1C 
+local LT_LIST_CH          = 0x2C
 local LT_LIST_NC, LT_LIST_NC2, LT_LIST, LT_LIST_ORI, LT_LIST_TOG = 0x6C, 0x6D, 0x0C, 0xCC, 0x4C
 local LT_VALUE_NC = 0x60
 local LT_VALUE_PERCENT, LT_VALUE_DEGREES, LT_VALUE_PREC2 = 0xC0, 0xE0, 0x69
@@ -58,6 +59,7 @@ local Change_Step         = 0
 local originalValue       = 0
 
 local TX_CHANNELS          = 16 
+local TX_CHANNELS          = 16
 local TX_FIRMWARE_VER     = 0x15
 
 --local ctx = {
@@ -136,7 +138,8 @@ end
 
 local function isListLine(line) 
   return line.Type==LT_LIST_NC or line.Type==LT_LIST_NC2 or 
-         line.Type == LT_LIST or line.Type == LT_LIST_ORI or line.Type == LT_LIST_TOG
+         line.Type == LT_LIST or line.Type == LT_LIST_ORI or line.Type == LT_LIST_TOG or
+         line.Type == LT_LIST_CH
 end
 
 local function isEditing() 
@@ -870,8 +873,8 @@ local function DSM_Display()
   if Phase == PH_RX_VER then
     lcd.drawText(1, 0, "DSM Frwd Prog "..VERSION, INVERS)
 
-    local msgId = 0x300 -- Waiting for RX
-    if (ctx_isReset) then msgId=0x301 end -- Waiting for Reset
+    local msgId = 0x350 -- Waiting for RX
+    if (ctx_isReset) then msgId=0x351 end -- Waiting for Reset
     lcd.drawText(1, 3 * LCD_Y_LINE_HEIGHT, Get_Text(msgId), BLINK) 
     return
   end

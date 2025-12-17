@@ -1,3 +1,4 @@
+
 ---- #########################################################################
 ---- #                                                                       #
 ---- # Copyright (C) Frankie Arzu                                            #
@@ -51,6 +52,7 @@ local PH_WAIT_CMD  , PH_EXIT_REQ  , PH_EXIT_DONE           = 9, 10, 11
 
 -- Line Types
 local LT_MENU                                            = 0x1C 
+local LT_LIST_CH                                         = 0x2C
 local LT_LIST_NC , LT_LIST_NC2                    = 0x6C, 0x6D 
 local LT_LIST , LT_LIST_ORI , LT_LIST_TOG  = 0x0C, 0xCC, 0x4C
 local LT_VALUE_NC                                        = 0x60
@@ -252,7 +254,8 @@ end
 
 local function isListLine(line) 
   return line.Type==LT_LIST_NC or line.Type==LT_LIST_NC2 or 
-         line.Type == LT_LIST or line.Type == LT_LIST_ORI or line.Type == LT_LIST_TOG
+         line.Type == LT_LIST or line.Type == LT_LIST_ORI or line.Type == LT_LIST_TOG or
+         line.Type == LT_LIST_CH
 end
 
 local function isEditing() 
@@ -408,13 +411,17 @@ local function DSM_Send(...)
   --LOG_write("TX:Sending (hex)  %s\n",hex)
 end
 -------------------------------------------------------------------------------------------------------------
-local function GUI_RotEncVal(line, dir) -- return encoder speed to inc or dec values
+local function GUI_RotEncVal(line, dir, rotarySpeed) -- return encoder speed to inc or dec values
 
   if isListLine(line) then return dir end
 
   local inc = 0
-  local Speed = getRotEncSpeed()
+  
+  if (rotarySpeed) then
+    return rotarySpeed * dir
+  end
 
+  local Speed = getRotEncSpeed()
   if Speed == ROTENC_MIDSPEED then  inc = (5 * dir)
   elseif Speed == ROTENC_HIGHSPEED then  inc = (15 * dir)
   else  inc = dir  end
@@ -486,7 +493,7 @@ local function DSM_HandleEvent(event, rotarySpeed)
 
   if event == EVT_VIRTUAL_NEXT then  -- NEXT
     if isEditing() then -- Editting?
-      Value_Add(GUI_RotEncVal(MenuLines[ctx_EditLine],1))
+      Value_Add(GUI_RotEncVal(MenuLines[ctx_EditLine],1,rotarySpeed))
     else
       if ctx_SelLine < 7 then -- On a regular line
         local num = ctx_SelLine -- Find the prev selectable 
@@ -513,7 +520,7 @@ local function DSM_HandleEvent(event, rotarySpeed)
   
   if event == EVT_VIRTUAL_PREV then -- PREV
     if isEditing() then -- In Edit Mode
-      Value_Add(GUI_RotEncVal(MenuLines[ctx_EditLine],-1))
+      Value_Add(GUI_RotEncVal(MenuLines[ctx_EditLine],-1, rotarySpeed))
     else
       if ctx_SelLine == 8 and Menu.NextId ~= 0 then
         ctx_SelLine = 7 -- Next 
@@ -812,7 +819,7 @@ local function DSM_ProcessResponse()
       ctx_SelLine = ctx_CurLine
     end
 
-    LOG_write("RX:Line: #%d Vid=0x%04X T=0x%02X \"%s\"\n", i, line.ValId, type, line.Text)
+    LOG_write("RX:Line: #%d Vid=0x%04X T=0x%02X \"%s\"  [0x%03X]\n", i, line.ValId, type, line.Text, line.TextId)
 
     if (line.MenuId~=Menu.MenuId) then  -- Going Back too fast: Stil receiving lines from previous menu 
       Menu.MenuId = line.MenuId 
@@ -935,7 +942,7 @@ function GetFlightModeValue(line)
       return string.format(ret,(gyroNum+1).."", fmStr)
   else
       if (isHeli(RX_Id)) then
-        --LOG_write("IsHeli(0x%02x)=1\n",RX_Id)
+        LOG_write("IsHeli(0x%02x)=1\n",RX_Id)
         fmStr = Heli_FMode[fmNum]
       end
       return string.format(ret,fmStr,fmStr)
@@ -951,8 +958,8 @@ local function DSM_Display()
   if Phase == PH_RX_VER then
     ui.drawFPSubHeader(0,"DSM Frwd Prog "..config.version)
 
-    local msgId = 0x300 -- Waiting for RX
-    if (ctx_isReset) then msgId=0x301 end -- Waiting for Reset
+    local msgId = 0x350 -- Waiting for RX
+    if (ctx_isReset) then msgId=0x351 end -- Waiting for Reset
     ui.drawFPSubHeader(ui.getFPLineHeight()*4,Get_Text(msgId))
     return
   end
@@ -987,7 +994,7 @@ local function DSM_Display()
       elseif (line.TextId >= 0x5000) then     -- Render Image
         -- Render Image# TextID
         local imageName = string.format("IMG%X.jpg",line.TextId)
-        ui.drawBitmap(1,y, imageName)
+        ui.drawBitmap(LCD_W/3, y, imageName)
       elseif (line.Type == LT_MENU) then -- Menu or Sub-Headeer
         if (isSelectable(line)) then
           -- Menu to another menu 
@@ -1423,7 +1430,7 @@ local function Inc_Init()
   
   refreshDisplay = true
   if (initStep == 0) then
-    LoadTextFromFile(MSG_FILE,14)
+    LoadTextFromFile(MSG_FILE,15)
     initStep=1
 
     --if (load_msg_from_file(MSG_FILE, 0, FileState)==1) then
@@ -1633,14 +1640,14 @@ local function event(widget, evt, touchState)
           end
       else
           ctx_SelLine = line
-          DSM_HandleEvent(EVT_VIRTUAL_ENTER, 1)
+          DSM_HandleEvent(EVT_VIRTUAL_ENTER, nil)
           refreshDisplay=true
           return false
       end -- if ctx_Editline
     end -- if line
   else
     if (evt > 0) then
-      DSM_HandleEvent(evt, 1)
+      DSM_HandleEvent(evt, nil)
       refreshDisplay=true
     end
   end -- touchState

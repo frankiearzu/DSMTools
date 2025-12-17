@@ -19,6 +19,10 @@ LT|0x0011|Ch9
 LT|0x0012|Ch10
 LT|0x0013|Ch11
 LT|0x0014|Ch12
+LT|0x0015|Ch13
+LT|0x0016|Ch14
+LT|0x0017|Ch15
+LT|0x0018|Ch16
 -- Servo Output values
 LT|0x002D|5.5ms
 LT|0x002E|11ms
@@ -523,18 +527,66 @@ T |0x02BA|Duration(s)
 T |0x02BB|Pitch Offset
 T |0x02BD|Dynamic Response
 T |0x02BE|AS3X Throttle Arm
+T |0x02BF|Skip Gyro Cal
 --
 T |0x02BF|Skip Gyro Cal
 T |0x02C0|Warning: Disabling the gyro
 T |0x02C1|calibration will disable the
 T |0x02C2|following:
 T |0x02C3|SAFE, Heading Hold,
-T |0x02C4|ASS3X Throttle Arm
-T |0x02C5|
--- Internal messages to LUA
-T |0x0300|No compatible DSM RX...
-T |0x0301|Waiting for RX to Restart
--- FLIGHT MODES
+T |0x02C4|ASS3X Throttle
+T |0x02C5|Arm
+T |0x02C7|The model should up to use 
+T |0x02C8|100% maximum Rate settings.
+T |0x02C9|Servo Travel adjustments
+T |0x02CA|should be used if reduced
+T |0x02CB|travel is needed.
+T |0x02CC|
+--
+T |0x02D5|FastBoot
+T |0x02D7|SpektrumRC Wiki
+T |0x02D8|https://www.spektrumrc.com/
+T |0x02D9| FastBoot for this model
+T |0x02DA| requires waiting a set amount
+T |0x02DB| of time after shutting off
+T |0x02DC| the model before powering it again.
+T |0x02DD| Visit SpektrumRC Wiki
+T |0x02DE| for more details.
+--
+T |0x02DF|Port Mapping
+T |0x02E0|Rx Port 1
+T |0x02E1|Rx Port 2
+T |0x02E2|Rx Port 3
+T |0x02E3|Rx Port 4
+T |0x02E4|Rx Port 5
+T |0x02E5|Rx Port 6
+T |0x02E6|Rx Port 7
+T |0x02E7|Rx Port 8
+T |0x02E8|Rx Port 9
+T |0x02E9|Rx Port 10
+T |0x02EA|Rx Port 11
+T |0x02EB|Rx Port 12
+T |0x02EC|Rx Port 13
+T |0x02ED|Rx Port 14
+T |0x02EE|Rx Port 15
+T |0x02EF|Rx Port 16
+T |0x02F0|Rx Port 17
+T |0x02F1|Rx Port 18
+T |0x02F2|Rx Port 19
+T |0x02F3|Rx Port 20
+--
+T |0x0300|Stick Input Test
+T |0x0301|Steering Channel
+T |0x0302|Steering Gains
+T |0x0303|Retract Setup
+T |0x0304|Retract CH Val
+T |0x0305|CH Transition Point
+T |0x0306|Port Settings
+T |0x0307|Relearn
+--
+T |0x0350|No compatible DSM RX...
+T |0x0351|Waiting for RX to Restart
+--
 FM|0x8000|Flight Mode %s
 FM|0x8001|Flight Mode %s
 FM|0x8002|Gyro System %s / Flight Mode %s
@@ -549,4 +601,3 @@ RX|0x001A|AR8360T
 RX|0x001B|AR8020T
 RX|0x001C|AR10360T
 RX|0x001E|AR631
-
