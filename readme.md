@@ -3,6 +3,7 @@
 This repository has a collection of EdgeTx/OpenTX/ETHOS Tools to use Spektrum Receivers
 
 **UPDATE: All clear (no changes) for new Spektrum firmware v3.4.22 released on Feb 4, 2026**
+
 **UPDATE for new Spektrum firmware AS3X+ v3.4.19 added on Dec 16, 2025**
 
 
