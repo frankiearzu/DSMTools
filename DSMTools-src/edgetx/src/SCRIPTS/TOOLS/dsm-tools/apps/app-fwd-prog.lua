@@ -1430,7 +1430,7 @@ local function Inc_Init()
   
   refreshDisplay = true
   if (initStep == 0) then
-    LoadTextFromFile(MSG_FILE,15)
+    LoadTextFromFile(MSG_FILE,16)
     initStep=1
 
     --if (load_msg_from_file(MSG_FILE, 0, FileState)==1) then

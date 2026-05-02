@@ -27,7 +27,7 @@ local ui = {}
 local refreshScreen = true
 
 local supportedRadios = {
-    -- Horus X10, Horus X12 (480x272)
+    -- Horus X10, TX16 (480x272)
     ["472x240"] = {
         ms = {
             textWidthPad        = 5,
@@ -41,6 +41,28 @@ local supportedRadios = {
             buttonHeight    = 80,
             buttonWidthPad  = 30,
             buttonHeightPad = 10,
+            buttonPerRow    = 2,
+        },
+        fp = {
+            textFont            = 0,
+            textFontBold        = BOLD,
+            headerFont          = BOLD,
+        },
+    },
+    -- TX16S MK3
+    ["800x480"] = {
+        ms = {
+            textWidthPad        = 5,
+            textHeightPad       = 4,
+
+            touchYOffeset       = 0, -- no offset
+            screenBGColor       = LIGHTWHITE
+        },
+        menu = {
+            buttonWidth     = 280,
+            buttonHeight    = 160,
+            buttonWidthPad  = 60,
+            buttonHeightPad = 20,
             buttonPerRow    = 2,
         },
         fp = {

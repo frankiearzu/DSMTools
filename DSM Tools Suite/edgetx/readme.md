@@ -7,7 +7,8 @@ the combined functionality.
 
 **UPGRADING FROM OLDER DSMTools**
 
-If you want to delete the older versions of the multiple individual tools, remove the /SCRIPTS/TOOLS/DSMLIB folder, and "DSM_*" on the main /SCRIPTS/TOOLS folder.. only keep "DSM_Tools.lua" that is the new version.   Your model info is still stored in /MODELS/DSMDATA and is backward compatible.
+If you want to delete the older versions of the multiple individual tools, remove the /SCRIPTS/TOOLS/DSMLIB folder, and "DSM_*" on the main /SCRIPTS/TOOLS folder.. only keep "dsm-tools.lua" that is the new version.   Your model info is still stored in /MODELS/DSMDATA and is backward compatible.
+NOTES for EdgeTX 2.12:  The DSM_Tools.lua has been renamed to dsm-tools.lua (all lowercase), it needs to match the folder name, otherwise two tools entries will appear.
 
 
 # DSM Tools Suite (EdgeTX Version)
@@ -17,22 +18,9 @@ If you want to delete the older versions of the multiple individual tools, remov
 **If it give a memory/error the first time you try to run a sub-menu application, try a second time**
 **For older B&W radios, they don't have enouth memory for the suite. Keep using the stand alone scripts**
 
+**UPDATE v2.5: COLOR only: Support for TX16S MK3 and EdgeTX 2.12  (May 1, 2026)**
+
 **UPDATE v2.4: Support for new Spektrum firmware 3.4.x  (Dec 16, 2025)**
-
-From Spektrum Site:
-
-New Features
-- Port Mapping. See https://wiki.spektrumrc.com for details guide/details.
-- Added FastBoot support. Telemetry alarm and receiver blinking will indicate a FastBoot state. Note - Behavior can vary depending on all electronics used in the system. See wiki.spektrumrc.com for platform specific details.
-- Added Channel Transition Point option for Nosewheel retract channel to specify where the transition between retracted/extended happens.
-
-Improvements
-- Re-organized Nosewheel menu structure
-
-Bug fixes
-- Some receivers not being able to save parameters properly
-- Outputs on additional gyro systems being affected by SAFE
-- Stick inputs being calculated incorrectly if a channel had one of the travel endpoints set to 0%.
 
 **UPDATE v2.3: Support for up to 16ch  (Nov 06, 2025)**
 
@@ -55,7 +43,7 @@ After the instalation, the directory folder should look like this:
 Color Radios:
 <code>
   /MODELS/DSMDATA                -- Where the info about your plane is stored
-  /SCRIPTS/TOOLS/DSM_Tools.lua   -- Main program for the TOOLS page
+  /SCRIPTS/TOOLS/dsm-tools.lua   -- Main program for the TOOLS page
   /SCRIPTS/TOOLS/dsm-tools/
                   apps        -- LUA Applications 
                   i18n        -- Messages displayed on the screen... english only right now.
