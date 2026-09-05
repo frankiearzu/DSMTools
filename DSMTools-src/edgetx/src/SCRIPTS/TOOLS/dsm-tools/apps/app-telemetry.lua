@@ -547,8 +547,8 @@ function AS3XSettings.paint(page)
     showNumberBoxed(x_data2, y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[13])
 
     y = y + LCD_LINE_H + LCD_LINE_PADDING
-    lcd.drawText (x_head1,y, "Yaw", BOLD)
-    showNumberBoxed(x_data1, y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[8]) 
+    --lcd.drawText (x_head1,y, "Yaw", BOLD)
+    --showNumberBoxed(x_data1, y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[8]) 
   
     lcd.drawText (x_head2,y, "Pitch U", BOLD)
     showNumberBoxed(x_data2, y, LCD_NUMBER_W, LCD_LINE_H, this.AS3X_Data[14])
